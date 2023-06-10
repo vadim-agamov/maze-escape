@@ -1,0 +1,123 @@
+﻿using System;
+using System.IO;
+using FluentFTP;
+using Helpers;
+using UnityEditor;
+using UnityEngine;
+using Utils;
+
+namespace Build
+{
+    public static class BuildMenuVK 
+    {
+        //constants
+        private const string VKDefine = "VK";
+        private const string VKWebGLTemplate = "PROJECT:Vk";
+        
+        [MenuItem("DEV/VK/BUILD_DEBUG")]
+        public static void BuildDebug()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, GetVkDebugDefines());
+            PlayerSettings.WebGL.template = VKWebGLTemplate;
+
+            string path = EditorUtility.SaveFilePanel("Choose Location of Built Game", "", Application.version + "_debug", "");
+
+            if (string.IsNullOrEmpty(path) == false)
+            {
+                ChangeConstants(false);
+                BuildBase.BuildAddressables();
+                BuildPipeline.BuildPlayer(BuildBase.GetDebugLevels(), path, BuildTarget.WebGL, BuildOptions.None);
+                
+                BuildBase.RemoveMobileWebglWarning(path);
+            }
+        }
+        
+        [MenuItem("DEV/VK/BUILD_PROD")]
+        public static void BuildProd()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, GetVkProdDefines());
+            PlayerSettings.WebGL.template = VKWebGLTemplate;
+
+
+            string path = Application.dataPath.Replace("/Assets", "/Builds/vk/v_"+DateTime.Now.TotalSeconds());
+            if (Directory.Exists(path)) Directory.Delete(path);
+            Directory.CreateDirectory(path);
+    
+            if (string.IsNullOrEmpty(path) == false)
+            {
+                ChangeConstants(true);
+                BuildBase.BuildAddressables();
+                BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.None);
+
+                BuildBase.RemoveMobileWebglWarning(path);
+                BuildBase.UploadFolderToHostinger(path,  VKBridge.VKConstants.Hosting_dev_folder);
+            }
+        }
+
+        
+        [MenuItem("DEV/VK/SET DEFINES/DEBUG")]
+        public static void SetVKDebugDefines()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetVkDebugDefines());
+            PlayerSettings.WebGL.template = VKWebGLTemplate;
+
+            BuildBase.EnableDevFolders();
+        }
+        
+        [MenuItem("DEV/VK/SET DEFINES/PROD")]
+        public static void SetVKProdDefines()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetVkProdDefines());
+            
+            BuildBase.DisableDevFolders();
+        }
+        
+        private static string GetVkDebugDefines()
+        {
+            return BuildBase.GetDebugDefines() + ";"+VKDefine;
+        }
+
+        private static string GetVkProdDefines()
+        {
+            return BuildBase.GetProdDefines() + ";"+VKDefine;
+        }
+
+       private static void ChangeConstants(bool incrementBuildNumber)
+       {
+           var constants = (Constants)AssetDatabase.LoadAssetAtPath(@"Assets\Resources\Constants.asset", typeof(Constants));
+
+           AssetDatabase.StartAssetEditing();
+
+           constants.BuildTime = DateTime.UtcNow.ToString("dd.MM.yyyy hh:mm:ss");
+           if (incrementBuildNumber)
+           {
+               constants.BuildNumberVK++;
+           }
+           
+           EditorUtility.SetDirty(constants);
+
+           AssetDatabase.StopAssetEditing();
+           AssetDatabase.SaveAssets();
+       }
+
+       [MenuItem("DEV/VK/MoveDevToProd")] 
+       static void VKMoveDevToProd()
+       {
+           var backupFolder = VKBridge.VKConstants.Hosting_backupRoot_folder+DateTime.Now;
+
+           using (var ftp = new FtpClient(FTPUtils.FtpHostingerIp, FTPUtils.FtpHostingerLogin,  FTPUtils.FtpHostingerPswrd))
+           {
+               ftp.Connect();
+
+               if (ftp.DirectoryExists(VKBridge.VKConstants.Hosting_dev_folder))
+               {
+                   ftp.Rename(VKBridge.VKConstants.Hosting_prod_folder, backupFolder);
+                   ftp.Rename(VKBridge.VKConstants.Hosting_dev_folder, VKBridge.VKConstants.Hosting_prod_folder);
+               }
+           }
+
+           Debug.Log("VKMoveDevToProd complete" );
+       }
+   }
+}
+

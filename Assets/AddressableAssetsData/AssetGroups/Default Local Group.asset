@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: a01222b45783e4276894a23be6a278ec
+  m_SerializeEntries:
+  - m_GUID: effd14320588a4cb9aeda4bedc297890
+    m_Address: LevelLoosedUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5100a73c5d2d5488b9b3063c2a353e42
+    m_Address: UIRoot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fe2766fcfe3ca4667ae8661d05d9296b
+    m_Address: LobbyScreen
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2e3637c6f2f104262af9b62a9f749850
+    m_Address: CheatsUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 29ecb0e9eca83437fa9b16181a51e508
+    m_Address: JumpScreen
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ac14bf01aceb64ed089d4cd29bcd6d59
+    m_Address: PlayPanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 57230025dc2524ac4a04eede35f44b95
+    m_Address: LevelWinUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 3640f2fade6034cb48ab522b37da8ae7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 19a12f2fa22b94c5689464e652ce8a2e, type: 2}
+    - {fileID: 11400000, guid: bb92b13a0c26d4b279a858c6ec6e977f, type: 2}

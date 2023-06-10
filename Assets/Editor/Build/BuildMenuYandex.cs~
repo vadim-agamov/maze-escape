@@ -1,0 +1,141 @@
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using FluentFTP;
+using Helpers;
+using UnityEditor;
+using UnityEngine;
+using Utils;
+
+namespace Build
+{
+    public static class BuildMenuYandex
+    {
+        [MenuItem("DEV/YANDEX/BUILD_DEBUG")]
+        public static void BuildYandexDebug()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, GetYandexDebugDefines());
+            PlayerSettings.WebGL.template = "PROJECT:Yandex";
+
+            string path = EditorUtility.SaveFilePanel("Choose Location of Built Game", "",
+                Application.version + "_debug", "");
+
+            if (string.IsNullOrEmpty(path) == false)
+            {
+                ChangeConstants(false);
+                BuildBase.BuildAddressables();
+                BuildPipeline.BuildPlayer(BuildBase.GetDebugLevels(), path, BuildTarget.WebGL, BuildOptions.None);
+            }
+        }
+
+        [MenuItem("DEV/YANDEX/BUILD_PROD")]
+
+        public static async Task BuildYandexProd()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, GetYandexProdDefines());
+            PlayerSettings.WebGL.template = "PROJECT:Yandex";
+
+
+            string path = Application.dataPath.Replace("/Assets", "/Builds/ya/v_" + DateTime.Now.TotalSeconds());
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path);
+            }
+
+            Directory.CreateDirectory(path);
+
+            // EditorUtility.SaveFilePanel("Choose Location of Built Game", "", Application.version + "_prod", "");
+
+            if (string.IsNullOrEmpty(path) == false)
+            {
+                ChangeConstants(true);
+                BuildBase.BuildAddressables();
+                BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.None);
+
+                Debug.LogWarning("RemoveMobileWebglWarning");
+                BuildBase.RemoveMobileWebglWarning(path);
+                
+                Debug.LogWarning("UploadFolderToHostinger");
+                BuildBase.UploadFolderToHostinger(path, YandexBridge.YANDEXConstants.Hosting_dev_folder);
+            }
+
+            Debug.LogWarning("YandexMoveDevToProd");
+            YandexMoveDevToProd();
+        }
+
+        //in case you need manually upload cheat build to dev
+        [MenuItem("DEV/YANDEX/UploadToDev")]
+        static void UploadFtp()
+        {
+            var path = EditorUtility.OpenFolderPanel("Choose Location of Upload", Application.version + "_prod", "");
+            BuildBase.UploadFolderToHostinger(path, YandexBridge.YANDEXConstants.Hosting_dev_folder);
+        }
+
+        [MenuItem("DEV/YANDEX/MoveDevToProd")]
+        static void YandexMoveDevToProd()
+        {
+            var backupFolder = YandexBridge.YANDEXConstants.Hosting_backupRoot_folder + DateTime.Now.TotalSeconds();
+
+            using (var ftp = new FtpClient(FTPUtils.FtpHostingerIp, FTPUtils.FtpHostingerLogin, FTPUtils.FtpHostingerPswrd))
+            {
+                ftp.Connect();
+
+                if (ftp.DirectoryExists(YandexBridge.YANDEXConstants.Hosting_dev_folder))
+                {
+                    ftp.Rename(YandexBridge.YANDEXConstants.Hosting_prod_folder, backupFolder);
+                    ftp.Rename(YandexBridge.YANDEXConstants.Hosting_dev_folder, YandexBridge.YANDEXConstants.Hosting_prod_folder);
+                }
+            }
+
+            Debug.Log("YandexMoveDevToProd complete");
+        }
+
+        [MenuItem("DEV/YANDEX/SET DEFINES/YANDEX_DEBUG")]
+        public static void SetYandexDebugDefines()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, GetYandexDebugDefines());
+            PlayerSettings.WebGL.template = "Assets/WebGLTemplates/Yandex";
+
+            BuildBase.EnableDevFolders();
+        }
+
+        [MenuItem("DEV/YANDEX/SET DEFINES/YANDEX_PROD")]
+        public static void SetYandexProdDefines()
+        {
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, GetYandexProdDefines());
+            PlayerSettings.WebGL.template = "Assets/WebGLTemplates/Yandex";
+            BuildBase.DisableDevFolders();
+        }
+
+        private static string GetYandexDebugDefines()
+        {
+            return BuildBase.GetDebugDefines() + ";YANDEX";
+        }
+
+        private static string GetYandexProdDefines()
+        {
+            return BuildBase.GetProdDefines() + ";YANDEX";
+        }
+
+
+        private static void ChangeConstants(bool incrementBuildNumber)
+        {
+            var constants =
+                (Constants) AssetDatabase.LoadAssetAtPath(@"Assets\Resources\Constants.asset", typeof(Constants));
+
+            AssetDatabase.StartAssetEditing();
+
+            constants.BuildTime = DateTime.UtcNow.ToString("dd.MM.yyyy hh:mm:ss");
+
+            if (incrementBuildNumber)
+            {
+                constants.BuildNumberYANDEX++;
+            }
+
+            EditorUtility.SetDirty(constants);
+
+            AssetDatabase.StopAssetEditing();
+            AssetDatabase.SaveAssets();
+        }
+    }
+}

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 945ded1d3fcb44b68077bab479f827e5, type: 3}
+  m_Name: FlyItemsConfig
+  m_EditorClassIdentifier: 
+  _icons:
+  - Icon: {fileID: 21300000, guid: 7ca32204a19b7417e93ae8eab3bee277, type: 3}
+    Name: swap
+  - Icon: {fileID: 21300000, guid: cab428cb3f03f4d739b31dad1b95fa25, type: 3}
+    Name: rocket
+  - Icon: {fileID: 21300000, guid: 25b4f317fc0fd4ae2af7b075f2942aea, type: 3}
+    Name: hammer
+  - Icon: {fileID: 21300000, guid: c39a7621e28d54b4bb8d17bac26d2a9b, type: 3}
+    Name: rainbow

@@ -1,0 +1,59 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Modules.BarrierEvents;
+using Modules.UIService.Events;
+
+namespace Modules.UIService
+{
+    public static class UiModelExtensions
+    {
+        public static UniTask Open(this UIModel model, string key, CancellationToken token)
+        {
+            var uiService = ServiceLocator.ServiceLocator.Get<IUIService>();
+            return uiService.Open(model, key, token);
+        }
+
+        public static async UniTask Show(this UIModel model, CancellationToken cancellationToken)
+        {
+            await model.View.Show(cancellationToken);
+            BarrierEvents<UiShowEvent>.Publish(new UiShowEvent(model));
+        }
+
+        public static async UniTask OpenAndShow(this UIModel model, string key, CancellationToken token)
+        {
+            await model.Open(key, token);
+            await model.Show(token);
+        }
+
+        public static async UniTask Hide(this UIModel model, CancellationToken cancellationToken)
+        {
+            await model.View.Hide(cancellationToken);
+            BarrierEvents<UiHideEvent>.Publish(new UiHideEvent(model));
+        }
+
+        public static void Close(this UIModel model)
+        {
+            var uiService = ServiceLocator.ServiceLocator.Get<IUIService>();
+            uiService.Close(model);
+        }
+
+        public static async UniTask HideAndClose(this UIModel model, CancellationToken cancellationToken)
+        {
+            await model.Hide(cancellationToken);
+            model.Close();
+        }
+
+        public static async UniTask WaitForHide(this UIModel model, CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                var hideEvent = await BarrierEvents<UiHideEvent>.WaitResult(cancellationToken);
+                if (hideEvent.Model == model)
+                    break;
+            }
+        }
+    }
+}
