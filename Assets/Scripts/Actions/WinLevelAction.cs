@@ -1,5 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Maze;
+using Maze.MazeService;
 using Modules.ServiceLocator;
 using Modules.UIService;
 using Services.CoreService;
@@ -9,22 +11,20 @@ namespace Actions
 {
     public class WinLevelAction
     {
-        private readonly ICoreService _coreService;
+        private readonly IMazeService _mazeService;
 
         public WinLevelAction()
         {
-            _coreService = ServiceLocator.Get<ICoreService>();
+            _mazeService = ServiceLocator.Get<IMazeService>();
         }
 
         public async UniTask Execute(CancellationToken token)
         {
-            _coreService.Context.CanSpawn = false;
-
             var model = new LevelWinModel();
             await model.OpenAndShow("LevelWinUI", token);
             await model.WaitForHide(token);
-
-            _coreService.Context.CanSpawn = true;
+            
+            await new GotoStateAction(new MazeState(), true).Execute(token);
         }
     }
 }

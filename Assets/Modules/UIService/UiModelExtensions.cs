@@ -1,6 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Modules.BarrierEvents;
+using Events;
 using Modules.UIService.Events;
 
 namespace Modules.UIService
@@ -16,7 +16,7 @@ namespace Modules.UIService
         public static async UniTask Show(this UIModel model, CancellationToken cancellationToken)
         {
             await model.View.Show(cancellationToken);
-            BarrierEvents<UiShowEvent>.Publish(new UiShowEvent(model));
+            Event<UiShowEvent>.Publish(new UiShowEvent(model));
         }
 
         public static async UniTask OpenAndShow(this UIModel model, string key, CancellationToken token)
@@ -28,7 +28,7 @@ namespace Modules.UIService
         public static async UniTask Hide(this UIModel model, CancellationToken cancellationToken)
         {
             await model.View.Hide(cancellationToken);
-            BarrierEvents<UiHideEvent>.Publish(new UiHideEvent(model));
+            Event<UiHideEvent>.Publish(new UiHideEvent(model));
         }
 
         public static void Close(this UIModel model)
@@ -50,7 +50,7 @@ namespace Modules.UIService
                 if (cancellationToken.IsCancellationRequested)
                     break;
 
-                var hideEvent = await BarrierEvents<UiHideEvent>.WaitResult(cancellationToken);
+                var hideEvent = await Event<UiHideEvent>.WaitResult(cancellationToken);
                 if (hideEvent.Model == model)
                     break;
             }

@@ -1,10 +1,13 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Maze;
+using Maze.MazeService;
 using Modules.ServiceLocator;
 using Modules.UIService;
 using Services;
 using Services.CoreService;
+using Services.PlayerDataService;
 using SN;
 using States;
 using UI;
@@ -16,18 +19,17 @@ namespace Actions
     {
         private readonly IPlayerDataService _playerDataService;
         private readonly int _levelScore;
-        private readonly ICoreService _coreService;
+        private readonly IMazeService _mazeService;
 
         public LooseLevelAction()
         {
-            _coreService = ServiceLocator.Get<ICoreService>();
+            _mazeService = ServiceLocator.Get<IMazeService>();
             _playerDataService = ServiceLocator.Get<IPlayerDataService>();
-            _levelScore = _coreService.Context.Score;
+            _levelScore = _mazeService.Context.Score;
         }
 
         public async UniTask Execute(CancellationToken token)
         {
-            _coreService.Context.CanSpawn = false;
             var data = _playerDataService.Data;
             data.MaxScore = Math.Max(data.MaxScore, _levelScore);
             _playerDataService.Commit();
@@ -41,7 +43,7 @@ namespace Actions
             Physics2D.gravity = -Physics2D.gravity;
             // await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: token);
             await SnBridge.Instance.ShowInterstitial();
-            await new GotoStateAction(new CoreState(), true).Execute(token);
+            await new GotoStateAction(new MazeState(), true).Execute(token);
             Physics2D.gravity = -Physics2D.gravity;
         }
     }

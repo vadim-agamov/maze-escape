@@ -218,6 +218,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Field
       objectReference: {fileID: 0}
+    - target: {fileID: 8500399687018854881, guid: c58334c1d53be436f885aa744dafc5bc, type: 3}
+      propertyPath: m_Name
+      value: Path
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c58334c1d53be436f885aa744dafc5bc, type: 3}
 --- !u!1 &519420028
@@ -238,7 +242,7 @@ GameObject:
   - component: {fileID: 519420039}
   - component: {fileID: 519420038}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,0 +1,22 @@
+using Cysharp.Threading.Tasks;
+using Maze.MazeService;
+using Modules.ServiceLocator;
+using Services.CoreService;
+
+namespace Actions
+{
+    public class UseChangeItemTrickAction
+    {
+        private readonly IMazeService _mazeService;
+
+        public UseChangeItemTrickAction()
+        {
+            _mazeService = ServiceLocator.Get<IMazeService>();
+        }
+
+        public UniTask<bool> Execute()
+        {
+            return _mazeService.GetComponent<SpawnComponent>().ChangeItem();
+        }
+    }
+}

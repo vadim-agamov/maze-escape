@@ -1,5 +1,6 @@
 using Actions;
 using Cysharp.Threading.Tasks;
+using Maze;
 using Modules.ServiceLocator;
 using Modules.UIService;
 using Services;
@@ -13,7 +14,7 @@ namespace UI
     {
         public void Play()
         {
-            new GotoStateAction(new CoreState(), true).Execute(Bootstrapper.SessionToken).Forget();
+            new GotoStateAction(new MazeState(), true).Execute(Bootstrapper.SessionToken).Forget();
         }
     }
 

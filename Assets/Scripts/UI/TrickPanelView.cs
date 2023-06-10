@@ -1,12 +1,10 @@
-using Actions;
+using Events;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Modules;
-using Modules.BarrierEvents;
 using Modules.FlyItemsService;
 using Modules.ServiceLocator;
-using Services;
-using Services.CoreService;
+using Services.PlayerDataService;
 using SN;
 using TMPro;
 using UnityEngine;
@@ -44,25 +42,25 @@ namespace UI
             UpdateCount(consumable);
 
             _useTrick.onClick.AddListener(OnClick);
-            BarrierEvents<ItemBeginDrag>.Subscribe(Block);
-            BarrierEvents<ItemEndDrag>.Subscribe(UnBlock);
+            // Event<ItemBeginDrag>.Subscribe(Block);
+            // Event<ItemEndDrag>.Subscribe(UnBlock);
         }
 
         private void OnDisable()
         {
-            BarrierEvents<ItemBeginDrag>.Unsubscribe(Block);
-            BarrierEvents<ItemEndDrag>.Unsubscribe(UnBlock);
+            // Event<ItemBeginDrag>.Unsubscribe(Block);
+            // Event<ItemEndDrag>.Unsubscribe(UnBlock);
         }
 
-        private void UnBlock(ItemEndDrag _ = null)
-        {
-            _useTrick.interactable = true;
-        }
-
-        private void Block(ItemBeginDrag _ = null)
-        {
-            _useTrick.interactable = false;
-        }
+        // private void UnBlock(ItemEndDrag _ = null)
+        // {
+        //     _useTrick.interactable = true;
+        // }
+        //
+        // private void Block(ItemBeginDrag _ = null)
+        // {
+        //     _useTrick.interactable = false;
+        // }
 
         private bool NeedBuy
         {
@@ -79,7 +77,7 @@ namespace UI
 
             async UniTaskVoid OnClickAsync()
             {
-                Block();
+                // Block();
                 _veil.SetActive(true);
                 
                 if (NeedBuy)
@@ -93,7 +91,7 @@ namespace UI
                     _veil.SetActive(false);
                 }
                 
-                UnBlock();
+                // UnBlock();
             }
         }
 
@@ -155,22 +153,22 @@ namespace UI
             {
                 var result = false;
           
-                if (_trickId == "hammer")
-                {
-                    result = await new UseHammerTrickAction().Execute();
-                }
-                else if (_trickId == "swap")
-                {
-                    result = await new UseChangeItemTrickAction().Execute();
-                }
-                else if (_trickId == "rainbow")
-                {
-                    result = await new UseRainbowTrickAction().Execute();
-                }
-                else if (_trickId == "rocket")
-                {
-                    result = await new UseRocketTrickAction().Execute();
-                }
+                // if (_trickId == "hammer")
+                // {
+                //     result = await new UseHammerTrickAction().Execute();
+                // }
+                // else if (_trickId == "swap")
+                // {
+                //     result = await new UseChangeItemTrickAction().Execute();
+                // }
+                // else if (_trickId == "rainbow")
+                // {
+                //     result = await new UseRainbowTrickAction().Execute();
+                // }
+                // else if (_trickId == "rocket")
+                // {
+                //     result = await new UseRocketTrickAction().Execute();
+                // }
                 
                 return result;
             }
