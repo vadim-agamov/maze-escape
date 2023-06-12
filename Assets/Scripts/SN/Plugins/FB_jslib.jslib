@@ -129,7 +129,10 @@ mergeInto(LibraryManager.library, {
       .getDataAsync(["data"])
       .then(function(response) 
       {
-         var data = response.data || "";
+         //console.log('FBGetData: end, : ' + response);
+         //console.log(JSON.stringify(response))
+         //var responseValidated = JSON.parse(JSON.stringify(response));
+         var data = JSON.stringify(response["data"]);
          console.log('FBGetData: end, : ' + data);
          unityInstance.SendMessage('FbBridge', 'OnPlayerProgressLoaded', data);
       });

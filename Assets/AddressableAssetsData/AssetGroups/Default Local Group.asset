@@ -45,6 +45,10 @@ MonoBehaviour:
     m_Address: LevelWinUI
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 9da3cf164ed7e436eb6d5578a7892d8d
+    m_Address: LevelsConfig
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3640f2fade6034cb48ab522b37da8ae7, type: 2}
   m_SchemaSet:

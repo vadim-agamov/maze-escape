@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Configs
+namespace Maze.Configs
 {
     [Flags]
     public enum CellType : int
@@ -39,6 +39,15 @@ namespace Configs
 
         [SerializeField] 
         private List<Vector2> _paths;
+
+        [SerializeField] 
+        private int _levelId;
+
+        public int LevelId
+        {
+            get => _levelId;
+            set { _levelId = value; }
+        }
 
         public CellType[,] Cells 
         {

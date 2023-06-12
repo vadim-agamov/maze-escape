@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze.Components;
+using Maze.Configs;
 using Modules.ServiceLocator;
+using Services.PlayerDataService;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Maze.MazeService
 {
@@ -16,9 +19,9 @@ namespace Maze.MazeService
 
         public T GetComponent<T>() where T : IComponent
         {
-            foreach (var levelChecker in _components)
+            foreach (var component in _components)
             {
-                if (levelChecker is T checker)
+                if (component is T checker)
                     return checker;
             }
 
@@ -29,6 +32,10 @@ namespace Maze.MazeService
 
         async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
+            var playerDataService = ServiceLocator.Get<IPlayerDataService>();
+            var levels = await Addressables.LoadAssetAsync<LevelsConfig>("LevelsConfig");
+            Context.Level = levels.LevelsConfigs[playerDataService.Data.Level % levels.LevelsConfigs.Length];
+            
             _components.Add(GameObject.Find("Field").GetComponent<FieldViewComponent>());
             _components.Add(GameObject.Find("Camera").GetComponent<CameraSizeFitterComponent>());
             _components.Add(GameObject.Find("Path").GetComponent<PathComponent>());

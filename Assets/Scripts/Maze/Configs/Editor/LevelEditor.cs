@@ -1,8 +1,7 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace Configs
+namespace Maze.Configs.Editor
 {
     public partial class LevelEditor : EditorWindow
     {

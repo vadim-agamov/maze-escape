@@ -1,5 +1,4 @@
-using System;
-using Configs;
+using Maze.Configs;
 using UnityEngine;
 using Utils;
 
@@ -34,8 +33,10 @@ namespace Maze
         private CellType _cellType;
         private int _row;
         private int _col;
-        public bool IsSelected;
+        // public bool IsSelected;
         public CellType CellType => _cellType;
+        public int Row => _row;
+        public int Col => _col;
 
         public void Setup(CellType cellType, int r, int c)
         {
@@ -79,49 +80,14 @@ namespace Maze
             // transform.position = new Vector3(_offset*c, _offset*-r, 0);
             gameObject.name = $"cell_{r}_{c}";
         }
-
-        public bool Contact(CellView other)
-        {
-            var c = other._col;
-            var r = other._row;
-
-            if (c == _col && r == _row)
-                return false;
-            
-            if (Math.Abs(r - _row) > 1)
-                return false;
-            
-            if (Math.Abs(c - _col) > 1)
-                return false;
-
-            if (_row == r)
-            {
-                if (c > _col)
-                    return !_cellType.HasFlag(CellType.RightWall);
-                
-                if(c < _col)
-                    return !_cellType.HasFlag(CellType.LeftWall);
-            }
-            
-            if (_col == c)
-            {
-                if (r > _row)
-                    return !_cellType.HasFlag(CellType.DownWall);
-                
-                if(r < _row)
-                    return !_cellType.HasFlag(CellType.UpWall);
-            }
-
-            return false;
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (IsSelected)
-            {
-                Gizmos.color = new Color(1, 0, 0, 0.5f);
-                Gizmos.DrawCube(transform.position, new Vector3(1, 1, 0));
-            }
-        }
+        
+        // private void OnDrawGizmos()
+        // {
+        //     if (IsSelected)
+        //     {
+        //         Gizmos.color = new Color(1, 0, 0, 0.5f);
+        //         Gizmos.DrawCube(transform.position, new Vector3(1, 1, 0));
+        //     }
+        // }
     }
 }

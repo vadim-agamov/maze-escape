@@ -120,6 +120,7 @@ namespace Services.PlayerDataService
         
         public void Reset()
         {
+            Level = 0;
             MaxScore = default;
             InstallDate = default;
             UnlockedItems = new List<string>();

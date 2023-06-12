@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f10e63906942ec86178bdf9b57edaa, type: 3}
+  m_Name: LevelsConfig
+  m_EditorClassIdentifier: Assembly-CSharp:Maze.Configs:LevelsConfig
+  _levels:
+  - {fileID: 11400000, guid: 8f3e6c8673fa54e4eb9eacb9a08ae37f, type: 2}
+  - {fileID: 11400000, guid: 5679da78f85e84c4c899f9e872274fa9, type: 2}
+  - {fileID: 11400000, guid: 0e74e7e025096471aae8c2269e95794c, type: 2}
+  - {fileID: 11400000, guid: 0029515d698dc4e329ab1d1b4985a234, type: 2}
+  - {fileID: 11400000, guid: 58f635fc01fff43698440f71587c3b87, type: 2}
+  - {fileID: 11400000, guid: 4bf49dc1d2a1f4486b4c09d919285f94, type: 2}
+  - {fileID: 11400000, guid: 6c58db433803d4a4db7f1466d85a37bc, type: 2}

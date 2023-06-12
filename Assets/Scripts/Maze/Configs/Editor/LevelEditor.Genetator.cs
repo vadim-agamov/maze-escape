@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
-namespace Configs
+namespace Maze.Configs.Editor
 {
     public partial class LevelEditor
     {
