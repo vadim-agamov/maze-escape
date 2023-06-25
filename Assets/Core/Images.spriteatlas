@@ -41,21 +41,29 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d5ba4db1a53c74c808c5db035fab27f4, type: 3}
   - {fileID: 21300000, guid: 764e0812333254854bd3e5d54ac80308, type: 3}
   - {fileID: 21300000, guid: d6dde4628fd0c48d29fc34515f94fd12, type: 3}
+  - {fileID: 21300000, guid: f92f0e9378ce3450dbea98895e41f804, type: 3}
   - {fileID: 21300000, guid: 392c1ed3b52e949f8863509203713dc1, type: 3}
   - {fileID: 21300000, guid: 1d69a8b4eb68c4b81ac93fba391bef28, type: 3}
+  - {fileID: 21300000, guid: 5b308b96b49b74094a44ce8edbc65535, type: 3}
+  - {fileID: 21300000, guid: 5ebcb097ec8e14f61b92c74fa788b732, type: 3}
   - {fileID: 21300000, guid: a6a0a6980b2d84cf2b82276c589af4d0, type: 3}
   - {fileID: 21300000, guid: 32c414197ade347288146659883ff02e, type: 3}
   - {fileID: 21300000, guid: fb640b5a1b4c94c598a6df5fb5a3b523, type: 3}
+  - {fileID: 21300000, guid: 7628b36da787f4ec4a0cf1d34c2977ab, type: 3}
   - {fileID: 21300000, guid: f49c630e980c94ceb9a3da8e999239df, type: 3}
   m_PackedSpriteNamesToIndex:
   - vertical1
   - field
   - horizontal1
+  - single_stone
   - vertical2
   - start
+  - single_stone0
+  - single_stone2
   - horizontal2
   - finish
   - vertical0
+  - single_stone1
   - horizontal0
   m_RenderDataMap: {}
   m_Tag: Images

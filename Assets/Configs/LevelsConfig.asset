@@ -13,10 +13,19 @@ MonoBehaviour:
   m_Name: LevelsConfig
   m_EditorClassIdentifier: Assembly-CSharp:Maze.Configs:LevelsConfig
   _levels:
-  - {fileID: 11400000, guid: 8f3e6c8673fa54e4eb9eacb9a08ae37f, type: 2}
-  - {fileID: 11400000, guid: 5679da78f85e84c4c899f9e872274fa9, type: 2}
-  - {fileID: 11400000, guid: 0e74e7e025096471aae8c2269e95794c, type: 2}
-  - {fileID: 11400000, guid: 0029515d698dc4e329ab1d1b4985a234, type: 2}
-  - {fileID: 11400000, guid: 58f635fc01fff43698440f71587c3b87, type: 2}
-  - {fileID: 11400000, guid: 4bf49dc1d2a1f4486b4c09d919285f94, type: 2}
-  - {fileID: 11400000, guid: 6c58db433803d4a4db7f1466d85a37bc, type: 2}
+  - {fileID: 11400000, guid: 1f1a9dcf07510410fa877fd42c382b18, type: 2}
+  - {fileID: 11400000, guid: afbfd3388dcb94f02a6f6bd384867d18, type: 2}
+  - {fileID: 11400000, guid: 845cda2f76cfe4571a0fe7db6b2b6ba3, type: 2}
+  - {fileID: 11400000, guid: a05a44a2453604043ad55efe3f51206e, type: 2}
+  - {fileID: 11400000, guid: dc7b299e2cea744c1952aeeef20d4c59, type: 2}
+  - {fileID: 11400000, guid: f02cabfbf1a6d44e0930840362baab79, type: 2}
+  - {fileID: 11400000, guid: 830319cf5b2054c05bb64d149dc4b2b6, type: 2}
+  - {fileID: 11400000, guid: 4752c486aed9c4d37b0e5ae515175332, type: 2}
+  - {fileID: 11400000, guid: 5c575b498a9a54165854cac9b5a646fb, type: 2}
+  - {fileID: 11400000, guid: 3d862160a1e0c47e2a5d5ae108dd5bfb, type: 2}
+  - {fileID: 11400000, guid: 3bb8ff08224a14937af8ffefd4955224, type: 2}
+  - {fileID: 11400000, guid: 2231a954b432e408f95a646435b5aabc, type: 2}
+  - {fileID: 11400000, guid: e9e885fcaf80840e5895c03c541ecc3f, type: 2}
+  - {fileID: 11400000, guid: 1d74b98174765469ca7fe114680b24b9, type: 2}
+  - {fileID: 11400000, guid: 94b4fa03a0862436fbb3c12edc36d337, type: 2}
+  - {fileID: 11400000, guid: 87b4cf2d67ab6488fa88be78497b163f, type: 2}

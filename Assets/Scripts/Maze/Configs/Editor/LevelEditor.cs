@@ -7,10 +7,7 @@ namespace Maze.Configs.Editor
     {
         [MenuItem("Game/LevelEditor")]
         private static void OpenWindow() => GetWindow<LevelEditor>().Show();
-
-        [SerializeField] 
-        private LevelConfig _levelConfig;
-
+        
         [SerializeField] 
         private CellType _path = CellType.Path0;
         
@@ -63,21 +60,30 @@ namespace Maze.Configs.Editor
             {
                 EditorGUI.TextArea(rect, "F", style);
             }
+            
+            if (cellType.HasFlag(CellType.PathItem))
+            {
+                EditorGUI.TextArea(rect, "*", style);
+            }
         }
         
         private void OnGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            _levelConfig = (LevelConfig)EditorGUILayout.ObjectField(_levelConfig, typeof(LevelConfig), true);
+            // _levelConfig = (LevelConfig)EditorGUILayout.ObjectField(_levelConfig, typeof(LevelConfig), true);
             EditorGUILayout.EndHorizontal();
 
             GenerateButton();
+            SaveButton();
+            LoadButton();
             // FindPathButton();
             DrawCells();
         }
-        
+
         private void DrawCells()
         {
+            if(_cells == null)
+                return;
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Path0"))
@@ -93,14 +99,9 @@ namespace Maze.Configs.Editor
                 _path = CellType.Path2;
             }
             EditorGUILayout.EndHorizontal();
-
-
-            if(_levelConfig == null)
-                return;
             
-            var cells = _levelConfig.Cells;
-            var rows = cells.GetLength(0);
-            var cols = cells.GetLength(1);
+            var rows = _cells.GetLength(0);
+            var cols = _cells.GetLength(1);
 
             var aspectRatio = (float) rows / cols;
             var width = Mathf.CeilToInt(EditorGUIUtility.currentViewWidth);
@@ -120,7 +121,7 @@ namespace Maze.Configs.Editor
             {
                 for (var c = 0; c < cols; c++)
                 {
-                    DrawBoardItem(itemRect, cells[r, c]);
+                    DrawBoardItem(itemRect, _cells[r, c]);
                     itemRect.x = itemRect.xMax;
                 }
 

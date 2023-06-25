@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace Maze.Components
         private Context _context;
         private Camera _camera;
         private bool _initialized;
-        private readonly List<CellView> _path = new List<CellView>();
+        private readonly LinkedList<CellView> _path = new LinkedList<CellView>();
         private readonly PathUpdatedEvent _pathUpdatedEvent = new PathUpdatedEvent();
         private FieldViewComponent _fieldViewComponent;
 
@@ -37,29 +38,41 @@ namespace Maze.Components
             if (Input.GetMouseButton(0))
             {
                 var hitPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
-                var pathCell = GetNearestCellFromPath(hitPosition);
-                var cell = GetNearestNeighbour(pathCell, hitPosition);
-                // Debug.Log($"pathCell {pathCell.Row},{pathCell.Col}, cell {cell.Row},{cell.Col}");
-                AddCellToPath(pathCell);
+                var pathCell = _path.Last.Value;//GetNearestCellFromPath(hitPosition);
+                // AddCellToPath(pathCell);
+                
+                var cell = GetNearestNeighbour(_path.Last.Value, hitPosition);
                 AddCellToPath(cell);
+
+
+                // Debug.Log($"pathCell {pathCell.Row},{pathCell.Col}, cell {cell.Row},{cell.Col}");
+                // AddCellToPath(pathCell);
+                // AddCellToPath(cell);
+
+                UpdateLineRenderer();
+                _pathUpdatedEvent.LastCell = cell;
+                Event<PathUpdatedEvent>.Publish(_pathUpdatedEvent);
             }
         }
 
         private CellView GetNearestCellFromPath(Vector3 position)
         {
-            var prevDistance = float.MaxValue;
-            var cell = _path.First();
+            // var prevDistance = float.MaxValue;
+            var cell = _path.First.Value;
             foreach (var p in _path)
             {
                 var distance = Vector3.Distance(p.transform.position, position);
-                if (distance < prevDistance)
-                {
-                    prevDistance = distance;
-                    cell = p;
-                }
+                Debug.Log($"distance {distance}");
+                if (distance < 1.5f)
+                    return p;
+                // if (distance < prevDistance)
+                // {
+                // prevDistance = distance;
+                // cell = p;
+                // }
             }
 
-            return cell;
+            return _path.Last.Value;
         }
 
         private CellView GetNearestNeighbour(CellView cell, Vector3 hitPosition)
@@ -114,8 +127,9 @@ namespace Maze.Components
             void AddNeighbor(int r, int c)
             {
                 if (r >= 0 && r < _context.Cells.GetLength(0) &&
-                    c >= 0 && c < _context.Cells.GetLength(1) &&
-                    _path.Count(x => x.Row == r && x.Col == c) == 0)
+                    c >= 0 && c < _context.Cells.GetLength(1))
+                    // Contact()
+                    // _path.Count(x => x.Row == r && x.Col == c) == 0)
                 {
                     neighbors.Add(_fieldViewComponent.GetCellView(r,c));
                 }
@@ -126,10 +140,13 @@ namespace Maze.Components
         {
             if (_path.Contains(cell))
             {
-                while(_path.Last() != cell)
+                while(true)
                 {
+                    if(_path.Last.Value == cell)
+                        break;
+                    
                     Debug.Log($"remove {_path.Last().Row},{_path.Last().Col}");
-                    _path.RemoveAt(_path.Count - 1);
+                    _path.RemoveLast();
                 }
             }
             else
@@ -140,25 +157,32 @@ namespace Maze.Components
                 // Debug.Log($"pathCell {pathCell.Row},{pathCell.Col}, cell {cell.Row},{cell.Col}");
 
                 Debug.Log($"add {cell.Row},{cell.Col}");
-                _path.Add(cell);
+                _path.AddLast(cell);
             }
 
-            UpdateLineRenderer();
-
-            _pathUpdatedEvent.LastCell = cell;
-            Event<PathUpdatedEvent>.Publish(_pathUpdatedEvent);
+            // UpdateLineRenderer();
+            //
+            // _pathUpdatedEvent.LastCell = cell;
+            // Event<PathUpdatedEvent>.Publish(_pathUpdatedEvent);
         }
 
         private void UpdateLineRenderer()
         {
             _lineRenderer.positionCount = _path.Count;
-            for (var i = 0; i < _path.Count; i++)
+            var index = 0;
+            foreach (var cellView in _path)
             {
-                var cellView = _path[i];
-                var position = cellView.transform.position;
+                var position = cellView.transform.localPosition;
                 position.z = -0.5f;
-                _lineRenderer.SetPosition(i, position);
+                _lineRenderer.SetPosition(index++, position);
             }
+            // for (var i = 0; i < _path.Count; i++)
+            // {
+            //     var cellView = _path[i];
+            //     var position = cellView.transform.position;
+            //     position.z = -0.5f;
+            //     _lineRenderer.SetPosition(i, position);
+            // }
         }
 
         private bool Contact(CellView a, CellView b)
@@ -211,7 +235,7 @@ namespace Maze.Components
             _context = context;
             _context.Path = _path;
             _camera = _context.Camera;
-            _path.Add(_fieldViewComponent.GetStartCell());
+            _path.AddLast(_fieldViewComponent.GetStartCell());
 
             _initialized = true;
             return UniTask.CompletedTask;
@@ -221,5 +245,17 @@ namespace Maze.Components
         {
             _initialized = false;
         }
+
+#if DEV
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(10, Screen.height - 100, 200, 100), "Reset"))
+            {
+                _path.Clear();
+                _path.AddLast(_fieldViewComponent.GetStartCell());
+                UpdateLineRenderer();
+            }
+        }
+#endif
     }
 }

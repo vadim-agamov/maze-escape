@@ -7,41 +7,38 @@ namespace Maze.Configs.Editor
 {
     public partial class LevelEditor
     {
-        private void FindPathButton()
-        {
-            if (_levelConfig == null)
-                return;
-
-            if (GUILayout.Button("Find Path"))
-            {
-                FindPath();
-            }
-        }
-
+        private int _totalPath;
+        
         private void FindPath()
         {
-            var cells = _levelConfig.Cells;
-
-            for (var row = 0; row < cells.GetLength(0); row++)
+            for (var row = 0; row < _cells.GetLength(0); row++)
             {
-                for (var col = 0; col < cells.GetLength(1); col++)
+                for (var col = 0; col < _cells.GetLength(1); col++)
                 {
-                    cells[row, col] &= ~CellType.Path0;
+                    _cells[row, col] &= ~CellType.Path;
+                    _cells[row, col] &= ~CellType.Visited;
                 }
             }
 
             var (r, c) = GetStart();
             var paths = new List<List<(int Row, int Col)>>();
 
-            FindPath(r, c, cells, new Stack<(int Row, int Col)>(), paths);
-            paths.Sort((a, b) => a.Count - b.Count);
-            paths = paths.Take(3).ToList();
-
+            FindPath(r, c, _cells, new Stack<(int Row, int Col)>(), paths);
+            _totalPath = paths.Count;
             Debug.Log($"found {paths.Count} paths");
+
+            paths.Sort((a, b) => a.Count - b.Count);
+            
+            var filteredPath = new List<List<(int Row, int Col)>>();
+            filteredPath.Add(paths.First()); 
+            filteredPath.Add(paths[paths.Count / 2]); 
+            filteredPath.Add(paths.Last()); 
+            // paths = paths.Take(3).ToList();
+
             var pathIndex = 0;
-            foreach (var path in paths)
+            foreach (var path in filteredPath)
             {
-                Debug.Log($"path {pathIndex}, count {path.Count}");
+                // Debug.Log($"path {pathIndex}, count {filteredPath.Count}");
 
                 CellType pathFlag = CellType.Path;
                 if (pathIndex == 0) pathFlag = CellType.Path0;
@@ -49,18 +46,16 @@ namespace Maze.Configs.Editor
                 if (pathIndex == 2) pathFlag = CellType.Path2;
                 foreach (var (row, col) in path)
                 {
-                    cells[row, col] |= pathFlag;
+                    _cells[row, col] |= pathFlag;
                 }
 
                 pathIndex++;
             }
-
-            _levelConfig.Cells = cells;
         }
 
         (int Row, int Col) GetStart()
         {
-            var cells = _levelConfig.Cells;
+            var cells = _cells;
             for (var r = 0; r < cells.GetLength(0); r++)
             {
                 for (var c = 0; c < cells.GetLength(1); c++)
@@ -83,9 +78,11 @@ namespace Maze.Configs.Editor
                 return;
             }
 
-
-            if (currentPath.Count > 1000)
-                throw new Exception($"{currentPath.Count}");
+            if (paths.Count >= 10000)
+            {
+                Debug.LogError($"FindPath too much path {paths.Count}");
+                return;
+            }
             
             currentPath.Push((Row: r, Col: c));
             cells[r, c] |= CellType.Visited;

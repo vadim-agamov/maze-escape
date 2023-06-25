@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Maze.Configs;
 using Maze.MazeService;
@@ -14,6 +15,12 @@ namespace Maze.Components
         [SerializeField]
         private RectTransform _rectTransform;
 
+        [SerializeField] 
+        private Vector2 _padding;
+
+        [SerializeField]
+        private Transform _cellsContainer;
+
         private CellView[,] _cellViews;
 
         private Context _context;
@@ -26,20 +33,22 @@ namespace Maze.Components
             var rows = _context.Cells.GetLength(0);
             var cols = _context.Cells.GetLength(1);
 
-            _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, cols * _cellSize);
-            _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rows * _cellSize);
+            _rectTransform.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, cols * _cellSize + _padding.x);
+            _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rows * _cellSize + _padding.y);
+            _cellsContainer.transform.position -= new Vector3(_padding.x, _padding.y, 0);
             var rect = _rectTransform.rect;
             var startCell = new Vector2(_cellSize * 0.5f + rect.xMin, -_cellSize * 0.5f + rect.yMax);
 
+            var cellIds = new HashSet<string>();
             _cellViews = new CellView[rows, cols];
             for (var r = 0; r < rows; r++)
             {
                 for (var c = 0; c < cols; c++)
                 {
                     var configCell = _context.Cells[r, c];
-                    var cell = Instantiate(_cell, transform, true);
+                    var cell = Instantiate(_cell, _cellsContainer.transform, true);
                     cell.transform.localPosition = startCell + new Vector2(_cellSize * c, _cellSize * -r);
-                    cell.Setup(configCell, r, c);
+                    cell.Setup(configCell, r, c, cellIds);
                     _cellViews[r, c] = cell;
                 }
             }
@@ -47,7 +56,7 @@ namespace Maze.Components
             context.Active = true;
             return UniTask.CompletedTask;
         }
-
+        
         public CellView GetCellView(int r, int c) => _cellViews[r, c];
 
         public CellView GetStartCell()
@@ -71,7 +80,7 @@ namespace Maze.Components
             if(_context == null || !_context.Active)
                 return;
             
-            GUI.Label(new Rect(10, Screen.height - 20, 200, 20), $"level {_context.Level.LevelId}");
+            GUI.Label(new Rect(10, Screen.height - 20, 200, 20), $"level {_context.Level.name}");
         }
 #endif
     }
