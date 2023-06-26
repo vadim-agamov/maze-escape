@@ -9,7 +9,6 @@ namespace Maze.MazeService
         public Camera Camera;
         public int Score;
         public CellType[,] Cells;
-        public IEnumerable<CellView> Path;
         public LevelConfig Level;
         public bool Active;
     }

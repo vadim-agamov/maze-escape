@@ -8,8 +8,30 @@ namespace Maze.Configs.Editor
     public partial class LevelEditor
     {
         private int _totalPath;
-        
-        private void FindPath()
+        private int _foundMinPath;
+
+        private void GenerateMazeAndFindPath(int minPath)
+        {
+            _foundMinPath = 0;
+
+            for (var i = 0; i < 500; i++)
+            {
+                Generate();
+                var p = FindPath();
+                var success = p >= _minPath && p < _minPath + minPath * 0.1f;
+                Debug.Log($"Found path {p} {success}");
+                if (success)
+                {
+                    Debug.Log($"SUCCESS: Found path {p}");
+                    _foundMinPath = p;
+                    return;
+                }
+            }
+
+            Debug.LogError($"FAIL: Unable to find path less than {minPath}");
+        }
+
+        private int FindPath()
         {
             for (var row = 0; row < _cells.GetLength(0); row++)
             {
@@ -25,7 +47,7 @@ namespace Maze.Configs.Editor
 
             FindPath(r, c, _cells, new Stack<(int Row, int Col)>(), paths);
             _totalPath = paths.Count;
-            Debug.Log($"found {paths.Count} paths");
+            // Debug.Log($"found {paths.Count} paths");
 
             paths.Sort((a, b) => a.Count - b.Count);
             
@@ -33,7 +55,8 @@ namespace Maze.Configs.Editor
             filteredPath.Add(paths.First()); 
             filteredPath.Add(paths[paths.Count / 2]); 
             filteredPath.Add(paths.Last()); 
-            // paths = paths.Take(3).ToList();
+            
+            // Debug.Log($"path {filteredPath.First().Count} -- {filteredPath.Last().Count}");
 
             var pathIndex = 0;
             foreach (var path in filteredPath)
@@ -51,6 +74,8 @@ namespace Maze.Configs.Editor
 
                 pathIndex++;
             }
+
+            return filteredPath.First().Count;
         }
 
         (int Row, int Col) GetStart()

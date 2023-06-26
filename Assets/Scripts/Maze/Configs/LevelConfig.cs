@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maze.Configs
@@ -43,7 +42,7 @@ namespace Maze.Configs
         private int _levelId;
 
         [SerializeField]
-        private int _totalPath;
+        private int _minPath;
 
         public int LevelId
         {
@@ -51,8 +50,8 @@ namespace Maze.Configs
             set { _levelId = value; }
         }
 
-        public int TotalPath => _totalPath;
-        public void SetTotalPath(int v) => _totalPath = v;
+        public int MinPath => _minPath;
+        public void SetMinPath(int v) => _minPath = v;
 
         public CellType[,] Cells 
         {

@@ -9,26 +9,34 @@ namespace Maze.Configs.Editor
     {
         private string _sizeFiled;
         private int _size = 5;
+        private string _minPathField;
+        private int _minPath = 10;
         private CellType[,] _cells;
         
         private void GenerateButton()
         {
             EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Size");
             _sizeFiled = GUILayout.TextField(_sizeFiled);
             if (int.TryParse(_sizeFiled, out var size))
             {
                 _size = size;
             }
+            
+            GUILayout.Label("MinPath");
+            _minPathField = GUILayout.TextField(_minPathField);
+            if (int.TryParse(_minPathField, out var p))
+            {
+                _minPath = p;
+            }
 
             if (GUILayout.Button("Generate"))
             {
-                Generate();
-                FindPath();
-                GeneratePathItems();
-                
+                GenerateMazeAndFindPath(_minPath);
+                // GeneratePathItems();
                 // RemoveStartFinishWalls();
                 _levelConfig = null;
-                _levelName = $"level_{_size}_{_totalPath}_{_cells.GetHashCode():X4}";
+                _levelName = $"level_{_size}_{_foundMinPath}_{_cells.GetHashCode():X4}";
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -80,8 +88,11 @@ namespace Maze.Configs.Editor
 
         private static void MakeStartAndFinish(CellType[,] cells, int cols, int rows)
         {
-            cells[0, cols / 2] |= CellType.Finish;//&= ~CellType.UpWall;
-            cells[rows - 1, cols / 2] |= CellType.Start; // &= ~CellType.DownWall;
+            cells[Random.Range(0, rows/2), Random.Range(0, cols)] |= CellType.Finish;
+            cells[Random.Range(rows/2, rows), Random.Range(0, cols)] |= CellType.Start;
+            
+            // cells[0, cols / 2] |= CellType.Finish;//&= ~CellType.UpWall;
+            // cells[rows - 1, cols / 2] |= CellType.Start; // &= ~CellType.DownWall;
         }
 
         private void ProcessCell(int r, int c, CellType[,] cells)

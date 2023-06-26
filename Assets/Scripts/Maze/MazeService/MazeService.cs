@@ -39,6 +39,7 @@ namespace Maze.MazeService
             _components.Add(GameObject.Find("Field").GetComponent<FieldViewComponent>());
             _components.Add(GameObject.Find("Camera").GetComponent<CameraSizeFitterComponent>());
             _components.Add(GameObject.Find("Path").GetComponent<PathComponent>());
+            _components.Add(GameObject.Find("HUD").GetComponent<MazeHUD>());
             _components.Add(new WinLevelCheckerComponent());
 
             foreach (var component in _components)

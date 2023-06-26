@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 7435052047345721476}
   - component: {fileID: 7435052047345721479}
   - component: {fileID: 7435052047345721477}
+  - component: {fileID: 718979195473134259}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -218,3 +219,16 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
+--- !u!114 &718979195473134259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7435052047345721478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ac724b44e6e43b2aaa7e0e0ce1edfa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pathLenght: {fileID: 3075784767689469882}

@@ -76,7 +76,6 @@ namespace Maze.Configs.Editor
             GenerateButton();
             SaveButton();
             LoadButton();
-            // FindPathButton();
             DrawCells();
         }
 

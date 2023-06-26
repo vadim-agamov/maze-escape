@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Actions;
 using Cysharp.Threading.Tasks;
 using Events;
 using Maze.Configs;
@@ -12,7 +12,7 @@ namespace Maze.Components
 {
     public class PathUpdatedEvent
     {
-        public CellView LastCell;
+        public LinkedList<CellView> Cells;
     }
 
     public class PathComponent : MonoBehaviour, IComponent
@@ -50,7 +50,6 @@ namespace Maze.Components
                 // AddCellToPath(cell);
 
                 UpdateLineRenderer();
-                _pathUpdatedEvent.LastCell = cell;
                 Event<PathUpdatedEvent>.Publish(_pathUpdatedEvent);
             }
         }
@@ -151,19 +150,9 @@ namespace Maze.Components
             }
             else
             {
-                // if (_path.Count > 0 && !Contact(_path.Last(), cell))
-                // return;
-
-                // Debug.Log($"pathCell {pathCell.Row},{pathCell.Col}, cell {cell.Row},{cell.Col}");
-
                 Debug.Log($"add {cell.Row},{cell.Col}");
                 _path.AddLast(cell);
             }
-
-            // UpdateLineRenderer();
-            //
-            // _pathUpdatedEvent.LastCell = cell;
-            // Event<PathUpdatedEvent>.Publish(_pathUpdatedEvent);
         }
 
         private void UpdateLineRenderer()
@@ -176,13 +165,6 @@ namespace Maze.Components
                 position.z = -0.5f;
                 _lineRenderer.SetPosition(index++, position);
             }
-            // for (var i = 0; i < _path.Count; i++)
-            // {
-            //     var cellView = _path[i];
-            //     var position = cellView.transform.position;
-            //     position.z = -0.5f;
-            //     _lineRenderer.SetPosition(i, position);
-            // }
         }
 
         private bool Contact(CellView a, CellView b)
@@ -233,9 +215,10 @@ namespace Maze.Components
             _fieldViewComponent = mazeService.GetComponent<FieldViewComponent>();
             
             _context = context;
-            _context.Path = _path;
             _camera = _context.Camera;
             _path.AddLast(_fieldViewComponent.GetStartCell());
+
+            _pathUpdatedEvent.Cells = _path; 
 
             _initialized = true;
             return UniTask.CompletedTask;
@@ -249,11 +232,16 @@ namespace Maze.Components
 #if DEV
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(10, Screen.height - 100, 200, 100), "Reset"))
+            if (GUI.Button(new Rect(Screen.width - 210, Screen.height - 50, 200, 50), "Restart"))
             {
-                _path.Clear();
-                _path.AddLast(_fieldViewComponent.GetStartCell());
-                UpdateLineRenderer();
+                new GotoStateAction(new MazeState(), true).Execute(Bootstrapper.SessionToken).Forget();
+
+                // if (_path.Count > 3)
+                // {
+                //     _path.RemoveLast();
+                // }
+                //
+                // UpdateLineRenderer();
             }
         }
 #endif

@@ -51,7 +51,7 @@ namespace States
             await loading.Hide();
             await _playModel.OpenAndShow("PlayPanel", cancellationToken);
             
-            ServiceLocator.Get<ISoundService>().Play("ambient", true);
+            // ServiceLocator.Get<ISoundService>().Play("ambient", true);
 
             async UniTask RegisterUI()
             {

@@ -24,6 +24,9 @@ namespace Maze.Configs.Editor
 
         private void SaveButton()
         {
+            if(_foundMinPath <= 0)
+                return;
+            
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Save");
             _levelName = GUILayout.TextField(_levelName);
@@ -31,7 +34,7 @@ namespace Maze.Configs.Editor
             {
                 var asset = CreateInstance<LevelConfig>();
                 asset.Cells = _cells;
-                asset.SetTotalPath(_totalPath);
+                asset.SetMinPath(_foundMinPath);
                 AssetDatabase.CreateAsset(asset, $"Assets/Configs/{_levelName}.asset");
                 AssetDatabase.SaveAssets();
                 _levelConfig = asset;

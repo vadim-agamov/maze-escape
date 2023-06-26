@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace Maze.Configs
@@ -17,5 +20,25 @@ namespace Maze.Configs
                 _levels[index].LevelId = index;
             }
         }
+
+#if UNITY_EDITOR
+        public void FetchLevels()
+        {
+            Clear();
+            var levels = AssetDatabase.FindAssets($"t:{nameof(LevelConfig)}")    
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Select(AssetDatabase.LoadAssetAtPath<LevelConfig>)
+                .ToList();
+            
+            levels.Sort((a,b) => a.MinPath - b.MinPath);
+            _levels = levels.ToArray();
+        }
+
+        public void Clear()
+        {
+            _levels = Array.Empty<LevelConfig>();
+            EditorUtility.SetDirty(this);
+        }
+#endif
     }
 }

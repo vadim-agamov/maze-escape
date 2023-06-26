@@ -20,7 +20,7 @@ namespace Maze.Components
 
         private void OnPathUpdated(PathUpdatedEvent pathUpdatedEvent)
         {
-            if (pathUpdatedEvent.LastCell.CellType.HasFlag(CellType.Finish))
+            if (pathUpdatedEvent.Cells.Last.Value.CellType.HasFlag(CellType.Finish))
             {
                 _context.Active = false;
                 var playerDataService = ServiceLocator.Get<IPlayerDataService>();
