@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace SN.FbBridge
 {
@@ -49,17 +50,19 @@ namespace SN.FbBridge
             return result;
         }
         
+        [UsedImplicitly]
         public void OnRewardedLoaded()
         {
             _rewardedPreloading = false;
             _rewardedPreloaded = true;
         }
 
+        [UsedImplicitly]
         public void OnRewardedNotLoaded()
         {
             _rewardedPreloading = false;
             _rewardedPreloaded = false;
-            ((ISnBridge) this).PreloadRewarded();
+            // ((ISnBridge) this).PreloadRewarded();
         }
 
         public void OnRewardedShown()

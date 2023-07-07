@@ -147,10 +147,10 @@ namespace Maze
                 }
             }
             
-            if(_cellType.HasFlag(CellType.Start))
-            {
-                _start.SetActive(true);
-            }
+            // if(_cellType.HasFlag(CellType.Start))
+            // {
+            //     _start.SetActive(true);
+            // }
             if(_cellType.HasFlag(CellType.Finish))
             {
                 _finish.SetActive(true);

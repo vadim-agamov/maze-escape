@@ -3,15 +3,18 @@ using UnityEngine;
 namespace Utils
 {
     [RequireComponent(typeof(SpriteRenderer))]
-    public class SpriteRectFitter : MonoBehaviour
+    public class SpriteRectScaler : MonoBehaviour
     {
         [SerializeField] 
         private RectTransform _targetRect;
 
+        [SerializeField] 
+        private float _padding;
+
         [HideInInspector] 
         [SerializeField] 
         private SpriteRenderer _spriteRenderer;
-        
+
         private void OnEnable()
         {
             FitScale();
@@ -23,8 +26,8 @@ namespace Utils
 
             var targetCorners = new Vector3[4];
             _targetRect.GetWorldCorners(targetCorners);
-            var targetWith = targetCorners[2].x - targetCorners[0].x;
-            var targetHeight = targetCorners[1].y - targetCorners[0].y;
+            var targetWith = _padding + targetCorners[2].x - targetCorners[0].x;
+            var targetHeight = _padding + targetCorners[1].y - targetCorners[0].y;
             
             var widthScale = targetWith / _spriteRenderer.bounds.size.x;
             var heightScale = targetHeight / _spriteRenderer.bounds.size.y;

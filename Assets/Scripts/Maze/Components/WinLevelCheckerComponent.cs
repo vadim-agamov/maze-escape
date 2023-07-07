@@ -1,3 +1,4 @@
+using System;
 using Actions;
 using Cysharp.Threading.Tasks;
 using Events;
@@ -11,9 +12,15 @@ namespace Maze.Components
     public class WinLevelCheckerComponent: IComponent
     {
         private Context _context;
+        private PathComponent _pathComponent;
+        private CharacterComponent _characterComponent;
+
         public UniTask Initialize(Context context)
         {
             _context = context;
+            var service = ServiceLocator.Get<MazeService.MazeService>();
+            _pathComponent = service.GetComponent<PathComponent>();
+            _characterComponent = service.GetComponent<CharacterComponent>();
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             return UniTask.CompletedTask;
         }
@@ -22,13 +29,22 @@ namespace Maze.Components
         {
             if (pathUpdatedEvent.Cells.Last.Value.CellType.HasFlag(CellType.Finish))
             {
-                _context.Active = false;
-                var playerDataService = ServiceLocator.Get<IPlayerDataService>();
-                playerDataService.Data.Level++;
-                playerDataService.Commit();
-                
-                new WinLevelAction().Execute(Bootstrapper.SessionToken).Forget();
+                WinLevelAction().Forget();
             }
+        }
+
+        private async UniTask WinLevelAction()
+        {
+            _context.Active = false;
+            
+            var playerDataService = ServiceLocator.Get<IPlayerDataService>();
+            playerDataService.Data.Level++;
+            playerDataService.Commit();
+
+            await UniTask.WaitUntil(() => _characterComponent.IsWalking, cancellationToken: Bootstrapper.SessionToken);
+            _pathComponent.ShowFullPath = true;
+            await UniTask.Delay(TimeSpan.FromSeconds(2));
+            await new WinLevelAction().Execute(Bootstrapper.SessionToken);
         }
 
         public void Dispose()

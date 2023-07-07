@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Maze.Configs;
 using UnityEngine;
 
@@ -8,6 +7,7 @@ namespace Maze.MazeService
     {
         public Camera Camera;
         public int Score;
+        public CellView[,] CellViews;
         public CellType[,] Cells;
         public LevelConfig Level;
         public bool Active;

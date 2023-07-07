@@ -2,7 +2,7 @@ mergeInto(LibraryManager.library, {
 
   FbGetUserId: function () 
   {
-    var returnStr = FBInstant.player.getID();
+    var returnStr = FBInstant.player.getID() || "";
     var bufferSize = lengthBytesUTF8(returnStr) + 1;
     var buffer = _malloc(bufferSize);
     stringToUTF8(returnStr, buffer, bufferSize);
@@ -133,8 +133,13 @@ mergeInto(LibraryManager.library, {
          //console.log(JSON.stringify(response))
          //var responseValidated = JSON.parse(JSON.stringify(response));
          var data = JSON.stringify(response["data"]);
-         console.log('FBGetData: end, : ' + data);
+         console.log('FBGetData: loaded, : ' + data);
          unityInstance.SendMessage('FbBridge', 'OnPlayerProgressLoaded', data);
+      })
+      .catch(function(error) 
+      {
+         console.log("FBGetData not loaded: " + error.message);
+         unityInstance.SendMessage('FbBridge', 'OnPlayerProgressLoaded', "{}");
       });
   }
 });

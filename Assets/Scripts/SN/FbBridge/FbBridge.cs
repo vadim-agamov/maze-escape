@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Services;
 using Services.PlayerDataService;
@@ -18,13 +19,13 @@ namespace SN.FbBridge
         [DllImport("__Internal")]
         private static extern void FBSetData(string data);
 
-        private string _userId;
+        // private string _userId;
 
         private UniTaskCompletionSource<PlayerData> _loadPlayerProgressCompletionSource;
 
         UniTask ISnBridge.Initialize()
         {
-            _userId = FbGetUserId();
+            // _userId = FbGetUserId();
             FbPreloadInterstitial();
             FbPreloadRewarded();
             return UniTask.CompletedTask;
@@ -44,6 +45,7 @@ namespace SN.FbBridge
             return _loadPlayerProgressCompletionSource.Task;
         }
 
+        [UsedImplicitly]
         public void OnPlayerProgressLoaded(string dataStr)
         {
             Debug.Log($"FbBridge: OnPlayerProgressLoaded: {dataStr}");

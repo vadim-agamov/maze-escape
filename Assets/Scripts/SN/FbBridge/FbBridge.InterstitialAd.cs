@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace SN.FbBridge
 {
@@ -46,17 +47,19 @@ namespace SN.FbBridge
             ((ISnBridge) this).PreloadInterstitial();
         }
 
+        [UsedImplicitly]
         public void OnInterstitialLoaded()
         {
             _interstitialPreloading = false;
             _interstitialPreloaded = true;
         }
 
+        [UsedImplicitly]
         public void OnInterstitialNotLoaded()
         {
             _interstitialPreloading = false;
             _interstitialPreloaded = false;
-            ((ISnBridge) this).PreloadInterstitial();
+            // ((ISnBridge) this).PreloadInterstitial();
         }
 
         public void OnInterstitialShown()

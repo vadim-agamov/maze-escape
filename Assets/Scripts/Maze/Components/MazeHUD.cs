@@ -34,7 +34,7 @@ namespace Maze.Components
         {
             _context = context;
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
-            SetupPath(0, 0);
+            SetupPath(_context.Level.MinPath, 0);
             return UniTask.CompletedTask;
         }
     }

@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Maze.Configs;
 using Maze.MazeService;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maze.Components
 {
@@ -20,6 +21,9 @@ namespace Maze.Components
 
         [SerializeField]
         private Transform _cellsContainer;
+
+        [SerializeField]
+        private UnityEvent _initialized;
 
         private CellView[,] _cellViews;
 
@@ -40,7 +44,7 @@ namespace Maze.Components
             var startCell = new Vector2(_cellSize * 0.5f + rect.xMin, -_cellSize * 0.5f + rect.yMax);
 
             var cellIds = new HashSet<string>();
-            _cellViews = new CellView[rows, cols];
+            _context.CellViews = _cellViews = new CellView[rows, cols];
             for (var r = 0; r < rows; r++)
             {
                 for (var c = 0; c < cols; c++)
@@ -54,6 +58,9 @@ namespace Maze.Components
             }
 
             context.Active = true;
+            
+            _initialized?.Invoke();
+            
             return UniTask.CompletedTask;
         }
         

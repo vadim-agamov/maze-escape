@@ -20,6 +20,8 @@ namespace Maze.Components
         [SerializeField] 
         private LineRenderer _lineRenderer;
 
+        public bool ShowFullPath;
+
         private Context _context;
         private Camera _camera;
         private bool _initialized;
@@ -31,7 +33,12 @@ namespace Maze.Components
         {
             if(!_initialized)
                 return;
-            
+
+            if (ShowFullPath)
+            {
+                UpdateLineRenderer();
+            }
+
             if(!_context.Active)
                 return;
             
@@ -157,12 +164,17 @@ namespace Maze.Components
 
         private void UpdateLineRenderer()
         {
+            if (!ShowFullPath)
+            {
+                _lineRenderer.positionCount = 0;
+                return;
+            }
+
             _lineRenderer.positionCount = _path.Count;
             var index = 0;
             foreach (var cellView in _path)
             {
                 var position = cellView.transform.localPosition;
-                position.z = -0.5f;
                 _lineRenderer.SetPosition(index++, position);
             }
         }
@@ -235,13 +247,6 @@ namespace Maze.Components
             if (GUI.Button(new Rect(Screen.width - 210, Screen.height - 50, 200, 50), "Restart"))
             {
                 new GotoStateAction(new MazeState(), true).Execute(Bootstrapper.SessionToken).Forget();
-
-                // if (_path.Count > 3)
-                // {
-                //     _path.RemoveLast();
-                // }
-                //
-                // UpdateLineRenderer();
             }
         }
 #endif
