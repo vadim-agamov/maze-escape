@@ -151,13 +151,13 @@ namespace Maze.Components
                     if(_path.Last.Value == cell)
                         break;
                     
-                    Debug.Log($"remove {_path.Last().Row},{_path.Last().Col}");
+                    // Debug.Log($"remove {_path.Last().Row},{_path.Last().Col}");
                     _path.RemoveLast();
                 }
             }
             else
             {
-                Debug.Log($"add {cell.Row},{cell.Col}");
+                // Debug.Log($"add {cell.Row},{cell.Col}");
                 _path.AddLast(cell);
             }
         }

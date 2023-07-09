@@ -13,8 +13,8 @@ namespace Maze.Configs.Editor
         private void GenerateMazeAndFindPath(int minPath)
         {
             _foundMinPath = 0;
-
-            for (var i = 0; i < 500; i++)
+            
+            for (var i = 0; i < 100; i++)
             {
                 Generate();
                 var p = FindPath();
@@ -47,7 +47,7 @@ namespace Maze.Configs.Editor
 
             FindPath(r, c, _cells, new Stack<(int Row, int Col)>(), paths);
             _totalPath = paths.Count;
-            // Debug.Log($"found {paths.Count} paths");
+            Debug.Log($"found {paths.Count} paths");
 
             paths.Sort((a, b) => a.Count - b.Count);
             
@@ -61,7 +61,7 @@ namespace Maze.Configs.Editor
             var pathIndex = 0;
             foreach (var path in filteredPath)
             {
-                // Debug.Log($"path {pathIndex}, count {filteredPath.Count}");
+                Debug.Log($"path {pathIndex}, count {path.Count}");
 
                 CellType pathFlag = CellType.Path;
                 if (pathIndex == 0) pathFlag = CellType.Path0;
@@ -93,14 +93,13 @@ namespace Maze.Configs.Editor
 
             throw new Exception("can't find start");
         }
-
+        
         private void FindPath(int r, int c, CellType[,] cells, Stack<(int Row,int Col)> currentPath, List<List<(int Row,int Col)>> paths)
         {
             if (cells[r, c].HasFlag(CellType.Finish))
             {
-                // cells[r, c] |= CellType.Path;
+                currentPath.Push((Row: r, Col: c));
                 paths.Add(currentPath.ToList());
-                return;
             }
 
             if (paths.Count >= 10000)
@@ -160,7 +159,6 @@ namespace Maze.Configs.Editor
 
             currentPath.Pop();
             cells[r, c] &= ~CellType.Visited;
-            // return false;
         }
         
         private List<(int NeigbourRow, int NeigbourCol, CellType SelfWall, CellType NeigbourWall)> GetUnvisitedReachableNeighbours(int r, int c, CellType[,] cells)

@@ -6,12 +6,13 @@ using Events;
 using Maze.Configs;
 using Maze.MazeService;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Maze.Components
 {
     public class CharacterComponent : MonoBehaviour, IComponent
     {
-        private LinkedList<Vector3> _waypoints;
+        private LinkedList<CrabWaypoint> _waypoints;
         private Vector3 _currentWaypoint;
         private Context _context;
         private bool _initialized;
@@ -27,8 +28,10 @@ namespace Maze.Components
         [SerializeField] 
         private Animator _animator;
 
-        [SerializeField] 
-        private LineRenderer _lineRenderer;
+        [SerializeField]
+        private CrabWaypoint _crabWaypoint;
+        
+        private ObjectPool<CrabWaypoint> _waypointsPool;
 
         private static readonly int State = Animator.StringToHash("state");
 
@@ -38,13 +41,25 @@ namespace Maze.Components
         {
             _context = context;
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
-            _waypoints = new LinkedList<Vector3>();
+            _waypoints = new LinkedList<CrabWaypoint>();
+            _waypointsPool = new ObjectPool<CrabWaypoint>(CreateWaypoint, GetWaypoint, ReleaseWaypoint, DestroyWaypoint);
             _currentWaypoint = Vector3.zero;
             SetupStartPosition();
             _initialized = true;
             return UniTask.CompletedTask;
         }
 
+        #region Pool
+        private CrabWaypoint CreateWaypoint() => Instantiate(_crabWaypoint);
+
+        private void DestroyWaypoint(CrabWaypoint waypoint) => Destroy(waypoint.gameObject);
+
+        private void GetWaypoint(CrabWaypoint waypoint) => waypoint.Show().Forget();
+
+        private void ReleaseWaypoint(CrabWaypoint waypoint) => waypoint.Hide().Forget();
+
+        #endregion
+        
         private void SetupStartPosition()
         {
             foreach (var cell in _context.CellViews)
@@ -58,21 +73,41 @@ namespace Maze.Components
 
         private void OnPathUpdated(PathUpdatedEvent evt)
         {
-            var point = evt.Cells.Last().transform.position;
+            var lastCell = evt.Cells.Last();
+            if(lastCell.CellType.HasFlag(CellType.Finish))
+                return;
+            
+            var point = lastCell.transform.position;
 
-            if (_waypoints.Contains(point))
+            if (_waypoints.Count(w => w.transform.position == point) > 0) 
             {
                 while(true)
                 {
-                    if(_waypoints.Last.Value == point)
+                    var waypoint = _waypoints.Last.Value;
+
+                    if(waypoint.transform.position == point)
                         break;
                     
+                    _waypointsPool.Release(waypoint);
                     _waypoints.RemoveLast();
                 }
             }
             else
             {
-                _waypoints.AddLast(point);
+                var newWaypoint = _waypointsPool.Get();
+                newWaypoint.transform.position = point;
+                _waypoints.AddLast(newWaypoint);
+
+                if (_waypoints.Count >= 2)
+                {
+                    var last = _waypoints.Last.Value;
+                    var preLast = _waypoints.Last.Previous.Value;
+                    
+                    var intermediate =  _waypointsPool.Get();
+                    intermediate.transform.position = Vector3.Lerp(last.transform.position, preLast.transform.position, 0.5f);
+                
+                    _waypoints.AddBefore(_waypoints.Last, intermediate);
+                }
             }
         }
 
@@ -96,7 +131,8 @@ namespace Maze.Components
 
             if (_currentWaypoint == Vector3.zero && _waypoints.Count > 0)
             {
-                _currentWaypoint = _waypoints.Last.Value;
+                _currentWaypoint = _waypoints.Last.Value.transform.position;
+                _waypointsPool.Release(_waypoints.Last.Value);
                 _waypoints.RemoveLast();
             }
 
@@ -113,7 +149,8 @@ namespace Maze.Components
             {
                 if (_waypoints.Count > 0)
                 {
-                    _currentWaypoint = _waypoints.First.Value;
+                    _currentWaypoint = _waypoints.First.Value.transform.position;
+                    _waypointsPool.Release(_waypoints.First.Value);
                     _waypoints.RemoveFirst();
                 }
                 else
@@ -121,31 +158,12 @@ namespace Maze.Components
                     _currentWaypoint = Vector3.zero;
                 }
             }
-
-            UpdateLineRenderer(); 
         }
-
-        private void UpdateLineRenderer()
-        {
-            if (_currentWaypoint == Vector3.zero)
-            {
-                _lineRenderer.positionCount = 0;
-                return;
-            }
-
-            _lineRenderer.positionCount = 2 + _waypoints.Count;
-            var index = 0;
-            _lineRenderer.SetPosition(index++, transform.position);
-            _lineRenderer.SetPosition(index++, _currentWaypoint);
-            foreach (var waypoint in _waypoints)
-            {
-                _lineRenderer.SetPosition(index++, waypoint);
-            }
-        }
-
+        
         void IDisposable.Dispose()
         {
             _initialized = false;
+            _waypointsPool.Dispose();
             Event<PathUpdatedEvent>.Unsubscribe(OnPathUpdated);
         }
     }
