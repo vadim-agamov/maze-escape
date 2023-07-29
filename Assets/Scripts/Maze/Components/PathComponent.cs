@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Actions;
 using Cysharp.Threading.Tasks;
-using Events;
+using Modules.Events;
 using Maze.Configs;
 using Maze.MazeService;
 using Modules.ServiceLocator;
 using UnityEngine;
+using Utils;
 
 namespace Maze.Components
 {
@@ -20,8 +21,9 @@ namespace Maze.Components
         [SerializeField] 
         private LineRenderer _lineRenderer;
 
-        public bool ShowFullPath;
-
+        [SerializeField] 
+        private GameObject _cursor;
+        
         private Context _context;
         private Camera _camera;
         private bool _initialized;
@@ -33,25 +35,25 @@ namespace Maze.Components
         {
             if(!_initialized)
                 return;
-
-            if (ShowFullPath)
-            {
-                UpdateLineRenderer();
-            }
-
+            
             if(!_context.Active)
                 return;
             
             if (Input.GetMouseButton(0))
             {
                 var hitPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
-                var pathCell = _path.Last.Value;//GetNearestCellFromPath(hitPosition);
+                hitPosition = new Vector3(hitPosition.x, hitPosition.y, 0);
+                // _cursor.transform.position = new Vector3(hitPosition.x, hitPosition.y, 0);
+                // var pathCell = _path.Last.Value;//GetNearestCellFromPath(hitPosition);
                 // AddCellToPath(pathCell);
                 
                 var cell = GetNearestNeighbour(_path.Last.Value, hitPosition);
                 AddCellToPath(cell);
 
-
+                // var distance = Vector3.Distance(cell.transform.position, hitPosition);
+                // var t = 0.5f / distance;
+                _cursor.transform.position = cell.transform.position;// Vector3.Lerp(cell.transform.position, hitPosition, t);
+                
                 // Debug.Log($"pathCell {pathCell.Row},{pathCell.Col}, cell {cell.Row},{cell.Col}");
                 // AddCellToPath(pathCell);
                 // AddCellToPath(cell);
@@ -59,6 +61,12 @@ namespace Maze.Components
                 UpdateLineRenderer();
                 Event<PathUpdatedEvent>.Publish(_pathUpdatedEvent);
             }
+            else
+            {
+                _cursor.transform.position = _path.Last.Value.transform.position;
+            }
+            
+            _cursor.SetActive(_context.Active);
         }
 
         private CellView GetNearestCellFromPath(Vector3 position)
@@ -164,20 +172,44 @@ namespace Maze.Components
 
         private void UpdateLineRenderer()
         {
-            if (!ShowFullPath)
+            var pathPoints = _path.Select(x => x.transform.position).ToList();
+            var points = Bezier.AddSegments(pathPoints, 3);
+            var smoothLine = Bezier.Create(points, 5);
+
+            _lineRenderer.positionCount = smoothLine.Count;
+            for (var i = 0; i < smoothLine.Count; i++)
             {
-                _lineRenderer.positionCount = 0;
-                return;
+                _lineRenderer.SetPosition(i, smoothLine[i]);
             }
 
-            _lineRenderer.positionCount = _path.Count;
-            var index = 0;
-            foreach (var cellView in _path)
+            _lineRenderer.useWorldSpace = true;
+        }
+
+        private void OnDrawGizmos()
+        {
+            for (var i = 0; i < _lineRenderer.positionCount; i++)
             {
-                var position = cellView.transform.localPosition;
-                _lineRenderer.SetPosition(index++, position);
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(_lineRenderer.GetPosition(i), 0.05f);
             }
         }
+
+        // private void OnDrawGizmos()
+        // {
+        //     var points = Bezier.AddSegments(_path.Select(x => x.transform.position).ToList(), 2);
+        //     foreach (var point in points)
+        //     {
+        //         Gizmos.color = Color.red;
+        //         Gizmos.DrawSphere(point, 0.2f);
+        //     }
+        //
+        //     var smoothLine = Bezier.Create(points, 10);
+        //     foreach (var point in smoothLine)
+        //     {
+        //         Gizmos.color = Color.yellow;
+        //         Gizmos.DrawSphere(point, 0.1f);
+        //     }
+        // }
 
         private bool Contact(CellView a, CellView b)
         {

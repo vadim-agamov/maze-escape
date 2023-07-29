@@ -1,7 +1,6 @@
-using System;
 using Actions;
 using Cysharp.Threading.Tasks;
-using Events;
+using Modules.Events;
 using Maze.Configs;
 using Maze.MazeService;
 using Modules.ServiceLocator;
@@ -42,8 +41,7 @@ namespace Maze.Components
             playerDataService.Commit();
 
             await UniTask.WaitUntil(() => _characterComponent.IsWalking, cancellationToken: Bootstrapper.SessionToken);
-            _pathComponent.ShowFullPath = true;
-            await UniTask.Delay(TimeSpan.FromSeconds(2));
+            // await UniTask.Delay(TimeSpan.FromSeconds(2));
             await new WinLevelAction().Execute(Bootstrapper.SessionToken);
         }
 

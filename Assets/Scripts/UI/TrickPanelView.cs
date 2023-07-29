@@ -1,4 +1,4 @@
-using Events;
+using Modules.Events;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Modules;

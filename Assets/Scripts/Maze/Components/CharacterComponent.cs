@@ -2,17 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Events;
 using Maze.Configs;
 using Maze.MazeService;
+using Modules.Events;
 using UnityEngine;
-using UnityEngine.Pool;
 
 namespace Maze.Components
 {
     public class CharacterComponent : MonoBehaviour, IComponent
     {
-        private LinkedList<CrabWaypoint> _waypoints;
+        private LinkedList<Vector3> _waypoints;
         private Vector3 _currentWaypoint;
         private Context _context;
         private bool _initialized;
@@ -31,7 +30,7 @@ namespace Maze.Components
         [SerializeField]
         private CrabWaypoint _crabWaypoint;
         
-        private ObjectPool<CrabWaypoint> _waypointsPool;
+        // private ObjectPool<CrabWaypoint> _waypointsPool;
 
         private static readonly int State = Animator.StringToHash("state");
 
@@ -40,10 +39,10 @@ namespace Maze.Components
         UniTask IComponent.Initialize(Context context)
         {
             _context = context;
-            Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
-            _waypoints = new LinkedList<CrabWaypoint>();
-            _waypointsPool = new ObjectPool<CrabWaypoint>(CreateWaypoint, GetWaypoint, ReleaseWaypoint, DestroyWaypoint);
+            _waypoints = new LinkedList<Vector3>();
+            // _waypointsPool = new ObjectPool<CrabWaypoint>(CreateWaypoint, GetWaypoint, ReleaseWaypoint, DestroyWaypoint);
             _currentWaypoint = Vector3.zero;
+            Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             SetupStartPosition();
             _initialized = true;
             return UniTask.CompletedTask;
@@ -70,44 +69,29 @@ namespace Maze.Components
                 }
             }
         }
-
+        
         private void OnPathUpdated(PathUpdatedEvent evt)
         {
-            var lastCell = evt.Cells.Last();
-            if(lastCell.CellType.HasFlag(CellType.Finish))
+            if(!_context.Active)
                 return;
             
-            var point = lastCell.transform.position;
+            var point = evt.Cells.Last().transform.position;
 
-            if (_waypoints.Count(w => w.transform.position == point) > 0) 
+            if (_waypoints.Count(w => w == point) > 0) 
             {
                 while(true)
                 {
                     var waypoint = _waypoints.Last.Value;
-
-                    if(waypoint.transform.position == point)
+            
+                    if(waypoint == point)
                         break;
                     
-                    _waypointsPool.Release(waypoint);
                     _waypoints.RemoveLast();
                 }
             }
             else
             {
-                var newWaypoint = _waypointsPool.Get();
-                newWaypoint.transform.position = point;
-                _waypoints.AddLast(newWaypoint);
-
-                if (_waypoints.Count >= 2)
-                {
-                    var last = _waypoints.Last.Value;
-                    var preLast = _waypoints.Last.Previous.Value;
-                    
-                    var intermediate =  _waypointsPool.Get();
-                    intermediate.transform.position = Vector3.Lerp(last.transform.position, preLast.transform.position, 0.5f);
-                
-                    _waypoints.AddBefore(_waypoints.Last, intermediate);
-                }
+                _waypoints.AddLast(point);
             }
         }
 
@@ -131,8 +115,7 @@ namespace Maze.Components
 
             if (_currentWaypoint == Vector3.zero && _waypoints.Count > 0)
             {
-                _currentWaypoint = _waypoints.Last.Value.transform.position;
-                _waypointsPool.Release(_waypoints.Last.Value);
+                _currentWaypoint = _waypoints.Last.Value;
                 _waypoints.RemoveLast();
             }
 
@@ -149,8 +132,7 @@ namespace Maze.Components
             {
                 if (_waypoints.Count > 0)
                 {
-                    _currentWaypoint = _waypoints.First.Value.transform.position;
-                    _waypointsPool.Release(_waypoints.First.Value);
+                    _currentWaypoint = _waypoints.First.Value;
                     _waypoints.RemoveFirst();
                 }
                 else
@@ -163,7 +145,6 @@ namespace Maze.Components
         void IDisposable.Dispose()
         {
             _initialized = false;
-            _waypointsPool.Dispose();
             Event<PathUpdatedEvent>.Unsubscribe(OnPathUpdated);
         }
     }

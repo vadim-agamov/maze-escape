@@ -1,6 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Events;
+using Modules.Events;
 using Modules.UIService.Events;
 
 namespace Modules.UIService

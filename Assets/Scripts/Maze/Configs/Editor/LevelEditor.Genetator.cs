@@ -109,7 +109,7 @@ namespace Maze.Configs.Editor
                 // cells[r, c] &= ~selfWall;
                 // cells[neighbourRow, neighbourCol] &= ~neighbourWall;
                 
-                if (Random.Range(0, 10) < 1)
+                if (Random.Range(0, 20) < 1)
                 {
                     BrakeRandomWall(neighbours);
                 }

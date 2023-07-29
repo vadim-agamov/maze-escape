@@ -1,6 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Events;
+using Modules.Events;
 using Maze.MazeService;
 using TMPro;
 using UnityEngine;

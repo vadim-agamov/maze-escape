@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace Events
+namespace Modules.Events
 {
     public static class Event<T> where T : class
     {
@@ -66,17 +66,13 @@ namespace Events
         
         public static UniTask<T> WaitResult(CancellationToken cancellationToken = default)
         {
-            if (_completionSource == null)
-                _completionSource = new UniTaskCompletionSource<T>();
-
+            _completionSource ??= new UniTaskCompletionSource<T>();
             return _completionSource.Task.AttachExternalCancellation(cancellationToken);
         }
 
         public static UniTask Wait(CancellationToken cancellationToken = default)
         {
-            if (_completionSource == null)
-                _completionSource = new UniTaskCompletionSource<T>();
-
+            _completionSource ??= new UniTaskCompletionSource<T>();
             return _completionSource.Task.AttachExternalCancellation(cancellationToken);
         }
     }
