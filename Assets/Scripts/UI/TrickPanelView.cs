@@ -4,6 +4,7 @@ using DG.Tweening;
 using Modules;
 using Modules.FlyItemsService;
 using Modules.ServiceLocator;
+using Modules.SoundService;
 using Services.PlayerDataService;
 using SN;
 using TMPro;

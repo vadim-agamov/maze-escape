@@ -1,20 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Utils
 {
     public static class Bezier
-    {
-        // public static Vector2 LineLerp(Vector2 p1, Vector2 p2, float t)
-        // {
-        //     float x = Mathf.Lerp(p1.x, p2.x, t);
-        //     float y = Mathf.Lerp(p1.y, p2.y, t);
-        //
-        //     return new Vector2(x, y);
-        // }
-
-        //Interpolates between three control points with a quadratic bezier curve, with the interpolant t
+    { 
         private static Vector3 QuadraticBezierInterpolation(Vector3 p1, Vector3 p2, Vector3 p3, float t)
         {
             var a = Vector3.Lerp(p1, p2, t);
@@ -72,26 +62,7 @@ namespace Utils
             {
                 result.Add(inputPositions[index]);
             }
-    
             
-            // result.Add(inputPositions[0]);
-            // result.Add(inputPositions[1]);
-            //
-            // var segmentsNormalized = 1f / segments;
-            //
-            // for (var index = 2; index < inputPositions.Count - 3; index+=3)
-            // {
-            //     for (var t = 0f; t < 1; t+=segmentsNormalized)
-            //     {
-            //         var point = QuadraticBezierInterpolation(
-            //             inputPositions[index], 
-            //             inputPositions[index+1],
-            //             inputPositions[index+2],
-            //             t);
-            //         result.Add(point);
-            //     }
-            // }
-
             return result;
             
             bool IsCorner(Vector3 p0, Vector3 p1, Vector3 p2)

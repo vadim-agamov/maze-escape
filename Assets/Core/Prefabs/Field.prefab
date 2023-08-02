@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetRect: {fileID: 5363308546607753705}
-  _padding: 2
+  _padding: 4
   _spriteRenderer: {fileID: 619130253}
 --- !u!1 &284234103256090360
 GameObject:
@@ -173,7 +173,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b51567f2da48d4998b01f0d77cdfca73, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 743852a15ee714ed996ff350370c6daf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

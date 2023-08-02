@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using Modules;
 using Modules.FlyItemsService;
 using Modules.FSM;
+using Modules.InputService;
 using Modules.ServiceLocator;
+using Modules.SoundService;
 using Modules.UIService;
-using Services;
 using Services.PlayerDataService;
 using SN;
 using UI;
@@ -39,7 +37,8 @@ namespace States
                 SnBridge.Initialize(),
                 RegisterUI(),
                 ServiceLocator.RegisterAndInitialize<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
-                ServiceLocator.RegisterAndInitialize<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken)
+                ServiceLocator.RegisterAndInitialize<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
+                ServiceLocator.RegisterAndInitialize<IInputService>(new InputService(), cancellationToken: cancellationToken),
             };
 
             await tasks.WhenAll(new Progress<float>(p =>
@@ -51,8 +50,6 @@ namespace States
             await loading.Hide();
             await _playModel.OpenAndShow("PlayPanel", cancellationToken);
             
-            // ServiceLocator.Get<ISoundService>().Play("ambient", true);
-
             async UniTask RegisterUI()
             {
                 IUIService uiService = new UIService();

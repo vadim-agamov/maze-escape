@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
 using Maze.MazeService;
+using Modules.InputService;
 using Modules.ServiceLocator;
 using UnityEngine;
 using Utils;
@@ -30,6 +31,7 @@ namespace Maze.Components
         private readonly LinkedList<CellView> _path = new LinkedList<CellView>();
         private readonly PathUpdatedEvent _pathUpdatedEvent = new PathUpdatedEvent();
         private FieldViewComponent _fieldViewComponent;
+        private IInputService _inputService;
 
         private void Update()
         {
@@ -39,9 +41,9 @@ namespace Maze.Components
             if(!_context.Active)
                 return;
             
-            if (Input.GetMouseButton(0))
+            if (_inputService.TouchesCount > 0)
             {
-                var hitPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+                var hitPosition = _camera.ScreenToWorldPoint(_inputService.Touch0);
                 hitPosition = new Vector3(hitPosition.x, hitPosition.y, 0);
                 // _cursor.transform.position = new Vector3(hitPosition.x, hitPosition.y, 0);
                 // var pathCell = _path.Last.Value;//GetNearestCellFromPath(hitPosition);
@@ -255,9 +257,10 @@ namespace Maze.Components
 
         public UniTask Initialize(Context context)
         {
+            _inputService = ServiceLocator.Get<IInputService>();
             var mazeService = ServiceLocator.Get<IMazeService>();
             _fieldViewComponent = mazeService.GetComponent<FieldViewComponent>();
-            
+
             _context = context;
             _camera = _context.Camera;
             _path.AddLast(_fieldViewComponent.GetStartCell());

@@ -11,7 +11,6 @@ namespace Modules.FlyItemsService
         public string Name;
     }
 
-
     [CreateAssetMenu(fileName = "FlyItemsConfig", menuName = "Configs/FlyItemsConfig", order = 0)]
     public class FlyItemsConfig : ScriptableObject
     {

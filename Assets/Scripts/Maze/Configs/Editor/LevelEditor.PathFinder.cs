@@ -14,7 +14,7 @@ namespace Maze.Configs.Editor
         {
             _foundMinPath = 0;
             
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 500; i++)
             {
                 Generate();
                 var p = FindPath();

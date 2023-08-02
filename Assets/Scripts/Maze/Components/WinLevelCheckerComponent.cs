@@ -36,10 +36,6 @@ namespace Maze.Components
         {
             _context.Active = false;
             
-            var playerDataService = ServiceLocator.Get<IPlayerDataService>();
-            playerDataService.Data.Level++;
-            playerDataService.Commit();
-
             await UniTask.WaitUntil(() => _characterComponent.IsWalking, cancellationToken: Bootstrapper.SessionToken);
             // await UniTask.Delay(TimeSpan.FromSeconds(2));
             await new WinLevelAction().Execute(Bootstrapper.SessionToken);

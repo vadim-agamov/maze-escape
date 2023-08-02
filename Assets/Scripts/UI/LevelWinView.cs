@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Modules.UIService;
 using UnityEngine;
@@ -7,25 +8,54 @@ namespace UI
 {
     public class LevelWinModel: UIModel
     {
-        public void OnClosed()
+        public enum LevelWinAction
         {
-            this.HideAndClose(Bootstrapper.SessionToken).Forget();
+            Replay,
+            PlayNext
         }
+        
+        private UniTaskCompletionSource<LevelWinAction> _completionSource =
+            new UniTaskCompletionSource<LevelWinAction>();
+
+        public void OnPlay()
+        {
+            _completionSource?.TrySetResult(LevelWinAction.PlayNext);
+            _completionSource = null;
+        }
+
+        public void OnReplay()
+        {
+            _completionSource?.TrySetResult(LevelWinAction.Replay);
+            _completionSource = null;
+        }
+
+        public UniTask<LevelWinAction> WaitAction(CancellationToken token) =>
+            _completionSource.Task.AttachExternalCancellation(token);
     }
     
     public class LevelWinView: UIView<LevelWinModel>
     {
         [SerializeField] 
-        private Button _closeHandler;
+        private Button _closeButton;
+        
+        [SerializeField] 
+        private Button _playButton;
+        
+        [SerializeField] 
+        private Button _replayButton;
         
         protected override void OnSetModel()
         {
-            _closeHandler.onClick.AddListener(Model.OnClosed);
+            _closeButton.onClick.AddListener(Model.OnPlay);
+            _playButton.onClick.AddListener(Model.OnPlay);
+            _replayButton.onClick.AddListener(Model.OnReplay);
         }
 
-        protected override void OnUnsetModel()
+
+        public override async UniTask Hide(CancellationToken cancellationToken = default)
         {
-            _closeHandler.onClick.RemoveAllListeners();
+             base.Hide(cancellationToken);
+             Model.OnPlay();
         }
     }
 }

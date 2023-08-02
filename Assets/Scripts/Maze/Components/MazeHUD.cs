@@ -1,41 +1,53 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Modules.Events;
+using JetBrains.Annotations;
 using Maze.MazeService;
-using TMPro;
+using Modules.ServiceLocator;
+using Modules.SoundService;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Maze.Components
 {
     public class MazeHUD : MonoBehaviour, IComponent
     {
-        [SerializeField] 
-        private TMP_Text _pathLenght;
+        [SerializeField]
+        private Button _soundButton;
+        [SerializeField]
+        private Sprite _soundOnSprite;
+        [SerializeField]   
+        private Sprite _soundOffSprite;
 
         private Context _context;
-
-        private void SetupPath(int pathMin, int current)
-        {
-            _pathLenght.text = $"{current} / {pathMin}";
-            _pathLenght.color = current > pathMin ? Color.red : Color.white;
-        }
-
-        private void OnPathUpdated(PathUpdatedEvent evt)
-        {
-            SetupPath(_context.Level.MinPath, evt.Cells.Count);
-        }
+        private ISoundService _soundService;
 
         void IDisposable.Dispose()
         {
-            Event<PathUpdatedEvent>.Unsubscribe(OnPathUpdated);
         }
 
         UniTask IComponent.Initialize(Context context)
         {
+            _soundService = ServiceLocator.Get<ISoundService>();
             _context = context;
-            Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
-            SetupPath(_context.Level.MinPath, 0);
+            _soundButton.onClick.AddListener(ToggleSound);
+            SetupSoundButton();
             return UniTask.CompletedTask;
+        }
+        
+        [UsedImplicitly]
+        public void ToggleSound()
+        {
+            if(_soundService.IsMuted)
+                _soundService.UnMute();
+            else
+                _soundService.Mute();
+            
+            SetupSoundButton();
+        }
+
+        private void SetupSoundButton()
+        {
+            _soundButton.image.sprite = !_soundService.IsMuted ? _soundOffSprite : _soundOnSprite;
         }
     }
 }

@@ -39,10 +39,10 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 68889031cd76147f2b04a506524d93ee, type: 3}
+  - {fileID: 21300000, guid: 743852a15ee714ed996ff350370c6daf, type: 3}
   - {fileID: 21300000, guid: d5ba4db1a53c74c808c5db035fab27f4, type: 3}
   - {fileID: 21300000, guid: 764e0812333254854bd3e5d54ac80308, type: 3}
   - {fileID: 21300000, guid: d6dde4628fd0c48d29fc34515f94fd12, type: 3}
-  - {fileID: 21300000, guid: b51567f2da48d4998b01f0d77cdfca73, type: 3}
   - {fileID: 21300000, guid: 9a59d753630b048709f4885039655d3b, type: 3}
   - {fileID: 1104671697, guid: 67f1bb73d532e4cb985221536ace6aac, type: 3}
   - {fileID: 1280957410, guid: 67f1bb73d532e4cb985221536ace6aac, type: 3}
@@ -82,10 +82,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f49c630e980c94ceb9a3da8e999239df, type: 3}
   m_PackedSpriteNamesToIndex:
   - back
+  - Cursor
   - vertical1
   - field
   - horizontal1
-  - Ellipse 42 (1)
   - Bubbles
   - PngItem_3812718_21
   - PngItem_3812718_20

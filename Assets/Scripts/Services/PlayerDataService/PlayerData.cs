@@ -8,12 +8,6 @@ using SN;
 
 namespace Services.PlayerDataService
 {
-    public interface IPlayerDataService : IService
-    {
-        PlayerData Data { get; }
-        void Commit();
-    }
-
     public class PlayerDataService: IPlayerDataService
     {
         private PlayerData _data;
