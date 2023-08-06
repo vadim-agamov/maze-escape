@@ -80,15 +80,5 @@ namespace Maze.Components
         public void Dispose()
         {
         }
-        
-#if DEV
-        private void OnGUI()
-        {
-            if(_context == null || !_context.Active)
-                return;
-            
-            GUI.Label(new Rect(10, Screen.height - 20, 200, 20), $"level {_context.Level.name}");
-        }
-#endif
     }
 }

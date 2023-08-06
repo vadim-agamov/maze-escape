@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
 using Maze.MazeService;
 using UnityEngine;
 
@@ -19,19 +20,25 @@ namespace Maze.Components
         {
             context.Camera = _camera;
             
+            FitCameraSize();
+
+            return UniTask.CompletedTask;
+        }
+
+        [UsedImplicitly]
+        public void FitCameraSize()
+        {
             var rect = _target.rect;
             
             // portrait
             var orthographicSizePortrait = rect.height / 2;
-            
+
             // landscape
             var ratio = Screen.height / (float)Screen.width;
             var orthographicSizeLandscape = ratio * rect.width / 2;
-            
+
             // The orthographicSize is half the size of the vertical viewing volume.
             _camera.orthographicSize = _padding + Mathf.Max(orthographicSizePortrait, orthographicSizeLandscape);
-            
-            return UniTask.CompletedTask;
         }
 
         public void Dispose()

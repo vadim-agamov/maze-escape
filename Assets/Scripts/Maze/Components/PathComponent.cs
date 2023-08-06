@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Actions;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
@@ -23,8 +22,10 @@ namespace Maze.Components
         private LineRenderer _lineRenderer;
 
         [SerializeField] 
-        private GameObject _cursor;
+        private GameObject _cursorPreafab;
         
+        private GameObject _beginCursor;
+        private GameObject _cursor;
         private Context _context;
         private Camera _camera;
         private bool _initialized;
@@ -161,13 +162,11 @@ namespace Maze.Components
                     if(_path.Last.Value == cell)
                         break;
                     
-                    // Debug.Log($"remove {_path.Last().Row},{_path.Last().Col}");
                     _path.RemoveLast();
                 }
             }
             else
             {
-                // Debug.Log($"add {cell.Row},{cell.Col}");
                 _path.AddLast(cell);
             }
         }
@@ -265,7 +264,11 @@ namespace Maze.Components
             _camera = _context.Camera;
             _path.AddLast(_fieldViewComponent.GetStartCell());
 
-            _pathUpdatedEvent.Cells = _path; 
+            _pathUpdatedEvent.Cells = _path;
+
+            _cursor = GameObject.Instantiate(_cursorPreafab, transform);
+            _beginCursor = GameObject.Instantiate(_cursorPreafab, transform);
+            _beginCursor.transform.position = _path.First.Value.transform.position;
 
             _initialized = true;
             return UniTask.CompletedTask;

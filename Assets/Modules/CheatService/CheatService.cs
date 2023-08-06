@@ -10,7 +10,6 @@ namespace Modules.CheatService
     public class CheatService: MonoBehaviour, ICheatService
     {
         private bool _isShown;
-        private Rect _rect;
         private readonly HashSet<ICheatsProvider> _cheatsProviders = new HashSet<ICheatsProvider>();
 
         private ICheatService This => this;
@@ -18,7 +17,7 @@ namespace Modules.CheatService
         UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
             DontDestroyOnLoad(gameObject);
-            _rect = new Rect(120, 120, Screen.width - 240, Screen.height - 240);
+            gameObject.name = $"[{nameof(CheatService)}]";
             return UniTask.CompletedTask;
         }
 
@@ -68,7 +67,7 @@ namespace Modules.CheatService
 
         private void DrawCheats()
         {
-            GUILayout.BeginArea(_rect);
+            GUILayout.BeginArea(new Rect(120, 120, Screen.width - 240, Screen.height - 240));
             foreach (var cheatsProvider in _cheatsProviders)
             {
                 GUILayout.BeginVertical(cheatsProvider.Id, "box");

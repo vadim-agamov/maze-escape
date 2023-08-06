@@ -9,6 +9,7 @@ using Modules.InputService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
 using Modules.UIService;
+using Services.JumpScreenService;
 using Services.PlayerDataService;
 using SN;
 using UI;
@@ -41,6 +42,7 @@ namespace States
                 ServiceLocator.RegisterAndInitialize<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
                 ServiceLocator.RegisterAndInitialize<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
                 ServiceLocator.RegisterAndInitialize<IInputService>(new InputService(), cancellationToken: cancellationToken),
+                ServiceLocator.RegisterAndInitialize<IJumpScreenService>(new JumpScreenService(), cancellationToken: cancellationToken)
             };
 #if DEV
             await InitializeCheats();

@@ -7,13 +7,14 @@ using Modules.ServiceLocator;
 using Services.PlayerDataService;
 using UnityEngine;
 
-namespace Maze
+namespace Maze.Cheats
 {
     public class MazeCheatsProvider: ICheatsProvider
     {
         private readonly CheatButton _restart;
         private readonly CheatIntInput _level;
         private readonly CheatLabel _levelInfo;
+        private readonly CheatButton _winLevel;
 
         public MazeCheatsProvider(ICheatService cheatService)
         {
@@ -40,12 +41,17 @@ namespace Maze
                     playerDataService.Commit();
                     new GotoStateAction(new MazeState(), true).Execute(Bootstrapper.SessionToken).Forget();
                 });
+            
+            _winLevel = new CheatButton(cheatService,
+                "Win", 
+                () => new WinLevelAction().Execute(Bootstrapper.SessionToken).Forget());
         }
 
         void ICheatsProvider.OnGUI()
         {
             _levelInfo.OnGUI();
             _restart.OnGUI();
+            _winLevel.OnGUI();
             _level.OnGUI();
         }
 

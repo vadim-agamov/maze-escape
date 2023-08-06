@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Modules.ServiceLocator;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -18,9 +19,9 @@ namespace Modules.SoundService
         UniTask IService.Initialize(IProgress<float> progress, CancellationToken _)
         {
             DontDestroyOnLoad(gameObject);
-            gameObject.name = nameof(SoundService);
+            gameObject.name = $"[{nameof(SoundService)}]";
             gameObject.AddComponent<AudioListener>();
-            _objectPool = new ObjectPool<AudioSource>(OnCreate, OnGet, OnRelease, OnDestroyAudioSource);
+            _objectPool = new ObjectPool<AudioSource>(OnCreateAudioSource, OnGetAudioSource, OnReleaseAudioSource, OnDestroyAudioSource);
             _activeSources = new List<AudioSource>();
             _cancellationToken = new CancellationTokenSource();
             return UniTask.CompletedTask;
@@ -33,17 +34,42 @@ namespace Modules.SoundService
             Destroy(this);
         }
 
-        void ISoundService.Play(string soundId, bool loop)
+        void ISoundService.PlayLoop(string soundId)
         {
-            Play(soundId, loop).Forget();
+            var source = _objectPool.Get();
+            if (source.clip == null || source.clip.name != soundId)
+            {
+                source.clip = Resources.Load<AudioClip>($"Sounds/{soundId}");
+            }
+
+            source.Play();
         }
 
-        void ISoundService.Stop(string soundId)
+        async UniTask ISoundService.Play(string soundId)
+        {
+            var source = _objectPool.Get();
+            if (source.clip == null || source.clip.name != soundId)
+            {
+                source.clip = Resources.Load<AudioClip>($"Sounds/{soundId}");
+            }
+
+            source.Play();
+
+            await UniTask
+                .Delay(TimeSpan.FromSeconds(source.clip.length), cancellationToken: _cancellationToken.Token)
+                .SuppressCancellationThrow();
+            _objectPool.Release(source);
+        }
+
+        async UniTask ISoundService.Stop(string soundId)
         {
             foreach (var audioSource in _activeSources)
             {
                 if (audioSource.clip.name == soundId)
                 {
+                    await audioSource.DOFade(0, 0.2f)
+                        .ToUniTask(cancellationToken: _cancellationToken.Token)
+                        .SuppressCancellationThrow();
                     audioSource.Stop();
                     _objectPool.Release(audioSource);
                     break;
@@ -68,29 +94,11 @@ namespace Modules.SoundService
                 activeSource.mute = false;
             }
         }
-
         bool ISoundService.IsMuted => _isMuted;
 
-        private async UniTask Play(string soundId, bool loop)
-        {
-            var source = _objectPool.Get();
-            if (source.clip == null || 
-                source.clip.name != soundId)
-            {
-                source.clip = Resources.Load<AudioClip>($"Sounds/{soundId}");
-            }
+        #region Pool
 
-            source.loop = loop;
-            source.Play();
-
-            if (!loop)
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(source.clip.length), cancellationToken: _cancellationToken.Token);
-                _objectPool.Release(source);
-            }
-        }
-
-        private AudioSource OnCreate()
+        private AudioSource OnCreateAudioSource()
         {
             var go = new GameObject("AudioSource");
             go.transform.SetParent(gameObject.transform);
@@ -103,8 +111,17 @@ namespace Modules.SoundService
             Destroy(item.gameObject);
         }
 
-        private void OnRelease(AudioSource item) => _activeSources.Remove(item);
+        private void OnReleaseAudioSource(AudioSource item)
+        {
+            _activeSources.Remove(item);
+            item.volume = 1f;
+        }
 
-        private void OnGet(AudioSource item) => _activeSources.Add(item);
+        private void OnGetAudioSource(AudioSource item)
+        {
+            _activeSources.Add(item);
+        }
+
+        #endregion
     }
 }

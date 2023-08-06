@@ -14,8 +14,7 @@ namespace UI
             PlayNext
         }
         
-        private UniTaskCompletionSource<LevelWinAction> _completionSource =
-            new UniTaskCompletionSource<LevelWinAction>();
+        private UniTaskCompletionSource<LevelWinAction> _completionSource = new UniTaskCompletionSource<LevelWinAction>();
 
         public void OnPlay()
         {
@@ -54,7 +53,7 @@ namespace UI
 
         public override async UniTask Hide(CancellationToken cancellationToken = default)
         {
-             base.Hide(cancellationToken);
+             await base.Hide(cancellationToken);
              Model.OnPlay();
         }
     }
