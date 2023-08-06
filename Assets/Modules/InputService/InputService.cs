@@ -48,6 +48,9 @@ namespace Modules.InputService
 
         private bool CheckPositionOverUI(Vector2 position)
         {
+            if(GUIUtility.hotControl > 0)
+                return true;
+            
             var eventDataCurrentPosition = new PointerEventData(EventSystem.current)
             {
                 position = position

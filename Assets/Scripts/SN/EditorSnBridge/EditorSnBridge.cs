@@ -29,10 +29,12 @@ namespace SN.EditorSnBridge
 			if (!File.Exists(PlayerProgressPath))
 			{
 				playerData = new PlayerData();
+				playerData.Reset();
 			}
 			else
 			{
 				playerData = JsonConvert.DeserializeObject<PlayerData>(File.ReadAllText(PlayerProgressPath));
+				playerData.LastSessionDate = DateTime.Now;
 			}
 
 			return UniTask.FromResult(playerData);

@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
+using Cheats;
 using Cysharp.Threading.Tasks;
+using Modules.CheatService;
 using Modules.FlyItemsService;
 using Modules.FSM;
 using Modules.InputService;
@@ -40,13 +42,15 @@ namespace States
                 ServiceLocator.RegisterAndInitialize<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
                 ServiceLocator.RegisterAndInitialize<IInputService>(new InputService(), cancellationToken: cancellationToken),
             };
-
+#if DEV
+            await InitializeCheats();
+#endif
             await tasks.WhenAll(new Progress<float>(p =>
             {
                 Debug.Log($"[{nameof(LoadingState)}] progress {p}");
                 loading.Progress = p;
             }));
-            
+
             await loading.Hide();
             await _playModel.OpenAndShow("PlayPanel", cancellationToken);
             
@@ -57,6 +61,15 @@ namespace States
                 await ServiceLocator.RegisterAndInitialize<IFlyItemsService>(new FlyItemsService(uiService.RootCanvas), cancellationToken: cancellationToken);
             }
         }
+
+#if DEV
+        private async UniTask InitializeCheats()
+        {
+            ICheatService cheatService = new GameObject().AddComponent<CheatService>();
+            await ServiceLocator.RegisterAndInitialize<ICheatService>(cheatService);
+            cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService));
+        }  
+#endif
 
         void IDisposable.Dispose()
         {

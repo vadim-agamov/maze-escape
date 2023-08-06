@@ -275,15 +275,5 @@ namespace Maze.Components
         {
             _initialized = false;
         }
-
-#if DEV
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(Screen.width - 210, Screen.height - 50, 200, 50), "Restart"))
-            {
-                new GotoStateAction(new MazeState(), true).Execute(Bootstrapper.SessionToken).Forget();
-            }
-        }
-#endif
     }
 }

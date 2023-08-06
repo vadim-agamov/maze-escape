@@ -44,6 +44,7 @@ namespace Services.PlayerDataService
         
         public int MaxScore;
         public DateTime InstallDate;
+        public DateTime LastSessionDate;
         public int Level;
         
         [JsonProperty]
@@ -51,6 +52,11 @@ namespace Services.PlayerDataService
         
         [JsonProperty("Consumables")]
         private List<Consumable> _consumables = new List<Consumable>();
+
+        public PlayerData()
+        {
+            Reset();
+        }
 
         public Consumable GetConsumable(string id)
         {
@@ -116,7 +122,8 @@ namespace Services.PlayerDataService
         {
             Level = 0;
             MaxScore = default;
-            InstallDate = default;
+            InstallDate = DateTime.Now;
+            LastSessionDate = DateTime.Now;
             UnlockedItems = new List<string>();
             _consumables = new List<Consumable>();
         }

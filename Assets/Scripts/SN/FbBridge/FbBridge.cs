@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
@@ -50,6 +51,8 @@ namespace SN.FbBridge
         {
             Debug.Log($"FbBridge: OnPlayerProgressLoaded: {dataStr}");
             var data = JsonConvert.DeserializeObject<PlayerData>(dataStr) ?? new PlayerData();
+            data.LastSessionDate = DateTime.Now;
+            
             _loadPlayerProgressCompletionSource.TrySetResult(data);
             _loadPlayerProgressCompletionSource = null;
         }
