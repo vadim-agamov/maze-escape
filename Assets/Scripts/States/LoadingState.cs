@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Cheats;
 using Cysharp.Threading.Tasks;
+using Modules.AnalyticsService;
 using Modules.CheatService;
 using Modules.FlyItemsService;
 using Modules.FSM;
@@ -37,6 +38,7 @@ namespace States
             
             var tasks = new []
             {
+                ServiceLocator.RegisterAndInitialize<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
                 SnBridge.Initialize(),
                 RegisterUI(),
                 ServiceLocator.RegisterAndInitialize<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
