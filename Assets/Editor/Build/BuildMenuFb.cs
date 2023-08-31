@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using Unity.SharpZipLib.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -15,6 +16,8 @@ namespace Build
         private const string AppId = "644999433795437";
         private const string UploadToken = "GG|644999433795437|TfueuQGqjs8BA0pjbsBOS945O1o";
         
+        private static UnityWebRequest _request;
+
         [MenuItem("DEV/FB/BUILD")]
         public static void BuildProd()
         {
@@ -41,6 +44,12 @@ namespace Build
                 
             var zipFile = ZipBuild(path);
             UploadToFb(zipFile);
+
+            while (!_request.isDone)
+            {
+                Thread.Sleep(5000);
+                Debug.Log($"Waiting for upload to finish... {_request.uploadProgress}");
+            }
         }
 
         private static string ZipBuild(string directoryPath)
@@ -61,9 +70,9 @@ namespace Build
             form.AddField("comment", $"uploaded at {DateTime.Now.ToShortDateString()}");
             form.AddField("type", "BUNDLE");
             form.AddField("access_token", UploadToken);
-            var request = UnityWebRequest.Post(url, form);
-            Debug.Log($"UploadToFb begin: {request.url}");
-            var operation = request.SendWebRequest();
+            _request = UnityWebRequest.Post(url, form);
+            Debug.Log($"UploadToFb begin: {_request.url}");
+            var operation = _request.SendWebRequest();
             operation.completed += _ =>
             {
                 Debug.Log($"UploadToFb end: status {operation.webRequest.downloadHandler.text}");

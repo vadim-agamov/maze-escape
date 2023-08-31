@@ -13,7 +13,7 @@ namespace Modules.AnalyticsService
 
         public AnalyticsService()
         {
-            // _analytics.Add(new UnityAnalytic());
+            _analytics.Add(new UnityAnalytic());
             _analytics.Add(new SnAnalytic());
         }
 

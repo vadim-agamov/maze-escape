@@ -1,25 +1,28 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-
+using UnityEngine;
 
 namespace Modules.AnalyticsService
 {
     public class UnityAnalytic : IAnalytic
     {
-        private UniTaskCompletionSource _initializationTokenSource;
+        // private UniTaskCompletionSource _initializationTokenSource;
 
-        UniTask IAnalytic.Initialize(CancellationToken token)
+        async UniTask IAnalytic.Initialize(CancellationToken token)
         {
-            _initializationTokenSource = new UniTaskCompletionSource();
-            Unity.Services.Core.UnityServices.InitializeAsync()
-                .ContinueWith(_ => _initializationTokenSource.TrySetResult(), token);
-            return _initializationTokenSource.Task.AttachExternalCancellation(token);
+            Debug.Log($"UnityAnalytic Initialize begin");
+            // _initializationTokenSource = new UniTaskCompletionSource();
+            await Unity.Services.Core.UnityServices.InitializeAsync();
+                // .ContinueWith(_ => _initializationTokenSource.TrySetResult(), token);
+            Debug.Log("UnityAnalytic Initialize end");
         }
 
         void IAnalytic.Start()
         {
+            Debug.Log($"UnityAnalytic Start begin");
             Unity.Services.Analytics.AnalyticsService.Instance.StartDataCollection();
+            Debug.Log($"UnityAnalytic Start end");
         }
 
         void IAnalytic.Stop()

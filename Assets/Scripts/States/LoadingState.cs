@@ -41,10 +41,11 @@ namespace States
             SnBridge.Initialize();
 
             IPlayerDataService playerDataService = new PlayerDataService();
+            IAnalyticsService analyticsService = new AnalyticsService();
             var tasks = new []
             {
-                ServiceLocator.RegisterAndInitialize<IPlayerDataService>(playerDataService, cancellationToken: cancellationToken),
-                ServiceLocator.RegisterAndInitialize<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
+                ServiceLocator.RegisterAndInitialize(playerDataService, cancellationToken: cancellationToken),
+                ServiceLocator.RegisterAndInitialize(analyticsService, cancellationToken: cancellationToken),
                 RegisterUI(),
                 ServiceLocator.RegisterAndInitialize<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
                 ServiceLocator.RegisterAndInitialize<IInputService>(new InputService(), cancellationToken: cancellationToken),
@@ -62,6 +63,8 @@ namespace States
             
             playerDataService.Data.LastSessionDate = DateTime.Now;
             playerDataService.Commit();
+            
+            analyticsService.Start();
             
             await loading.Hide();
             await _playModel.OpenAndShow("PlayPanel", cancellationToken);
