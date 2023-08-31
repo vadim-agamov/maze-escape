@@ -175,14 +175,15 @@ namespace Maze.Components
         {
             var pathPoints = _path.Select(x => x.transform.position).ToList();
             var points = Bezier.AddSegments(pathPoints, 3);
-            var smoothLine = Bezier.Create(points, 5);
+            var smoothLine = Bezier.Create(points, 5).Skip(1);
 
-            _lineRenderer.positionCount = smoothLine.Count;
-            for (var i = 0; i < smoothLine.Count; i++)
+            var index = 0;
+            foreach (var pos in smoothLine)
             {
-                _lineRenderer.SetPosition(i, smoothLine[i]);
+                _lineRenderer.positionCount = index + 1;
+                _lineRenderer.SetPosition(index, pos);
+                index++;
             }
-
             _lineRenderer.useWorldSpace = true;
         }
 

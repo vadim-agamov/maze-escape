@@ -15,5 +15,10 @@ namespace Modules.UIService
             View.UnsetModel();
             View = null;
         }
+        
+        public void UpdateModel()
+        {
+            View.OnUpdateModel();
+        }
     }
 }

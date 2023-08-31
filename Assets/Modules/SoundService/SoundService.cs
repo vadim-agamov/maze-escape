@@ -18,12 +18,16 @@ namespace Modules.SoundService
 
         UniTask IService.Initialize(IProgress<float> progress, CancellationToken _)
         {
+            Debug.Log($"[{nameof(SoundService)}] Initialize begin");
+
             DontDestroyOnLoad(gameObject);
             gameObject.name = $"[{nameof(SoundService)}]";
             gameObject.AddComponent<AudioListener>();
             _objectPool = new ObjectPool<AudioSource>(OnCreateAudioSource, OnGetAudioSource, OnReleaseAudioSource, OnDestroyAudioSource);
             _activeSources = new List<AudioSource>();
             _cancellationToken = new CancellationTokenSource();
+            
+            Debug.Log($"[{nameof(SoundService)}] Initialize end");
             return UniTask.CompletedTask;
         }
 

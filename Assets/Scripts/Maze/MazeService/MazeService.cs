@@ -4,6 +4,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze.Components;
 using Maze.Configs;
+using Modules.AnalyticsService;
 using Modules.ServiceLocator;
 using Services.PlayerDataService;
 using UnityEngine;
@@ -32,6 +33,8 @@ namespace Maze.MazeService
 
         async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
+            Debug.Log($"[{nameof(MazeService)}] Initialize begin");
+            
             var playerDataService = ServiceLocator.Get<IPlayerDataService>();
             var levels = await Addressables.LoadAssetAsync<LevelsConfig>("LevelsConfig");
             
@@ -48,6 +51,8 @@ namespace Maze.MazeService
             {
                 await component.Initialize(_context);
             }
+            
+            Debug.Log($"[{nameof(MazeService)}] Initialize end");
         }
 
         void IService.Dispose()

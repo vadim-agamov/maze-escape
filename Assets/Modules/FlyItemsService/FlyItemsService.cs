@@ -67,8 +67,10 @@ namespace Modules.FlyItemsService
         
         public UniTask Initialize(IProgress<float> progress = null, CancellationToken cancellationToken = default)
         {
+            Debug.Log($"[{nameof(FlyItemsService)}] Initialize begin");
             _pool = new ObjectPool<Image>(OnCreateItem, OnGetItem, OnReleaseItem);
             _config = Resources.Load<FlyItemsConfig>("FlyItemsConfig");
+            Debug.Log($"[{nameof(FlyItemsService)}] Initialize end");
             return UniTask.CompletedTask;
         }
 

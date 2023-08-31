@@ -18,28 +18,29 @@ namespace Build
         [MenuItem("DEV/FB/BUILD")]
         public static void BuildProd()
         {
-            // PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, GetFbProdDefines());
             PlayerSettings.WebGL.template = FbWebGLTemplate;
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
             var now = DateTime.Now;
             var path = Application.dataPath.Replace("/Assets", $"/Builds/fb/v_{now.Day}.{now.Month}-{now.Hour}.{now.Minute}.{now.Second}");
-            if (Directory.Exists(path)) 
-                Directory.Delete(path);
-            
-            Directory.CreateDirectory(path);
-    
-            if (string.IsNullOrEmpty(path) == false)
+            if (Directory.Exists(path))
             {
-                ChangeConstants(true);
-                BuildBase.BuildAddressables();
-                BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.None);
-                
-                // BuildBase.RemoveMobileWebglWarning(path);
-
-                var zipFile = ZipBuild(path);
-                UploadToFb(zipFile);
+                Directory.Delete(path);
             }
+
+            Directory.CreateDirectory(path);
+
+            if (string.IsNullOrEmpty(path) != false)
+            {
+                return;
+            }
+            
+            ChangeConstants(true);
+            BuildBase.BuildAddressables();
+            BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.None);
+                
+            var zipFile = ZipBuild(path);
+            UploadToFb(zipFile);
         }
 
         private static string ZipBuild(string directoryPath)

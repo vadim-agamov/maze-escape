@@ -13,11 +13,15 @@ namespace Services.JumpScreenService
         
         async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
+            Debug.Log($"[{nameof(JumpScreenService)}] Initialize begin");
+
             var gameObject = await Addressables.InstantiateAsync("JumpScreen").ToUniTask(cancellationToken: cancellationToken);
             gameObject.name = $"[{nameof(JumpScreenService)}]";
             GameObject.DontDestroyOnLoad(gameObject);
 
             _jumpScreen = gameObject.GetComponent<JumpScreen>();
+            
+            Debug.Log($"[{nameof(JumpScreenService)}] Initialize end");
         }
 
         void IService.Dispose()

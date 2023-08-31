@@ -4,15 +4,16 @@ using Cheats;
 using Cysharp.Threading.Tasks;
 using Modules.AnalyticsService;
 using Modules.CheatService;
+using Modules.Extensions;
 using Modules.FlyItemsService;
 using Modules.FSM;
 using Modules.InputService;
 using Modules.ServiceLocator;
+using Modules.SnBridge;
 using Modules.SoundService;
 using Modules.UIService;
 using Services.JumpScreenService;
 using Services.PlayerDataService;
-using SN;
 using UI;
 using UnityEngine;
 
@@ -32,20 +33,24 @@ namespace States
 
             var eventSystemPrefab = Resources.Load("EventSystem");
             var eventSystem = GameObject.Instantiate(eventSystemPrefab);
+            eventSystem.name = "[EventSystem]";
             GameObject.DontDestroyOnLoad(eventSystem);
             
             var loading = GameObject.Find("LoadingPanel").GetComponent<LoadingPanel>();
-            
+
+            SnBridge.Initialize();
+
+            IPlayerDataService playerDataService = new PlayerDataService();
             var tasks = new []
             {
+                ServiceLocator.RegisterAndInitialize<IPlayerDataService>(playerDataService, cancellationToken: cancellationToken),
                 ServiceLocator.RegisterAndInitialize<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
-                SnBridge.Initialize(),
                 RegisterUI(),
                 ServiceLocator.RegisterAndInitialize<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
-                ServiceLocator.RegisterAndInitialize<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
                 ServiceLocator.RegisterAndInitialize<IInputService>(new InputService(), cancellationToken: cancellationToken),
                 ServiceLocator.RegisterAndInitialize<IJumpScreenService>(new JumpScreenService(), cancellationToken: cancellationToken)
             };
+
 #if DEV
             await InitializeCheats();
 #endif
@@ -54,7 +59,10 @@ namespace States
                 Debug.Log($"[{nameof(LoadingState)}] progress {p}");
                 loading.Progress = p;
             }));
-
+            
+            playerDataService.Data.LastSessionDate = DateTime.Now;
+            playerDataService.Commit();
+            
             await loading.Hide();
             await _playModel.OpenAndShow("PlayPanel", cancellationToken);
             
@@ -74,11 +82,7 @@ namespace States
             cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService));
         }  
 #endif
-
-        void IDisposable.Dispose()
-        {
-        }
-
+        
         async UniTask IState.Exit(CancellationToken cancellationToken)
         {
             await _playModel.HideAndClose(cancellationToken);

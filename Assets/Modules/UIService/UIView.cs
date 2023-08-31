@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Modules.UIService
 {
-    public abstract class UIViewBase : MonoBehaviour, IUIView
+    public abstract class UIViewBase : MonoBehaviour
     {
         [SerializeReference] 
         private IViewAnimation _showAnimation;
@@ -55,6 +55,7 @@ namespace Modules.UIService
         }
 
         protected virtual void OnSetModel() { }
+        internal virtual void OnUpdateModel() { }
         protected virtual void OnUnsetModel() { }
     }
 

@@ -6,5 +6,6 @@ namespace Services.PlayerDataService
     {
         PlayerData Data { get; }
         void Commit();
+        void Reset();
     }
 }

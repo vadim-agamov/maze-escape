@@ -17,7 +17,9 @@ namespace Modules.InputService
         
         UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
+            Debug.Log($"[{nameof(InputService)}] Initialize begin");
             _raycastResult = new List<RaycastResult>();
+            Debug.Log($"[{nameof(InputService)}] Initialize end");
             return UniTask.CompletedTask;
         }
 

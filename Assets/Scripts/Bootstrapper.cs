@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Modules.FSM;
 using Modules.ServiceLocator;
 using States;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bootstrapper
@@ -14,8 +15,15 @@ public class Bootstrapper
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void InitializeSceneStart()
     {
+        Application.quitting += OnApplicationQuit;
         _applicationCancellation = new CancellationTokenSource();
-        var fsmService = ServiceLocator.Register<IFsmService>(new FsmService());
-        fsmService.Enter(new LoadingState()).Forget();
+        Fsm.Enter(new LoadingState(), _applicationCancellation.Token).Forget();
+    }
+
+    private static void OnApplicationQuit()
+    {
+        Application.quitting -= OnApplicationQuit;
+        _applicationCancellation.Cancel();
+        _applicationCancellation = null;
     }
 }

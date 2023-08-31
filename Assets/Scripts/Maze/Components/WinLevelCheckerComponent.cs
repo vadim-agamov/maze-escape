@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Actions;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
 using Maze.MazeService;
+using Modules.AnalyticsService;
 using Modules.ServiceLocator;
 using Services.PlayerDataService;
 
@@ -29,6 +31,8 @@ namespace Maze.Components
             if (pathUpdatedEvent.Cells.Last.Value.CellType.HasFlag(CellType.Finish))
             {
                 WinLevelAction().Forget();
+                
+                ServiceLocator.Get<IAnalyticsService>().TrackEvent($"WinLevel_{_context.Level.LevelId}");
             }
         }
 

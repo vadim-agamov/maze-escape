@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze.Cheats;
@@ -6,7 +5,9 @@ using Maze.MazeService;
 using Modules.CheatService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
+using Unity.Services.Analytics;
 using UnityEngine.SceneManagement;
+using IAnalyticsService = Modules.AnalyticsService.IAnalyticsService;
 using IState = Modules.FSM.IState;
 
 namespace Maze
@@ -15,11 +16,7 @@ namespace Maze
     {
         private readonly string AMBIENT_SOUND_ID = "welcome-to-coconut-island-153182";
         private MazeCheatsProvider _cheatsProvider;
-
-        void IDisposable.Dispose()
-        {
-        }
-
+        
         async UniTask IState.Enter(CancellationToken cancellationToken)
         {
             await SceneManager.LoadSceneAsync("Scenes/CoreMaze");

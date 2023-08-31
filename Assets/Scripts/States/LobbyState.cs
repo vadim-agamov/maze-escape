@@ -24,9 +24,5 @@ namespace States
             await _lobbyScreenModel.Hide(cancellationToken);
             _lobbyScreenModel.Close();
         }
-
-        void IDisposable.Dispose()
-        {
-        }
     }
 }

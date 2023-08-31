@@ -22,6 +22,8 @@ namespace Modules.UIService
         
         async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
+            Debug.Log($"[{nameof(UIService)}] Initialize begin");
+            
             _uiRoot = await Addressables.InstantiateAsync("UIRoot");
             _uiRoot.name = "[IURoot]";
             _rootCanvas = _uiRoot.GetComponentInChildren<Canvas>();
@@ -34,7 +36,7 @@ namespace Modules.UIService
 
             Object.DontDestroyOnLoad(_uiRoot);
             
-            progress?.Report(1f);
+            Debug.Log($"[{nameof(UIService)}] Initialize end");
         }
 
         void IService.Dispose()

@@ -11,7 +11,6 @@ namespace Actions
     public class GotoStateAction
     {
         private readonly IState _state;
-        private readonly IFsmService _fsm;
         private readonly bool _withJumpScreen;
         private readonly IJumpScreenService _jumpScreen;
 
@@ -19,7 +18,6 @@ namespace Actions
         {
             _withJumpScreen = withJumpScreen;
             _state = state;
-            _fsm = ServiceLocator.Get<IFsmService>();
             _jumpScreen = ServiceLocator.Get<IJumpScreenService>();
         }
 
@@ -30,7 +28,7 @@ namespace Actions
                 await _jumpScreen.Show(token);
             }
 
-            await _fsm.Enter(_state, token);
+            await Fsm.Enter(_state, token);
             // await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
 
             if (_withJumpScreen)

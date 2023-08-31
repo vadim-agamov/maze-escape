@@ -23,12 +23,11 @@ namespace Cheats
                 "Reset", () =>
             {
                 Debug.Log("Reset");
-                _playerDataService.Data.Reset();
-                _playerDataService.Commit();
+                _playerDataService.Reset();
             });
             
-            _installDate = new CheatLabel(() => $"Install date: {_playerDataService.Data.InstallDate}");
-            _lastSessionDate = new CheatLabel(() => $"Last Session date: {_playerDataService.Data.LastSessionDate}");
+            _installDate = new CheatLabel(() => $"Install date: {_playerDataService.Data?.InstallDate}");
+            _lastSessionDate = new CheatLabel(() => $"Last Session date: {_playerDataService.Data?.LastSessionDate}");
         }
 
         void ICheatsProvider.OnGUI()

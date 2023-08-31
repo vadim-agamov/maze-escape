@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Modules.ServiceLocator;
+using UnityEngine;
 
 namespace Modules.AnalyticsService
 {
@@ -12,12 +13,15 @@ namespace Modules.AnalyticsService
 
         public AnalyticsService()
         {
-            _analytics.Add(new UnityAnalytic());
+            // _analytics.Add(new UnityAnalytic());
+            _analytics.Add(new SnAnalytic());
         }
 
         async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
+            Debug.Log($"[{nameof(AnalyticsService)}] Initialize begin");
             await UniTask.WhenAll(_analytics.Select(a => a.Initialize(cancellationToken)));
+            Debug.Log($"[{nameof(AnalyticsService)}] Initialize end");
         }
 
         void IService.Dispose()

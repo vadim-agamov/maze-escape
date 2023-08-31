@@ -17,6 +17,6 @@ namespace Modules.AnalyticsService
     {
         void Start();
         void Stop();
-        void TrackEvent(string eventName, Dictionary<string, object> parameters);
+        void TrackEvent(string eventName, Dictionary<string, object> parameters = null);
     }
 }
