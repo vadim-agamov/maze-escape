@@ -2,6 +2,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze;
 using Modules.ServiceLocator;
+using Modules.SocialNetworkService;
 using Modules.UIService;
 using Services.PlayerDataService;
 using UI;
@@ -10,6 +11,8 @@ namespace Actions
 {
     public class WinLevelAction
     {
+        private readonly ISocialNetworkService _snService = ServiceLocator.Get<ISocialNetworkService>();
+
         public async UniTask Execute(CancellationToken token)
         {
             var model = new LevelWinModel();
@@ -25,6 +28,7 @@ namespace Actions
 
             await model.HideAndClose(token);
 
+            await new ShowInterstitialAction().Execute();
             await new GotoStateAction(new MazeState(), true).Execute(token);
         }
     }

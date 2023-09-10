@@ -30,7 +30,7 @@ namespace Maze.Components
         private Context _context;
         private float _cellSize = 1.5f;
 
-        public UniTask Initialize(Context context)
+        public UniTask Initialize(Context context, IMazeService mazeService)
         {
             _context = context;
             _context.Cells = context.Level.Cells;

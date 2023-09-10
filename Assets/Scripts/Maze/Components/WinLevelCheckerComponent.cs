@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Actions;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
@@ -6,7 +5,6 @@ using Maze.Configs;
 using Maze.MazeService;
 using Modules.AnalyticsService;
 using Modules.ServiceLocator;
-using Services.PlayerDataService;
 
 namespace Maze.Components
 {
@@ -16,12 +14,11 @@ namespace Maze.Components
         private PathComponent _pathComponent;
         private CharacterComponent _characterComponent;
 
-        public UniTask Initialize(Context context)
+        public UniTask Initialize(Context context, IMazeService mazeService)
         {
             _context = context;
-            var service = ServiceLocator.Get<MazeService.MazeService>();
-            _pathComponent = service.GetComponent<PathComponent>();
-            _characterComponent = service.GetComponent<CharacterComponent>();
+            _pathComponent = mazeService.GetComponent<PathComponent>();
+            _characterComponent = mazeService.GetComponent<CharacterComponent>();
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             return UniTask.CompletedTask;
         }

@@ -25,7 +25,7 @@ namespace Maze.Components
         {
         }
 
-        UniTask IComponent.Initialize(Context context)
+        UniTask IComponent.Initialize(Context context, IMazeService mazeService)
         {
             _soundService = ServiceLocator.Get<ISoundService>();
             _context = context;

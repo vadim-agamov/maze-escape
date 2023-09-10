@@ -16,7 +16,7 @@ namespace Maze.Cheats
         private readonly CheatLabel _levelInfo;
         private readonly CheatButton _winLevel;
 
-        public MazeCheatsProvider(ICheatService cheatService)
+        public MazeCheatsProvider(ICheatService cheatService, IMazeService mazeService)
         {
             _restart = new CheatButton(
                 cheatService,
@@ -26,7 +26,7 @@ namespace Maze.Cheats
                     new GotoStateAction(new MazeState(), true).Execute(Bootstrapper.SessionToken).Forget();
                 });
 
-            var levelConfig = ServiceLocator.Get<IMazeService>().Context.Level;
+            var levelConfig = mazeService.Context.Level;
             _levelInfo = new CheatLabel(() => $"Level Info: #{levelConfig.LevelId}, min path:{levelConfig.MinPath}");
             
             var playerDataService = ServiceLocator.Get<IPlayerDataService>();

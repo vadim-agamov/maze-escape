@@ -91,11 +91,12 @@
         logic_progress = p;
         if(logic_progress > 1) logic_progress = 1;
       }).then((instance) => {
-        console.log("createUnityInstance loaded");
+        console.log("startGameAsync load");
         unityInstance = instance;
-        FBInstant.startGameAsync();
+      }).then(() => {
+        console.log("startGameAsync loaded"); 
       }).catch((message) => {
-        alert(message);
+        console.log("startGameAsync error: " + message);
       });
       }
     </script>

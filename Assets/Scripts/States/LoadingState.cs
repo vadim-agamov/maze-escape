@@ -9,7 +9,9 @@ using Modules.FlyItemsService;
 using Modules.FSM;
 using Modules.InputService;
 using Modules.ServiceLocator;
-using Modules.SnBridge;
+using Modules.SocialNetworkService;
+using Modules.SocialNetworkService.EditorSocialNetworkService;
+using Modules.SocialNetworkService.FbSocialNetworkService;
 using Modules.SoundService;
 using Modules.UIService;
 using Services.JumpScreenService;
@@ -31,58 +33,68 @@ namespace States
             
             _playModel = new PlayModel();
 
-            var eventSystemPrefab = Resources.Load("EventSystem");
-            var eventSystem = GameObject.Instantiate(eventSystemPrefab);
-            eventSystem.name = "[EventSystem]";
-            GameObject.DontDestroyOnLoad(eventSystem);
-            
+            SetupEventSystem();
+
             var loading = GameObject.Find("LoadingPanel").GetComponent<LoadingPanel>();
-
-            SnBridge.Initialize();
-
-            IPlayerDataService playerDataService = new PlayerDataService();
-            IAnalyticsService analyticsService = new AnalyticsService();
+            
+#if UNITY_EDITOR
+            var socialNetworkService = new GameObject("EditorSN").AddComponent<EditorSocialNetworkService>();
+#elif FB
+            var socialNetworkService = new GameObject("FbBridge").AddComponent<FbSocialNetworkService>();
+#endif
+            
             var tasks = new []
             {
-                ServiceLocator.RegisterAndInitialize(playerDataService, cancellationToken: cancellationToken),
-                ServiceLocator.RegisterAndInitialize(analyticsService, cancellationToken: cancellationToken),
-                RegisterUI(),
-                ServiceLocator.RegisterAndInitialize<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
-                ServiceLocator.RegisterAndInitialize<IInputService>(new InputService(), cancellationToken: cancellationToken),
-                ServiceLocator.RegisterAndInitialize<IJumpScreenService>(new JumpScreenService(), cancellationToken: cancellationToken)
-            };
-
+                ServiceLocator.Register<ISocialNetworkService>(socialNetworkService, cancellationToken: cancellationToken),
+                ServiceLocator.Register<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
+                ServiceLocator.Register<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
+                RegisterUI(cancellationToken),
+                ServiceLocator.Register<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
+                ServiceLocator.Register<IInputService>(new InputService(), cancellationToken: cancellationToken),
+                ServiceLocator.Register<IJumpScreenService>(new JumpScreenService(), cancellationToken: cancellationToken),
 #if DEV
-            await InitializeCheats();
+                RegisterCheats(cancellationToken)
 #endif
+            };
+            
             await tasks.WhenAll(new Progress<float>(p =>
             {
                 Debug.Log($"[{nameof(LoadingState)}] progress {p}");
                 loading.Progress = p;
             }));
             
-            playerDataService.Data.LastSessionDate = DateTime.Now;
-            playerDataService.Commit();
+            Debug.Log($"all services registered");
             
-            analyticsService.Start();
+            ServiceLocator.Get<IPlayerDataService>().Data.LastSessionDate = DateTime.Now;
+            ServiceLocator.Get<IAnalyticsService>().Start();
             
             await loading.Hide();
             await _playModel.OpenAndShow("PlayPanel", cancellationToken);
-            
-            async UniTask RegisterUI()
-            {
-                IUIService uiService = new UIService();
-                await ServiceLocator.RegisterAndInitialize(uiService, cancellationToken: cancellationToken);
-                await ServiceLocator.RegisterAndInitialize<IFlyItemsService>(new FlyItemsService(uiService.RootCanvas), cancellationToken: cancellationToken);
-            }
+        }
+
+        private async UniTask RegisterUI(CancellationToken token)
+        {
+            IUIService uiService = new UIService();
+            await ServiceLocator.Register(uiService, cancellationToken: token);
+            await ServiceLocator.Register<IFlyItemsService>(new FlyItemsService(uiService.RootCanvas), cancellationToken: token);
+        }
+        
+        private static void SetupEventSystem()
+        {
+            var eventSystemPrefab = Resources.Load("EventSystem");
+            var eventSystem = GameObject.Instantiate(eventSystemPrefab);
+            eventSystem.name = "[EventSystem]";
+            GameObject.DontDestroyOnLoad(eventSystem);
         }
 
 #if DEV
-        private async UniTask InitializeCheats()
+        private async UniTask RegisterCheats(CancellationToken token)
         {
             ICheatService cheatService = new GameObject().AddComponent<CheatService>();
-            await ServiceLocator.RegisterAndInitialize<ICheatService>(cheatService);
-            cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService));
+            await ServiceLocator.Register(cheatService, cancellationToken: token);
+            var playerDataService = await ServiceLocator.GetAsync<IPlayerDataService>(token);
+            cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService, playerDataService));
+            cheatService.RegisterCheatProvider(new AdCheatsProvider(cheatService));
         }  
 #endif
         

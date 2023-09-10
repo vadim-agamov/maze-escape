@@ -36,7 +36,7 @@ namespace Maze.Components
 
         public bool IsWalking => _currentWaypoint == Vector3.zero;
         
-        UniTask IComponent.Initialize(Context context)
+        UniTask IComponent.Initialize(Context context, IMazeService mazeService)
         {
             _context = context;
             _waypoints = new LinkedList<Vector3>();

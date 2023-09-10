@@ -6,6 +6,6 @@ namespace Maze.Components
 {
     public interface IComponent : IDisposable
     {
-        UniTask Initialize(Context context);
+        UniTask Initialize(Context context, IMazeService mazeService);
     }
 }

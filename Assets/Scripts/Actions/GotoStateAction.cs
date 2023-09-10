@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Modules.FSM;
@@ -29,7 +28,6 @@ namespace Actions
             }
 
             await Fsm.Enter(_state, token);
-            // await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
 
             if (_withJumpScreen)
             {

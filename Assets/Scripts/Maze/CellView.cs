@@ -64,16 +64,16 @@ namespace Maze
             _downWall.sprite = _horizontalWalls.Random();
             
             _downLeftWall.sprite = _cornerWalls.Random();
-            _downLeftWall.transform.Rotate(0,0, Random.Range(0, 360));
+            // _downLeftWall.transform.Rotate(0,0, Random.Range(0, 360));
             
             _downRightWall.sprite = _cornerWalls.Random();
-            _downRightWall.transform.Rotate(0,0, Random.Range(0, 360));
+            // _downRightWall.transform.Rotate(0,0, Random.Range(0, 360));
             
             _upLeftWall.sprite = _cornerWalls.Random();
-            _upLeftWall.transform.Rotate(0,0, Random.Range(0, 360));
+            // _upLeftWall.transform.Rotate(0,0, Random.Range(0, 360));
 
             _upRightWall.sprite = _cornerWalls.Random();
-            _upRightWall.transform.Rotate(0,0, Random.Range(0, 360));
+            // _upRightWall.transform.Rotate(0,0, Random.Range(0, 360));
 
             if(_cellType.HasFlag(CellType.RightWall))
             {

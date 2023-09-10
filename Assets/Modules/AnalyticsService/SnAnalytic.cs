@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Modules.SocialNetworkService;
 
 namespace Modules.AnalyticsService
 {
     public class SnAnalytic : IAnalytic
     {
-        UniTask IAnalytic.Initialize(CancellationToken token)
+        private ISocialNetworkService _snService;
+
+        async UniTask IAnalytic.Initialize(CancellationToken token)
         {
-            return UniTask.CompletedTask;
+            _snService = await ServiceLocator.ServiceLocator.GetAsync<ISocialNetworkService>(token);
         }
 
         void IAnalytic.Start()
@@ -21,7 +24,7 @@ namespace Modules.AnalyticsService
 
         void IAnalytic.TrackEvent(string eventName, Dictionary<string, object> parameters)
         {
-            SnBridge.SnBridge.Instance.LogEvent(eventName, parameters);
+            _snService.LogEvent(eventName, parameters);
         }
     }
 }

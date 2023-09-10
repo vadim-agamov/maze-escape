@@ -255,10 +255,9 @@ namespace Maze.Components
             return false;
         }
 
-        public UniTask Initialize(Context context)
+        public UniTask Initialize(Context context, IMazeService mazeService)
         {
             _inputService = ServiceLocator.Get<IInputService>();
-            var mazeService = ServiceLocator.Get<IMazeService>();
             _fieldViewComponent = mazeService.GetComponent<FieldViewComponent>();
 
             _context = context;

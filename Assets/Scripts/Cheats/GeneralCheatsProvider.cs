@@ -1,6 +1,5 @@
 using Modules.CheatService;
 using Modules.CheatService.Controls;
-using Modules.ServiceLocator;
 using Services.PlayerDataService;
 using UnityEngine;
 
@@ -14,13 +13,11 @@ namespace Cheats
         private readonly CheatLabel _installDate;
         private readonly CheatLabel _lastSessionDate;
 
-        public GeneralCheatsProvider(ICheatService cheatService)
+        public GeneralCheatsProvider(ICheatService cheatService, IPlayerDataService playerDataService)
         {
-            _playerDataService = ServiceLocator.Get<IPlayerDataService>();
+            _playerDataService = playerDataService;
 
-            _reset = new CheatButton(
-                cheatService,
-                "Reset", () =>
+            _reset = new CheatButton(cheatService, "Reset", () =>
             {
                 Debug.Log("Reset");
                 _playerDataService.Reset();

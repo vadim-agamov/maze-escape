@@ -5,9 +5,7 @@ using Maze.MazeService;
 using Modules.CheatService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
-using Unity.Services.Analytics;
 using UnityEngine.SceneManagement;
-using IAnalyticsService = Modules.AnalyticsService.IAnalyticsService;
 using IState = Modules.FSM.IState;
 
 namespace Maze
@@ -20,12 +18,12 @@ namespace Maze
         async UniTask IState.Enter(CancellationToken cancellationToken)
         {
             await SceneManager.LoadSceneAsync("Scenes/CoreMaze");
-            await ServiceLocator.RegisterAndInitialize<IMazeService>(new MazeService.MazeService(), cancellationToken: cancellationToken);
+            await ServiceLocator.Register<IMazeService>(new MazeService.MazeService(), cancellationToken: cancellationToken);
             ServiceLocator.Get<ISoundService>().PlayLoop(AMBIENT_SOUND_ID);
 
 #if DEV
             var cheatService = ServiceLocator.Get<ICheatService>();
-            _cheatsProvider = new MazeCheatsProvider(cheatService);
+            _cheatsProvider = new MazeCheatsProvider(cheatService, ServiceLocator.Get<IMazeService>());
             cheatService.RegisterCheatProvider(_cheatsProvider);
 #endif
         }

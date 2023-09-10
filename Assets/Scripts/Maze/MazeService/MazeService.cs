@@ -49,7 +49,7 @@ namespace Maze.MazeService
 
             foreach (var component in _components)
             {
-                await component.Initialize(_context);
+                await component.Initialize(_context, this);
             }
             
             Debug.Log($"[{nameof(MazeService)}] Initialize end");

@@ -16,7 +16,7 @@ namespace Maze.Components
         [SerializeField] 
         private float _padding;
 
-        public UniTask Initialize(Context context)
+        public UniTask Initialize(Context context, IMazeService mazeService)
         {
             context.Camera = _camera;
             
