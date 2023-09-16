@@ -10,14 +10,20 @@ using Modules.FSM;
 using Modules.InputService;
 using Modules.ServiceLocator;
 using Modules.SocialNetworkService;
-using Modules.SocialNetworkService.EditorSocialNetworkService;
-using Modules.SocialNetworkService.FbSocialNetworkService;
 using Modules.SoundService;
 using Modules.UIService;
 using Services.JumpScreenService;
 using Services.PlayerDataService;
 using UI;
 using UnityEngine;
+
+#if UNITY_EDITOR
+    using Modules.SocialNetworkService.EditorSocialNetworkService;
+#elif FB
+    using Modules.SocialNetworkService.FbSocialNetworkService;
+#elif DUMMY_WEBGL
+    using Modules.SocialNetworkService.DummySocialNetworkService;
+#endif
 
 namespace States
 {
@@ -41,8 +47,10 @@ namespace States
             var socialNetworkService = new GameObject("EditorSN").AddComponent<EditorSocialNetworkService>();
 #elif FB
             var socialNetworkService = new GameObject("FbBridge").AddComponent<FbSocialNetworkService>();
+#elif DUMMY_WEBGL
+            var socialNetworkService = new GameObject("DummySN").AddComponent<DummySocialNetworkService>();
 #endif
-            
+
             var tasks = new []
             {
                 ServiceLocator.Register<ISocialNetworkService>(socialNetworkService, cancellationToken: cancellationToken),

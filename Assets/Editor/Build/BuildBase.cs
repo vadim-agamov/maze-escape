@@ -5,7 +5,7 @@ using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 
-namespace Build
+namespace Editor.Build
 {
     public static class BuildBase 
     {
@@ -104,7 +104,7 @@ namespace Build
         {
             return "DEV;UNITASK_DOTWEEN_SUPPORT;ANALYTICS";
         }
-        public  static string GetProdDefines()
+        public static string GetProdDefines()
         {
             return "UNITASK_DOTWEEN_SUPPORT;ANALYTICS;RELEASE";
         }

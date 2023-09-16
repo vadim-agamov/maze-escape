@@ -11,8 +11,7 @@ namespace Modules.SocialNetworkService.EditorSocialNetworkService
 	public class EditorSocialNetworkService : MonoBehaviour, ISocialNetworkService
 	{
 		private static string PlayerProgressPath => Path.Combine(Application.persistentDataPath, "player_progress.json");
-
-
+		
 		string ISocialNetworkService.GetUserId() => SystemInfo.deviceUniqueIdentifier;
 
 		UniTask<string> ISocialNetworkService.LoadPlayerProgress()

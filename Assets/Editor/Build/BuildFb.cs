@@ -1,14 +1,15 @@
 using System;
 using System.IO;
 using System.Threading;
+using Build;
 using Unity.SharpZipLib.Utils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Build
+namespace Editor.Build
 {
-    public static class BuildMenuFb
+    public static class BuildFb
     {
         //constants
         private const string FbDefine = "FB";
@@ -18,7 +19,7 @@ namespace Build
         
         private static UnityWebRequest _request;
 
-        [MenuItem("DEV/FB/BUILD")]
+        [MenuItem("Game/Build/FB/BUILD")]
         public static void BuildProd()
         {
             PlayerSettings.WebGL.template = FbWebGLTemplate;
@@ -38,7 +39,6 @@ namespace Build
                 return;
             }
             
-            ChangeConstants(true);
             BuildBase.BuildAddressables();
             BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.None);
                 
@@ -79,16 +79,14 @@ namespace Build
             };
         }
 
-        [MenuItem("DEV/FB/SET DEFINES/DEBUG")]
+        [MenuItem("Game/Build/FB/SET DEFINES/DEBUG")]
         public static void SetFbDebugDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbDebugDefines());
-            // PlayerSettings.WebGL.template = FbWebGLTemplate;
-
             BuildBase.EnableDevFolders();
         }
         
-        [MenuItem("DEV/FB/SET DEFINES/PROD")]
+        [MenuItem("Game/Build/FB/SET DEFINES/PROD")]
         public static void SetFbProdDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbProdDefines());
@@ -105,24 +103,6 @@ namespace Build
         {
             return BuildBase.GetProdDefines() + ";" + FbDefine;
         }
-
-       private static void ChangeConstants(bool incrementBuildNumber)
-       {
-           // var constants = (Constants)AssetDatabase.LoadAssetAtPath(@"Assets\Resources\Constants.asset", typeof(Constants));
-           //
-           // AssetDatabase.StartAssetEditing();
-           //
-           // constants.BuildTime = DateTime.UtcNow.ToString("dd.MM.yyyy hh:mm:ss");
-           // if (incrementBuildNumber)
-           // {
-           //     constants.BuildNumberFB++;
-           // }
-           //
-           // EditorUtility.SetDirty(constants);
-           //
-           // AssetDatabase.StopAssetEditing();
-           // AssetDatabase.SaveAssets();
-       }
     }
 }
 

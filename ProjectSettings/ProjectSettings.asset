@@ -511,7 +511,8 @@ PlayerSettings:
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
   openGLRequireES32: 0
-  m_TemplateCustomTags: {}
+  m_TemplateCustomTags:
+    PRODUCT_DESCRIPTION: 
   mobileMTRendering:
     Android: 1
     iPhone: 1
@@ -767,7 +768,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: PROJECT:FbMinimal
+  webGLTemplate: PROJECT:Minimal
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 2
@@ -783,7 +784,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    WebGL: DEV;UNITASK_DOTWEEN_SUPPORT;ANALYTICS;FB
+    WebGL: DEV;UNITASK_DOTWEEN_SUPPORT;ANALYTICS;DUMMY_WEBGL
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
