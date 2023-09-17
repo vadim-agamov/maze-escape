@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading;
-using Build;
 using Unity.SharpZipLib.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -19,9 +18,11 @@ namespace Editor.Build
         
         private static UnityWebRequest _request;
 
-        [MenuItem("Game/Build/FB/BUILD")]
-        public static void BuildProd()
+        [MenuItem("Game/Build/FB/Build")]
+        public static void Build()
         {
+            SetFbDebugDefines();
+            
             PlayerSettings.WebGL.template = FbWebGLTemplate;
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
@@ -40,7 +41,7 @@ namespace Editor.Build
             }
             
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.None);
+            BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
                 
             var zipFile = ZipBuild(path);
             UploadToFb(zipFile);
@@ -79,18 +80,17 @@ namespace Editor.Build
             };
         }
 
-        [MenuItem("Game/Build/FB/SET DEFINES/DEBUG")]
+        [MenuItem("Game/Build/FB/Set Defines Dev")]
         public static void SetFbDebugDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbDebugDefines());
             BuildBase.EnableDevFolders();
         }
         
-        [MenuItem("Game/Build/FB/SET DEFINES/PROD")]
+        [MenuItem("Game/Build/FB/Set Defines Prod")]
         public static void SetFbProdDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbProdDefines());
-            
             BuildBase.DisableDevFolders();
         }
         

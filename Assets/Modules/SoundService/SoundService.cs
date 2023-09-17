@@ -46,6 +46,7 @@ namespace Modules.SoundService
                 source.clip = Resources.Load<AudioClip>($"Sounds/{soundId}");
             }
 
+            source.loop = true;
             source.Play();
         }
 

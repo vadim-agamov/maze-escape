@@ -1,7 +1,8 @@
 {
   "instant_games": {
     "platform_version": "RICH_GAMEPLAY",
-    "navigation_menu_version": "NAV_BAR",
-    "orientation": "PORTRAIT"
+    "orientation": "PORTRAIT",
+    "override_web_orientation": "LANDSCAPE",
+    "navigation_menu_version": "NAV_BAR"
   }
 }

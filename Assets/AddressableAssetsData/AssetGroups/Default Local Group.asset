@@ -21,34 +21,37 @@ MonoBehaviour:
     m_Address: LevelLoosedUI
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5100a73c5d2d5488b9b3063c2a353e42
     m_Address: UIRoot
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fe2766fcfe3ca4667ae8661d05d9296b
     m_Address: LobbyScreen
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 2e3637c6f2f104262af9b62a9f749850
-    m_Address: CheatsUI
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 29ecb0e9eca83437fa9b16181a51e508
     m_Address: JumpScreen
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ac14bf01aceb64ed089d4cd29bcd6d59
     m_Address: PlayPanel
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 57230025dc2524ac4a04eede35f44b95
     m_Address: LevelWinUI
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9da3cf164ed7e436eb6d5578a7892d8d
     m_Address: LevelsConfig
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3640f2fade6034cb48ab522b37da8ae7, type: 2}
   m_SchemaSet:

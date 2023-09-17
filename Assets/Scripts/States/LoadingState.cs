@@ -35,14 +35,12 @@ namespace States
         {
             Application.targetFrameRate = 60;
             Time.fixedDeltaTime = 1f / Application.targetFrameRate;
-            Debug.Log($"[{nameof(LoadingState)}] {Application.targetFrameRate}, {Time.fixedDeltaTime}");
-            
+
             _playModel = new PlayModel();
 
             SetupEventSystem();
-
             var loading = GameObject.Find("LoadingPanel").GetComponent<LoadingPanel>();
-            
+
 #if UNITY_EDITOR
             var socialNetworkService = new GameObject("EditorSN").AddComponent<EditorSocialNetworkService>();
 #elif FB
@@ -51,31 +49,31 @@ namespace States
             var socialNetworkService = new GameObject("DummySN").AddComponent<DummySocialNetworkService>();
 #endif
 
-            var tasks = new []
+            var tasks = new[]
             {
                 ServiceLocator.Register<ISocialNetworkService>(socialNetworkService, cancellationToken: cancellationToken),
                 ServiceLocator.Register<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
                 ServiceLocator.Register<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
                 RegisterUI(cancellationToken),
                 ServiceLocator.Register<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
-                ServiceLocator.Register<IInputService>(new InputService(), cancellationToken: cancellationToken),
-                ServiceLocator.Register<IJumpScreenService>(new JumpScreenService(), cancellationToken: cancellationToken),
+                ServiceLocator.Register<IInputService>(new InputService(), cancellationToken: cancellationToken), ServiceLocator.Register<IJumpScreenService>(new JumpScreenService(), cancellationToken: cancellationToken),
 #if DEV
                 RegisterCheats(cancellationToken)
 #endif
             };
-            
+
             await tasks.WhenAll(new Progress<float>(p =>
             {
                 Debug.Log($"[{nameof(LoadingState)}] progress {p}");
                 loading.Progress = p;
             }));
             
-            Debug.Log($"all services registered");
-            
+            Debug.Log($"[{nameof(LoadingState)}] all services registered");
+
             ServiceLocator.Get<IPlayerDataService>().Data.LastSessionDate = DateTime.Now;
             ServiceLocator.Get<IAnalyticsService>().Start();
-            
+            ServiceLocator.Get<IAnalyticsService>().TrackEvent($"Loaded");
+
             await loading.Hide();
             await _playModel.OpenAndShow("PlayPanel", cancellationToken);
         }

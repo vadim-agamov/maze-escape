@@ -32,8 +32,11 @@ namespace Maze.Components
 
         public UniTask Initialize(Context context, IMazeService mazeService)
         {
+            var portraitScreen = Screen.width < Screen.height;
+            Debug.Log($"[{nameof(FieldViewComponent)}] Initialize begin, portraitScreen: {portraitScreen} {Screen.width}x{Screen.height}");
+            
             _context = context;
-            _context.Cells = context.Level.Cells;
+            _context.Cells = portraitScreen ? context.Level.Cells : context.Level.PivotedCells;
             var rows = _context.Cells.GetLength(0);
             var cols = _context.Cells.GetLength(1);
 

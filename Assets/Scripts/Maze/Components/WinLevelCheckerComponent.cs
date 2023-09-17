@@ -28,8 +28,6 @@ namespace Maze.Components
             if (pathUpdatedEvent.Cells.Last.Value.CellType.HasFlag(CellType.Finish))
             {
                 WinLevelAction().Forget();
-                
-                ServiceLocator.Get<IAnalyticsService>().TrackEvent($"WinLevel_{_context.Level.LevelId}");
             }
         }
 

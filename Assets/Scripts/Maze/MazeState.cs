@@ -2,6 +2,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze.Cheats;
 using Maze.MazeService;
+using Modules.AnalyticsService;
 using Modules.CheatService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
@@ -20,7 +21,6 @@ namespace Maze
             await SceneManager.LoadSceneAsync("Scenes/CoreMaze");
             await ServiceLocator.Register<IMazeService>(new MazeService.MazeService(), cancellationToken: cancellationToken);
             ServiceLocator.Get<ISoundService>().PlayLoop(AMBIENT_SOUND_ID);
-
 #if DEV
             var cheatService = ServiceLocator.Get<ICheatService>();
             _cheatsProvider = new MazeCheatsProvider(cheatService, ServiceLocator.Get<IMazeService>());

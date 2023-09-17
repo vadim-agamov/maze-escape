@@ -24,11 +24,11 @@ namespace Maze.Components
         [SerializeField] 
         private float _speed = 1;
 
-        [SerializeField] 
-        private Animator _animator;
-
-        [SerializeField]
-        private CrabWaypoint _crabWaypoint;
+        // [SerializeField] 
+        // private Animator _animator;
+        //
+        // [SerializeField]
+        // private CrabWaypoint _crabWaypoint;
         
         // private ObjectPool<CrabWaypoint> _waypointsPool;
 
@@ -48,16 +48,16 @@ namespace Maze.Components
             return UniTask.CompletedTask;
         }
 
-        #region Pool
-        private CrabWaypoint CreateWaypoint() => Instantiate(_crabWaypoint);
-
-        private void DestroyWaypoint(CrabWaypoint waypoint) => Destroy(waypoint.gameObject);
-
-        private void GetWaypoint(CrabWaypoint waypoint) => waypoint.Show().Forget();
-
-        private void ReleaseWaypoint(CrabWaypoint waypoint) => waypoint.Hide().Forget();
-
-        #endregion
+        // #region Pool
+        // private CrabWaypoint CreateWaypoint() => Instantiate(_crabWaypoint);
+        //
+        // private void DestroyWaypoint(CrabWaypoint waypoint) => Destroy(waypoint.gameObject);
+        //
+        // private void GetWaypoint(CrabWaypoint waypoint) => waypoint.Show().Forget();
+        //
+        // private void ReleaseWaypoint(CrabWaypoint waypoint) => waypoint.Hide().Forget();
+        //
+        // #endregion
         
         private void SetupStartPosition()
         {
@@ -95,16 +95,16 @@ namespace Maze.Components
             }
         }
 
-        private void SetState(int state)
-        {
-            if (_currentState == state)
-            {
-                return;
-            }
-
-            _currentState = state;
-            _animator.SetInteger(State, _currentState);
-        }
+        // private void SetState(int state)
+        // {
+        //     if (_currentState == state)
+        //     {
+        //         return;
+        //     }
+        //
+        //     _currentState = state;
+        //     _animator.SetInteger(State, _currentState);
+        // }
 
         private void Update()
         {
@@ -121,12 +121,12 @@ namespace Maze.Components
 
             if (_currentWaypoint == Vector3.zero)
             {
-                SetState(_context.Active ? IdleState : JumpState);
+                // SetState(_context.Active ? IdleState : JumpState);
                 return;
             }
 
             transform.position  = Vector3.MoveTowards(transform.position, _currentWaypoint, _speed * Time.deltaTime);
-            SetState(WalkState);
+            // SetState(WalkState);
 
             if (Vector3.Distance(transform.position, _currentWaypoint) < 0.1f)
             {

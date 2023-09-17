@@ -6,15 +6,11 @@ using UnityEngine;
 namespace Modules.AnalyticsService
 {
     public class UnityAnalytic : IAnalytic
-    {
-        // private UniTaskCompletionSource _initializationTokenSource;
-
+    { 
         async UniTask IAnalytic.Initialize(CancellationToken token)
         {
             Debug.Log($"UnityAnalytic Initialize begin");
-            // _initializationTokenSource = new UniTaskCompletionSource();
             await Unity.Services.Core.UnityServices.InitializeAsync();
-                // .ContinueWith(_ => _initializationTokenSource.TrySetResult(), token);
             Debug.Log("UnityAnalytic Initialize end");
         }
 
@@ -32,6 +28,14 @@ namespace Modules.AnalyticsService
 
         void IAnalytic.TrackEvent(string eventName, Dictionary<string, object> parameters)
         {
+            parameters ??= new Dictionary<string, object>();
+#if UNITY_EDITOR
+            parameters.Add("platform", "editor");
+#elif FB
+            parameters.Add("platform", "fb");
+#elif DUMMY_WEBGL
+            parameters.Add("platform", "dummy_webgl");
+#endif
             Unity.Services.Analytics.AnalyticsService.Instance.CustomData(eventName, parameters);
         }
     }

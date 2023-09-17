@@ -21,7 +21,6 @@ namespace Maze.Configs
 
         Visited = 1 << 15,
         
-
         Path =  Path0 | Path1 | Path2,
         PermanentTypes = LeftWall | RightWall | UpWall | DownWall | Start | Finish | Path | PathItem
     }
@@ -52,6 +51,48 @@ namespace Maze.Configs
 
         public int MinPath => _minPath;
         public void SetMinPath(int v) => _minPath = v;
+        
+        public CellType[,] PivotedCells
+        {
+            /*
+             *   U     U -> L 
+             * L   R   R -> D
+             *   D     L -> U
+             *         D -> R
+             *    c1 c2 c3
+             * r1 a  b  c   
+             * r2 d  e  f
+             *
+             *    c1 c2
+             * r1 a  d
+             * r2 b  e
+             * r3 c  f
+             */
+            
+            get
+            {
+                var res = new CellType[_cols, _rows];
+                for (var r = 0; r < _rows; r++)
+                {
+                    for (var c = 0; c < _cols; c++)
+                    {
+                        var cell = _cells[r * _cols + c];
+                        var pivotedCell = new CellType();
+                        if(cell.HasFlag(CellType.Start)) pivotedCell |= CellType.Start;
+                        if(cell.HasFlag(CellType.Finish)) pivotedCell |= CellType.Finish;
+                        
+                        if(cell.HasFlag(CellType.UpWall)) pivotedCell |= CellType.LeftWall;
+                        if(cell.HasFlag(CellType.RightWall)) pivotedCell |= CellType.DownWall;
+                        if(cell.HasFlag(CellType.LeftWall)) pivotedCell |= CellType.UpWall;
+                        if(cell.HasFlag(CellType.DownWall)) pivotedCell |= CellType.RightWall;
+                        
+                        res[c, r] = pivotedCell;
+                    }
+                }
+
+                return res;
+            }
+        }
 
         public CellType[,] Cells 
         {

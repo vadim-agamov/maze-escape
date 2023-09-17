@@ -15,8 +15,8 @@ namespace Maze.MazeService
     public class MazeService: IMazeService
     {
         private readonly List<IComponent> _components = new List<IComponent>();
-
         private readonly Context _context = new Context();
+        private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
 
         public T GetComponent<T>() where T : IComponent
         {
@@ -34,10 +34,9 @@ namespace Maze.MazeService
         async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(MazeService)}] Initialize begin");
-            
+
             var playerDataService = ServiceLocator.Get<IPlayerDataService>();
             var levels = await Addressables.LoadAssetAsync<LevelsConfig>("LevelsConfig");
-            
             Context.Level = levels.LevelsConfigs[playerDataService.Data.Level % levels.LevelsConfigs.Length];
             
             _components.Add(GameObject.Find("Field").GetComponent<FieldViewComponent>());
@@ -53,6 +52,7 @@ namespace Maze.MazeService
             }
             
             Debug.Log($"[{nameof(MazeService)}] Initialize end");
+            AnalyticsService.TrackEvent($"StartLevel_{playerDataService.Data.Level}");
         }
 
         void IService.Dispose()

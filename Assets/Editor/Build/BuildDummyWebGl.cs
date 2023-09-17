@@ -9,10 +9,12 @@ namespace Editor.Build
         [MenuItem("Game/Build/WebGl/Build")]
         public static void Build()
         {
+            SetDev();
+            
             PlayerSettings.WebGL.template = "PROJECT:Minimal";
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
-            var path = Application.dataPath.Replace("/Assets", $"/Builds/WebGl");
+            var path = Application.dataPath.Replace("/Assets", $"/Builds/DummyWebGl");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
@@ -26,7 +28,7 @@ namespace Editor.Build
             }
             
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.None);
+            BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
         }
 
         [MenuItem("Game/Build/WebGl/Set Defines Dev")]

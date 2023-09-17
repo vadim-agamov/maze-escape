@@ -1,8 +1,8 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze;
+using Modules.AnalyticsService;
 using Modules.ServiceLocator;
-using Modules.SocialNetworkService;
 using Modules.UIService;
 using Services.PlayerDataService;
 using UI;
@@ -11,7 +11,8 @@ namespace Actions
 {
     public class WinLevelAction
     {
-        private readonly ISocialNetworkService _snService = ServiceLocator.Get<ISocialNetworkService>();
+        private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
+        private IPlayerDataService DataService { get; } = ServiceLocator.Get<IPlayerDataService>();
 
         public async UniTask Execute(CancellationToken token)
         {
@@ -21,9 +22,9 @@ namespace Actions
             var action = await model.WaitAction(token);
             if (action == LevelWinModel.LevelWinAction.PlayNext)
             {
-                var playerDataService = ServiceLocator.Get<IPlayerDataService>();
-                playerDataService.Data.Level++;
-                playerDataService.Commit();
+                AnalyticsService.TrackEvent($"WinLevel_{DataService.Data.Level}");
+                DataService.Data.Level++;
+                DataService.Commit();
             }
 
             await model.HideAndClose(token);

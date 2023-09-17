@@ -66,19 +66,24 @@ namespace Modules.ServiceLocator
 
             var taskCompletionSource = new UniTaskCompletionSource();
             _services.Add(service, taskCompletionSource);
+            AwaitServiceInitialization().Forget();
+            await taskCompletionSource.Task;
 
-            try
+            async UniTask AwaitServiceInitialization()
             {
-                await service.Initialize(progress, cancellationToken);
-                taskCompletionSource.TrySetResult();
-            }
-            catch (OperationCanceledException _)
-            {
-                taskCompletionSource.TrySetCanceled();
-            }
-            catch (Exception e)
-            {
-                taskCompletionSource.TrySetException(e);
+                try
+                {
+                    await service.Initialize(progress, cancellationToken);
+                    taskCompletionSource.TrySetResult();
+                }
+                catch (OperationCanceledException _)
+                {
+                    taskCompletionSource.TrySetCanceled();
+                }
+                catch (Exception e)
+                {
+                    taskCompletionSource.TrySetException(e);
+                }    
             }
         }
         
