@@ -47,6 +47,7 @@ namespace Modules.SoundService
             }
 
             source.loop = true;
+            source.mute = _isMuted;
             source.Play();
         }
 
@@ -58,6 +59,8 @@ namespace Modules.SoundService
                 source.clip = Resources.Load<AudioClip>($"Sounds/{soundId}");
             }
 
+            source.loop = false;
+            source.mute = _isMuted;
             source.Play();
 
             await UniTask

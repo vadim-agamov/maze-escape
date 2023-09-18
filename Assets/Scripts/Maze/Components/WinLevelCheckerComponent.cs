@@ -3,8 +3,6 @@ using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
 using Maze.MazeService;
-using Modules.AnalyticsService;
-using Modules.ServiceLocator;
 
 namespace Maze.Components
 {

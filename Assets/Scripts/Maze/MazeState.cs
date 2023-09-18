@@ -2,7 +2,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze.Cheats;
 using Maze.MazeService;
-using Modules.AnalyticsService;
 using Modules.CheatService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
