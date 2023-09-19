@@ -12,9 +12,18 @@ namespace Actions
 
         public async UniTask Execute()
         {
-            _soundService.Mute();
+            var isMuted = _soundService.IsMuted;
+            if (!isMuted)
+            {
+                _soundService.Mute();
+            }
+
             await _snService.ShowInterstitial();
-            _soundService.UnMute();
+
+            if (!isMuted)
+            {
+                _soundService.UnMute();
+            }
         }
     }
 }

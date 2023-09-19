@@ -768,7 +768,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: PROJECT:Minimal
+  webGLTemplate: PROJECT:FbMinimal
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 2
@@ -784,7 +784,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    WebGL: DEV;UNITASK_DOTWEEN_SUPPORT;ANALYTICS;DUMMY_WEBGL
+    WebGL: DEV;UNITASK_DOTWEEN_SUPPORT;ANALYTICS;FB
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

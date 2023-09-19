@@ -68,6 +68,7 @@ SpriteAtlas:
     - 743852a15ee714ed996ff350370c6daf: 21300000
     - 764e0812333254854bd3e5d54ac80308: 21300000
     - 1d69a8b4eb68c4b81ac93fba391bef28: 21300000
+    - 89010547c8f2746c9825f349bdc63e35: 21300000
     - eb2b7af7d125a44e39a922aec7efabb3: 21300000
     - 9d3f4d08ca9394f68ae70b65eec5739f: 21300000
     - c9281f18622ee451eb98ffdffedcf9a0: 21300000
@@ -87,6 +88,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 743852a15ee714ed996ff350370c6daf, type: 3}
   - {fileID: 21300000, guid: 764e0812333254854bd3e5d54ac80308, type: 3}
   - {fileID: 21300000, guid: 1d69a8b4eb68c4b81ac93fba391bef28, type: 3}
+  - {fileID: 21300000, guid: 89010547c8f2746c9825f349bdc63e35, type: 3}
   - {fileID: 21300000, guid: eb2b7af7d125a44e39a922aec7efabb3, type: 3}
   - {fileID: 21300000, guid: 9d3f4d08ca9394f68ae70b65eec5739f, type: 3}
   - {fileID: 21300000, guid: c9281f18622ee451eb98ffdffedcf9a0, type: 3}
@@ -105,6 +107,7 @@ SpriteAtlas:
   - Cursor
   - field
   - start
+  - attention (1)
   - 2
   - h_1
   - seaweed
