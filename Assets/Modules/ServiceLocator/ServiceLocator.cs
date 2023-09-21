@@ -54,7 +54,7 @@ namespace Modules.ServiceLocator
             throw new InvalidOperationException($"Get: Service of type {typeof(TService)} is not registered.");
         }
         
-        public static async UniTask Register<TService>(TService service, IProgress<float> progress = null, CancellationToken cancellationToken = default) where TService : class, IService
+        public static async UniTask Register<TService>(TService service, CancellationToken cancellationToken = default) where TService : class, IService
         {
 #if UNITY_EDITOR
             if (!typeof(TService).IsInterface)
@@ -73,7 +73,7 @@ namespace Modules.ServiceLocator
             {
                 try
                 {
-                    await service.Initialize(progress, cancellationToken);
+                    await service.Initialize(cancellationToken);
                     taskCompletionSource.TrySetResult();
                 }
                 catch (OperationCanceledException _)

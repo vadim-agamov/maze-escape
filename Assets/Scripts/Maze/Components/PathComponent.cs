@@ -3,7 +3,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
-using Maze.MazeService;
+using Maze.Service;
 using Modules.InputService;
 using Modules.ServiceLocator;
 using UnityEngine;
@@ -11,7 +11,7 @@ using Utils;
 
 namespace Maze.Components
 {
-    public class PathUpdatedEvent
+    public struct PathUpdatedEvent
     {
         public LinkedList<CellView> Cells;
     }
@@ -30,7 +30,6 @@ namespace Maze.Components
         private Camera _camera;
         private bool _initialized;
         private readonly LinkedList<CellView> _path = new LinkedList<CellView>();
-        private readonly PathUpdatedEvent _pathUpdatedEvent = new PathUpdatedEvent();
         private FieldViewComponent _fieldViewComponent;
         private IInputService _inputService;
 
@@ -62,7 +61,7 @@ namespace Maze.Components
                 // AddCellToPath(cell);
 
                 UpdateLineRenderer();
-                Event<PathUpdatedEvent>.Publish(_pathUpdatedEvent);
+                Event<PathUpdatedEvent>.Publish(new PathUpdatedEvent { Cells = _path});
             }
             else
             {
@@ -264,10 +263,8 @@ namespace Maze.Components
             _camera = _context.Camera;
             _path.AddLast(_fieldViewComponent.GetStartCell());
 
-            _pathUpdatedEvent.Cells = _path;
-
-            _cursor = GameObject.Instantiate(_cursorPreafab, transform);
-            _beginCursor = GameObject.Instantiate(_cursorPreafab, transform);
+            _cursor = Instantiate(_cursorPreafab, transform);
+            _beginCursor = Instantiate(_cursorPreafab, transform);
             _beginCursor.transform.position = _path.First.Value.transform.position;
 
             _initialized = true;

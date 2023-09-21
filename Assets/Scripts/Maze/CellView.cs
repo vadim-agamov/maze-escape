@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using Maze.Configs;
+using Modules.Extensions;
 using UnityEngine;
 using Utils;
 
 namespace Maze
 {
-    public class CellView: MonoBehaviour
+    public class CellView: MonoBehaviour, IAttentionFxControl
     {
         [SerializeField]
         private SpriteRenderer _leftWall;
@@ -46,6 +47,9 @@ namespace Maze
         [SerializeField] 
         private Sprite[] _cornerWalls;
         
+        [SerializeField]
+        private GameObject _attentionFx;
+        
         private CellType _cellType;
         private int _row;
         private int _col;
@@ -64,16 +68,9 @@ namespace Maze
             _downWall.sprite = _horizontalWalls.Random();
             
             _downLeftWall.sprite = _cornerWalls.Random();
-            // _downLeftWall.transform.Rotate(0,0, Random.Range(0, 360));
-            
             _downRightWall.sprite = _cornerWalls.Random();
-            // _downRightWall.transform.Rotate(0,0, Random.Range(0, 360));
-            
             _upLeftWall.sprite = _cornerWalls.Random();
-            // _upLeftWall.transform.Rotate(0,0, Random.Range(0, 360));
-
             _upRightWall.sprite = _cornerWalls.Random();
-            // _upRightWall.transform.Rotate(0,0, Random.Range(0, 360));
 
             if(_cellType.HasFlag(CellType.RightWall))
             {
@@ -147,16 +144,11 @@ namespace Maze
                 }
             }
             
-            // if(_cellType.HasFlag(CellType.Start))
-            // {
-            //     _start.SetActive(true);
-            // }
             if(_cellType.HasFlag(CellType.Finish))
             {
                 _finish.SetActive(true);
             }
             
-            // transform.position = new Vector3(_offset*c, _offset*-r, 0);
             gameObject.name = $"cell_{r}_{c}";
             
             bool TryAddWallId(string id)
@@ -172,5 +164,9 @@ namespace Maze
 
             string GenerateId(float a, float b) => $"({a:F1},{b:F1})";
         }
+
+        void IAttentionFxControl.Show() => _attentionFx.SetActive(true);
+
+        void IAttentionFxControl.Hide() => _attentionFx.SetActive(false);
     }
 }

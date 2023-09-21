@@ -2,20 +2,18 @@ using Actions;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
-using Maze.MazeService;
+using Maze.Service;
 
 namespace Maze.Components
 {
     public class WinLevelCheckerComponent: IComponent
     {
         private Context _context;
-        private PathComponent _pathComponent;
         private CharacterComponent _characterComponent;
 
         public UniTask Initialize(Context context, IMazeService mazeService)
         {
             _context = context;
-            _pathComponent = mazeService.GetComponent<PathComponent>();
             _characterComponent = mazeService.GetComponent<CharacterComponent>();
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             return UniTask.CompletedTask;
@@ -25,7 +23,7 @@ namespace Maze.Components
         {
             if (pathUpdatedEvent.Cells.Last.Value.CellType.HasFlag(CellType.Finish))
             {
-                WinLevelAction().Forget();
+                WinLevelAction().SuppressCancellationThrow().Forget();
             }
         }
 
@@ -33,8 +31,7 @@ namespace Maze.Components
         {
             _context.Active = false;
             
-            await UniTask.WaitUntil(() => _characterComponent.IsWalking, cancellationToken: Bootstrapper.SessionToken);
-            // await UniTask.Delay(TimeSpan.FromSeconds(2));
+            await UniTask.WaitUntil(() => _characterComponent.IsWalking == false, cancellationToken: Bootstrapper.SessionToken);
             await new WinLevelAction().Execute(Bootstrapper.SessionToken);
         }
 

@@ -17,7 +17,7 @@ namespace Modules.AnalyticsService
             _analytics.Add(new SnAnalytic());
         }
 
-        async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+        async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(AnalyticsService)}] Initialize begin");
             await UniTask.WhenAll(_analytics.Select(a => a.Initialize(cancellationToken)));

@@ -13,30 +13,31 @@ namespace Modules.UIService
     public class UIService: IUIService
     {
         private Canvas _rootCanvas;
-        private GraphicRaycaster _rootRaycaster;
         private GameObject _uiRoot;
-        private Camera _camera;
-        private bool _prevInteractableState;
+        private Vector2 ReferenceResolution { get; }
         Canvas IUIService.RootCanvas => _rootCanvas;
-        Camera IUIService.Camera => _camera;
-        
-        async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+
+        public UIService(Vector2 referenceResolution)
+        {
+            ReferenceResolution = referenceResolution;
+        }
+
+        UniTask IService.Initialize(CancellationToken _)
         {
             Debug.Log($"[{nameof(UIService)}] Initialize begin");
-            
-            _uiRoot = await Addressables.InstantiateAsync("UIRoot");
-            _uiRoot.name = "[IURoot]";
-            _rootCanvas = _uiRoot.GetComponentInChildren<Canvas>();
-            _rootRaycaster = _uiRoot.GetComponentInChildren<GraphicRaycaster>();
-            _camera = _uiRoot.GetComponentInChildren<Camera>();
 
-#if DEV
-            _prevInteractableState = _rootRaycaster.enabled;
-#endif
+            _uiRoot = new GameObject("[UIRoot]", typeof(Canvas), typeof(GraphicRaycaster), typeof(CanvasScaler));
+            _rootCanvas = _uiRoot.GetComponentInChildren<Canvas>();
+            _rootCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            
+            var canvasScaler = _uiRoot.GetComponent<CanvasScaler>();
+            canvasScaler.referenceResolution = ReferenceResolution;
+            canvasScaler.matchWidthOrHeight = 1;
+            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
 
             Object.DontDestroyOnLoad(_uiRoot);
-            
             Debug.Log($"[{nameof(UIService)}] Initialize end");
+            return UniTask.CompletedTask;
         }
 
         void IService.Dispose()
@@ -54,30 +55,17 @@ namespace Modules.UIService
                 return;
             }
 
-            var result = op.Result;
-            result.name = key;
-            var view = result.GetComponent<UIViewBase>();
+            var viewGameObject = op.Result;
+            viewGameObject.name = key;
+            viewGameObject.SetActive(false);
+            var view = viewGameObject.GetComponent<UIViewBase>();
             model.AttachView(view);
-            view.gameObject.SetActive(false);
         }
 
         void IUIService.Close<TModel>(TModel model)
         {
             Addressables.ReleaseInstance(model.View.gameObject);
             model.DeattachView();
-        }
-
-        bool IUIService.SetInteractiveState(bool state)
-        {
-#if DEV
-            if (_prevInteractableState == state)
-                Debug.Log($"[UIService]::Service already {(state ? "Activated" : "Deactivate")}");
-#endif
-
-            var prevInteractableState = _prevInteractableState;
-            _prevInteractableState = state;
-            _rootRaycaster.enabled = state;
-            return prevInteractableState;
         }
     }
 }

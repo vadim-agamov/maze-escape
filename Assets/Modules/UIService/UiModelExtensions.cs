@@ -42,18 +42,5 @@ namespace Modules.UIService
             await model.Hide(cancellationToken);
             model.Close();
         }
-
-        public static async UniTask WaitForHide(this UIModel model, CancellationToken cancellationToken)
-        {
-            while (true)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-
-                var hideEvent = await Event<UiHideEvent>.WaitResult(cancellationToken);
-                if (hideEvent.Model == model)
-                    break;
-            }
-        }
     }
 }

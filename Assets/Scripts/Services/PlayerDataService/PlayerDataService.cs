@@ -14,7 +14,7 @@ namespace Services.PlayerDataService
         private ISocialNetworkService _socialNetworkService;
         
         
-        async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+        async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(PlayerDataService)}] Initialize begin");
 

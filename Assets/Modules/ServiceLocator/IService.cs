@@ -6,7 +6,7 @@ namespace Modules.ServiceLocator
 {
     public interface IService
     {
-        UniTask Initialize(IProgress<float> progress = null, CancellationToken cancellationToken = default);
+        UniTask Initialize(CancellationToken cancellationToken = default);
         void Dispose();
     }
 }

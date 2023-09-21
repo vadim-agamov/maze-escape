@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
-using Maze.MazeService;
+using Maze.Service;
 using UnityEngine;
 
 namespace Maze.Components

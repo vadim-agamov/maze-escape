@@ -1,6 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Maze.MazeService;
+using Maze.Service;
 
 namespace Maze.Components
 {

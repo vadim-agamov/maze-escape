@@ -15,7 +15,7 @@ namespace Modules.InputService
         private IInputService This => this;
         private int TouchCount => Input.touchCount > 0 ? Input.touchCount : Input.GetMouseButton(0) ? 1 : 0;
         
-        UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+        UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(InputService)}] Initialize begin");
             _raycastResult = new List<RaycastResult>();

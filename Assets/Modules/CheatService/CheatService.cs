@@ -14,7 +14,7 @@ namespace Modules.CheatService
 
         private ICheatService This => this;
         
-        UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+        UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(CheatService)}] Initialize begin");
             DontDestroyOnLoad(gameObject);

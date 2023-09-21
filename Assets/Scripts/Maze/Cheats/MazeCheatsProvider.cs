@@ -1,6 +1,6 @@
 using Actions;
 using Cysharp.Threading.Tasks;
-using Maze.MazeService;
+using Maze.Service;
 using Modules.CheatService;
 using Modules.CheatService.Controls;
 using Modules.ServiceLocator;

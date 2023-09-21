@@ -16,7 +16,7 @@ namespace Modules.SoundService
         private CancellationTokenSource _cancellationToken;
         private bool _isMuted;
 
-        UniTask IService.Initialize(IProgress<float> progress, CancellationToken _)
+        UniTask IService.Initialize(CancellationToken _)
         {
             Debug.Log($"[{nameof(SoundService)}] Initialize begin");
 

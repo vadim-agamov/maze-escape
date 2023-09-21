@@ -1,7 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
-using Maze.MazeService;
+using Maze.Service;
 using Modules.ServiceLocator;
 using Modules.SoundService;
 using UnityEngine;

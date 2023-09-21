@@ -17,28 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: a01222b45783e4276894a23be6a278ec
   m_SerializeEntries:
-  - m_GUID: effd14320588a4cb9aeda4bedc297890
-    m_Address: LevelLoosedUI
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5100a73c5d2d5488b9b3063c2a353e42
-    m_Address: UIRoot
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fe2766fcfe3ca4667ae8661d05d9296b
-    m_Address: LobbyScreen
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 29ecb0e9eca83437fa9b16181a51e508
     m_Address: JumpScreen
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ac14bf01aceb64ed089d4cd29bcd6d59
-    m_Address: PlayPanel
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

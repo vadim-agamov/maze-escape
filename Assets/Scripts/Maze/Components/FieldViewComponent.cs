@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Maze.Configs;
-using Maze.MazeService;
+using Maze.Service;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -28,7 +28,7 @@ namespace Maze.Components
         private CellView[,] _cellViews;
 
         private Context _context;
-        private float _cellSize = 1.5f;
+        private const float CellSize = 1.5f;
 
         public UniTask Initialize(Context context, IMazeService mazeService)
         {
@@ -40,11 +40,11 @@ namespace Maze.Components
             var rows = _context.Cells.GetLength(0);
             var cols = _context.Cells.GetLength(1);
 
-            _rectTransform.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, cols * _cellSize + _padding.x);
-            _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rows * _cellSize + _padding.y);
+            _rectTransform.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, cols * CellSize + _padding.x);
+            _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rows * CellSize + _padding.y);
             _cellsContainer.transform.position -= new Vector3(_padding.x, _padding.y, 0);
             var rect = _rectTransform.rect;
-            var startCell = new Vector2(_cellSize * 0.5f + rect.xMin, -_cellSize * 0.5f + rect.yMax);
+            var startCell = new Vector2(CellSize * 0.5f + rect.xMin, -CellSize * 0.5f + rect.yMax);
 
             var cellIds = new HashSet<string>();
             _context.CellViews = _cellViews = new CellView[rows, cols];
@@ -54,7 +54,7 @@ namespace Maze.Components
                 {
                     var configCell = _context.Cells[r, c];
                     var cell = Instantiate(_cell, _cellsContainer.transform, true);
-                    cell.transform.localPosition = startCell + new Vector2(_cellSize * c, _cellSize * -r);
+                    cell.transform.localPosition = startCell + new Vector2(CellSize * c, CellSize * -r);
                     cell.Setup(configCell, r, c, cellIds);
                     _cellViews[r, c] = cell;
                 }

@@ -69,10 +69,10 @@ namespace Modules.SocialNetworkService.EditorSocialNetworkService
 		{
 		}
 
-		UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+		async UniTask IService.Initialize(CancellationToken cancellationToken)
 		{
 			DontDestroyOnLoad(gameObject);
-			return UniTask.CompletedTask;
+			await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellationToken);
 		}
 
 		void IService.Dispose()

@@ -3,61 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Maze.Configs;
-using Maze.MazeService;
+using Maze.Service;
 using Modules.Events;
 using UnityEngine;
 
 namespace Maze.Components
 {
-    public class CharacterComponent : MonoBehaviour, IComponent
+    public struct CharacterMoveBeginEvent
     {
+    }
+    
+    public struct CharacterMoveEndEvent
+    {
+    }
+    
+    
+    public class CharacterComponent : MonoBehaviour, IComponent, IAttentionFxControl
+    {
+        [SerializeField] 
+        private float _speed = 1;
+        
+        [SerializeField]
+        private GameObject _attentionFx;
+
         private LinkedList<Vector3> _waypoints;
         private Vector3 _currentWaypoint;
         private Context _context;
         private bool _initialized;
-
         private const int IdleState = 0;
         private const int WalkState = 1;
         private const int JumpState = 2;
+
         private int _currentState = IdleState;
-
-        [SerializeField] 
-        private float _speed = 1;
-
-        // [SerializeField] 
-        // private Animator _animator;
-        //
-        // [SerializeField]
-        // private CrabWaypoint _crabWaypoint;
-        
-        // private ObjectPool<CrabWaypoint> _waypointsPool;
 
         private static readonly int State = Animator.StringToHash("state");
 
-        public bool IsWalking => _currentWaypoint == Vector3.zero;
-        
+        public bool IsWalking { get; private set; }
+
         UniTask IComponent.Initialize(Context context, IMazeService mazeService)
         {
             _context = context;
             _waypoints = new LinkedList<Vector3>();
-            // _waypointsPool = new ObjectPool<CrabWaypoint>(CreateWaypoint, GetWaypoint, ReleaseWaypoint, DestroyWaypoint);
             _currentWaypoint = Vector3.zero;
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             SetupStartPosition();
             _initialized = true;
             return UniTask.CompletedTask;
         }
-
-        // #region Pool
-        // private CrabWaypoint CreateWaypoint() => Instantiate(_crabWaypoint);
-        //
-        // private void DestroyWaypoint(CrabWaypoint waypoint) => Destroy(waypoint.gameObject);
-        //
-        // private void GetWaypoint(CrabWaypoint waypoint) => waypoint.Show().Forget();
-        //
-        // private void ReleaseWaypoint(CrabWaypoint waypoint) => waypoint.Hide().Forget();
-        //
-        // #endregion
         
         private void SetupStartPosition()
         {
@@ -122,10 +114,12 @@ namespace Maze.Components
             if (_currentWaypoint == Vector3.zero)
             {
                 // SetState(_context.Active ? IdleState : JumpState);
+                IsWalking = false;
                 return;
             }
 
             transform.position  = Vector3.MoveTowards(transform.position, _currentWaypoint, _speed * Time.deltaTime);
+            IsWalking = true;
             // SetState(WalkState);
 
             if (Vector3.Distance(transform.position, _currentWaypoint) < 0.1f)
@@ -147,5 +141,8 @@ namespace Maze.Components
             _initialized = false;
             Event<PathUpdatedEvent>.Unsubscribe(OnPathUpdated);
         }
+
+        void IAttentionFxControl.Show() => _attentionFx.SetActive(true);
+        void IAttentionFxControl.Hide() => _attentionFx.SetActive(false);
     }
 }

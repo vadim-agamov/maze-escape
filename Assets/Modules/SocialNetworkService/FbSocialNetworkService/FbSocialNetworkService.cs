@@ -71,7 +71,7 @@ namespace Modules.SocialNetworkService.FbSocialNetworkService
             FBLogEvent(eventName);
         }
 
-        async UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+        async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(FbSocialNetworkService)}] Initialize");
             DontDestroyOnLoad(gameObject);

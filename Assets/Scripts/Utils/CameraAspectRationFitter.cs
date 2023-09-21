@@ -24,9 +24,6 @@ public class CameraAspectRationFitter : MonoBehaviour
     private void DoScale()
     {
         var ratio = Screen.width / (float)Screen.height;
-        // Debug.Log($">>>>>>> ratio {ratio}");
-
-
         if (ratio > DesiredRatio)
         {
             _camera.orthographicSize = CameraSize;

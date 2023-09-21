@@ -5,43 +5,33 @@ using Cysharp.Threading.Tasks;
 
 namespace Modules.Events
 {
-    public static class Event<T> where T : class
+    public static class Event<TEvent> 
     {
-        private static HashSet<Action<T>> _subscribers = new HashSet<Action<T>>();
-        private static HashSet<Action<T>> _subscribersToAdd = new HashSet<Action<T>>();
-        private static HashSet<Action<T>> _subscribersToRemove = new HashSet<Action<T>>();
-        private static UniTaskCompletionSource<T> _completionSource;
+        private static HashSet<Action<TEvent>> _subscribers = new HashSet<Action<TEvent>>();
+        private static HashSet<Action<TEvent>> _subscribersToAdd = new HashSet<Action<TEvent>>();
+        private static HashSet<Action<TEvent>> _subscribersToRemove = new HashSet<Action<TEvent>>();
+        private static UniTaskCompletionSource<TEvent> _completionSource;
 
-        public static void Subscribe(Action<T> method)
+        public static void Subscribe(Action<TEvent> method)
         {
-            if(!_subscribersToAdd.Contains(method))
-                _subscribersToAdd.Add(method);
-            
-            if (_subscribersToRemove.Contains(method))
-                _subscribersToRemove.Remove(method);
+            _subscribersToAdd.Add(method);
+            _subscribersToRemove.Remove(method);
         }
 
-        public static void Unsubscribe(Action<T> method)
+        public static void Unsubscribe(Action<TEvent> method)
         {
-            if(!_subscribersToAdd.Contains(method))
-                _subscribersToAdd.Remove(method);
-            
-            if (!_subscribersToRemove.Contains(method))
-                _subscribersToRemove.Add(method);
+            _subscribersToAdd.Remove(method);
+            _subscribersToRemove.Add(method);
         }
 
-        public static void Publish(T args = null)
+        public static void Publish(TEvent @event = default)
         {
             if (_subscribersToAdd.Count > 0)
             {
                 foreach (var action in _subscribersToAdd)
                 {
-                    if (!_subscribers.Contains(action))
-                    {
-                        _subscribers.Add(action);
-                    }
+                    _subscribers.Add(action);
                 }
-
                 _subscribersToAdd.Clear();
             }
 
@@ -51,28 +41,27 @@ namespace Modules.Events
                 {
                     _subscribers.Remove(action);
                 }
-
                 _subscribersToRemove.Clear();
             }
             
             foreach (var subscriber in _subscribers)
             {
-                subscriber.Invoke(args);
+                subscriber.Invoke(@event);
             }
 
-            _completionSource?.TrySetResult(args);
+            _completionSource?.TrySetResult(@event);
             _completionSource = null;
         }
         
-        public static UniTask<T> WaitResult(CancellationToken cancellationToken = default)
+        public static UniTask<TEvent> WaitResult(CancellationToken cancellationToken)
         {
-            _completionSource ??= new UniTaskCompletionSource<T>();
+            _completionSource ??= new UniTaskCompletionSource<TEvent>();
             return _completionSource.Task.AttachExternalCancellation(cancellationToken);
         }
 
-        public static UniTask Wait(CancellationToken cancellationToken = default)
+        public static UniTask Wait(CancellationToken cancellationToken)
         {
-            _completionSource ??= new UniTaskCompletionSource<T>();
+            _completionSource ??= new UniTaskCompletionSource<TEvent>();
             return _completionSource.Task.AttachExternalCancellation(cancellationToken);
         }
     }

@@ -1,8 +1,8 @@
 ﻿namespace Modules.UIService.Events
 {
-    public class UiShowEvent
+    public struct UiShowEvent
     {
-        public readonly UIModel Model;
+        public UIModel Model { get; }
 
         public UiShowEvent(UIModel model)
         {

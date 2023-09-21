@@ -11,6 +11,7 @@ namespace Editor.Build
         {
             SetDev();
             
+            BuildBase.IncrementBuildNumber();
             PlayerSettings.WebGL.template = "PROJECT:Minimal";
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
@@ -28,7 +29,7 @@ namespace Editor.Build
             }
             
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
+            BuildPipeline.BuildPlayer(BuildBase.GetProdScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
         }
 
         [MenuItem("Game/Build/WebGl/Set Defines Dev")]

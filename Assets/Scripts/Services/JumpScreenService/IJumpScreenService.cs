@@ -8,5 +8,6 @@ namespace Services.JumpScreenService
     {
         UniTask Show(CancellationToken cancellationToken);
         UniTask Hide(CancellationToken cancellationToken);
+        float Progress { set; }
     }
 }

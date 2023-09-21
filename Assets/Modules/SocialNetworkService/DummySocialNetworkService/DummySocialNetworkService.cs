@@ -9,7 +9,7 @@ namespace Modules.SocialNetworkService.DummySocialNetworkService
 {
     public class DummySocialNetworkService : MonoBehaviour, ISocialNetworkService
     {
-        UniTask IService.Initialize(IProgress<float> progress, CancellationToken cancellationToken)
+        UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             DontDestroyOnLoad(gameObject);
             return UniTask.CompletedTask;

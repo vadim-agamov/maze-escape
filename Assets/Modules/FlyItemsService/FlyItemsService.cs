@@ -65,7 +65,7 @@ namespace Modules.FlyItemsService
             return Fly(name, from.transform.position, from.Play, to.transform.position, to.Play, count);
         }
         
-        public UniTask Initialize(IProgress<float> progress = null, CancellationToken cancellationToken = default)
+        public UniTask Initialize(CancellationToken cancellationToken = default)
         {
             Debug.Log($"[{nameof(FlyItemsService)}] Initialize begin");
             _pool = new ObjectPool<Image>(OnCreateItem, OnGetItem, OnReleaseItem);

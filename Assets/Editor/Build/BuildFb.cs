@@ -23,6 +23,7 @@ namespace Editor.Build
         {
             SetFbDebugDefines();
             
+            BuildBase.IncrementBuildNumber();
             PlayerSettings.WebGL.template = FbWebGLTemplate;
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
@@ -41,7 +42,7 @@ namespace Editor.Build
             }
             
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetProdLevels(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
+            BuildPipeline.BuildPlayer(BuildBase.GetProdScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
                 
             var zipFile = ZipBuild(path);
             UploadToFb(zipFile);
@@ -84,14 +85,12 @@ namespace Editor.Build
         public static void SetFbDebugDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbDebugDefines());
-            BuildBase.EnableDevFolders();
         }
         
         [MenuItem("Game/Build/FB/Set Defines Prod")]
         public static void SetFbProdDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbProdDefines());
-            BuildBase.DisableDevFolders();
         }
         
         private static string GetFbDebugDefines()

@@ -4,34 +4,32 @@ using Modules.FSM;
 using Modules.ServiceLocator;
 using Services.JumpScreenService;
 
-
 namespace Actions
 {
     public class GotoStateAction
     {
         private readonly IState _state;
         private readonly bool _withJumpScreen;
-        private readonly IJumpScreenService _jumpScreen;
+        private IJumpScreenService JumpScreen { get; } = ServiceLocator.Get<IJumpScreenService>();
 
         public GotoStateAction(IState state, bool withJumpScreen)
         {
             _withJumpScreen = withJumpScreen;
             _state = state;
-            _jumpScreen = ServiceLocator.Get<IJumpScreenService>();
         }
 
         public async UniTask Execute(CancellationToken token)
         {
             if (_withJumpScreen)
             {
-                await _jumpScreen.Show(token);
+                await JumpScreen.Show(token);
             }
 
             await Fsm.Enter(_state, token);
 
             if (_withJumpScreen)
             {
-                await _jumpScreen.Hide(token);
+                await JumpScreen.Hide(token);
             }
         }
     }
