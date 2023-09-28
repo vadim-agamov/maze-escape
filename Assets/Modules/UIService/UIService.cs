@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Modules.ServiceLocator;
@@ -12,10 +11,9 @@ namespace Modules.UIService
 {
     public class UIService: IUIService
     {
-        private Canvas _rootCanvas;
-        private GameObject _uiRoot;
+        private Canvas _canvas;
         private Vector2 ReferenceResolution { get; }
-        Canvas IUIService.RootCanvas => _rootCanvas;
+        Canvas IUIService.Canvas => _canvas;
 
         public UIService(Vector2 referenceResolution)
         {
@@ -25,29 +23,45 @@ namespace Modules.UIService
         UniTask IService.Initialize(CancellationToken _)
         {
             Debug.Log($"[{nameof(UIService)}] Initialize begin");
-
-            _uiRoot = new GameObject("[UIRoot]", typeof(Canvas), typeof(GraphicRaycaster), typeof(CanvasScaler));
-            _rootCanvas = _uiRoot.GetComponentInChildren<Canvas>();
-            _rootCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            
-            var canvasScaler = _uiRoot.GetComponent<CanvasScaler>();
-            canvasScaler.referenceResolution = ReferenceResolution;
-            canvasScaler.matchWidthOrHeight = 1;
-            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-
-            Object.DontDestroyOnLoad(_uiRoot);
+            SetupCanvas();
             Debug.Log($"[{nameof(UIService)}] Initialize end");
             return UniTask.CompletedTask;
         }
 
+        private void SetupCanvas()
+        {
+            var rootGameObject = new GameObject(
+                "[RootCanvas]",
+                typeof(GraphicRaycaster),
+                typeof(Canvas),
+                typeof(CanvasScaler));
+
+            var canvasScaler = rootGameObject.GetComponent<CanvasScaler>();
+            canvasScaler.referenceResolution = ReferenceResolution;
+            canvasScaler.matchWidthOrHeight = 1;
+            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+
+            var camera = new GameObject("[UICamera]").AddComponent<Camera>();
+            camera.transform.position = new Vector3(100, 0, 0);
+            camera.orthographic = true;
+            camera.clearFlags = CameraClearFlags.Nothing;
+            camera.orthographicSize = 10;
+
+            _canvas = rootGameObject.GetComponent<Canvas>();
+            _canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            _canvas.worldCamera = camera;
+
+            Object.DontDestroyOnLoad(rootGameObject);
+            Object.DontDestroyOnLoad(camera.gameObject);
+        }
+
         void IService.Dispose()
         {
-            Addressables.ReleaseInstance(_uiRoot);
         }
 
         async UniTask IUIService.Open<TModel>(TModel model, string key, CancellationToken cancellationToken)
         {
-            var op = Addressables.InstantiateAsync(key, _rootCanvas.transform);
+            var op = Addressables.InstantiateAsync(key, _canvas.transform);
             await op.ToUniTask(cancellationToken: cancellationToken);
             if (op.Status == AsyncOperationStatus.Failed)
             {
@@ -58,14 +72,15 @@ namespace Modules.UIService
             var viewGameObject = op.Result;
             viewGameObject.name = key;
             viewGameObject.SetActive(false);
-            var view = viewGameObject.GetComponent<UIViewBase>();
-            model.AttachView(view);
+            var view = viewGameObject.GetComponent<UIView>();
+            view.SetModel(model);
+            model.ViewControl = view;
         }
 
         void IUIService.Close<TModel>(TModel model)
         {
-            Addressables.ReleaseInstance(model.View.gameObject);
-            model.DeattachView();
+            Addressables.ReleaseInstance(model.ViewControl.GameObject);
+            model.ViewControl = null;
         }
     }
 }

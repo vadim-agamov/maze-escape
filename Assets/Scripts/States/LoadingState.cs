@@ -9,20 +9,21 @@ using Modules.Extensions;
 using Modules.FlyItemsService;
 using Modules.FSM;
 using Modules.InputService;
+using Modules.PlatformService;
 using Modules.ServiceLocator;
-using Modules.SocialNetworkService;
 using Modules.SoundService;
 using Modules.UIService;
+using Services.AdsService;
 using Services.JumpScreenService;
 using Services.PlayerDataService;
 using UnityEngine;
 
 #if UNITY_EDITOR
-    using Modules.SocialNetworkService.EditorSocialNetworkService;
+    using Modules.PlatformService.EditorPlatformService;
 #elif FB
-    using Modules.SocialNetworkService.FbSocialNetworkService;
+    using Modules.PlatformService.FbPlatformService;
 #elif DUMMY_WEBGL
-    using Modules.SocialNetworkService.DummySocialNetworkService;
+    using Modules.PlatformService.DummyPlatformService;
 #endif
 
 namespace States
@@ -38,21 +39,22 @@ namespace States
             await jumpScreenService.Show(cancellationToken);
             
 #if UNITY_EDITOR
-            var socialNetworkService = new GameObject("EditorSN").AddComponent<EditorSocialNetworkService>();
+            var socialNetworkService = new GameObject("EditorSN").AddComponent<EditorPlatformService>();
 #elif FB
-            var socialNetworkService = new GameObject("FbBridge").AddComponent<FbSocialNetworkService>();
+            var socialNetworkService = new GameObject("FbBridge").AddComponent<FbPlatformService>();
 #elif DUMMY_WEBGL
-            var socialNetworkService = new GameObject("DummySN").AddComponent<DummySocialNetworkService>();
+            var socialNetworkService = new GameObject("DummySN").AddComponent<DummyPlatformService>();
 #endif
 
             var tasks = new[]
             {
-                ServiceLocator.Register<ISocialNetworkService>(socialNetworkService, cancellationToken: cancellationToken),
+                ServiceLocator.Register<IPlatformService>(socialNetworkService, cancellationToken: cancellationToken),
                 ServiceLocator.Register<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
                 ServiceLocator.Register<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
                 RegisterUI(cancellationToken),
                 ServiceLocator.Register<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
                 ServiceLocator.Register<IInputService>(new InputService(), cancellationToken: cancellationToken),
+                ServiceLocator.Register<IAdsService>(new AdsService(), cancellationToken: cancellationToken),
 #if DEV
                 RegisterCheats(cancellationToken)
 #endif
@@ -79,7 +81,7 @@ namespace States
         {
             IUIService uiService = new UIService(new Vector2(1080, 1920));
             await ServiceLocator.Register(uiService, cancellationToken: token);
-            await ServiceLocator.Register<IFlyItemsService>(new FlyItemsService(uiService.RootCanvas), cancellationToken: token);
+            await ServiceLocator.Register<IFlyItemsService>(new FlyItemsService(uiService.Canvas), cancellationToken: token);
         }
         
         private static void SetupEventSystem()

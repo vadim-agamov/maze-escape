@@ -10,20 +10,23 @@ namespace Modules.UIService.ViewAnimation
     {
         [SerializeField] 
         private float duration = .3f;
+        
+        [SerializeField]
+        private CanvasGroup _canvasGroup;
 
-        public async UniTask PlayAsync(UIViewBase viewBase, CancellationToken cancellationToken = default)
+        public async UniTask PlayAsync(UIView viewBase, CancellationToken cancellationToken = default)
         {
-            if (viewBase.CanvasGroup == null)
+            if (_canvasGroup == null)
             {
                 Debug.LogError($"Canvas group in view base is null {viewBase.gameObject.name}");
                 return;
             }
 
-            viewBase.CanvasGroup.interactable = false;
+            _canvasGroup.interactable = false;
 
-            await viewBase.CanvasGroup.DOFade(0, duration, cancellationToken: cancellationToken);
+            await _canvasGroup.DOFade(0, duration, cancellationToken: cancellationToken);
 
-            viewBase.CanvasGroup.interactable = true;
+            _canvasGroup.interactable = true;
         }
     }
 }

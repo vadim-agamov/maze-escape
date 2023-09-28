@@ -17,11 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: a01222b45783e4276894a23be6a278ec
   m_SerializeEntries:
-  - m_GUID: 29ecb0e9eca83437fa9b16181a51e508
-    m_Address: JumpScreen
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 57230025dc2524ac4a04eede35f44b95
     m_Address: LevelWinUI
     m_ReadOnly: 0
@@ -29,6 +24,16 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9da3cf164ed7e436eb6d5578a7892d8d
     m_Address: LevelsConfig
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab46770af48c14744800a5f067b9145c
+    m_Address: MazeHUD
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4eb5567da9e242ddb481312478ce1f1
+    m_Address: SoundsConfig
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -23,18 +23,6 @@ namespace Modules.Extensions
             return default;
         }
         
-        public static T Random<T>(this T[] list)
-        {
-            var index = UnityEngine.Random.Range(0, list.Length);
-            return list[index];
-        }
-        
-        public static T Random<T>(this List<T> list)
-        {
-            var index = UnityEngine.Random.Range(0, list.Count);
-            return list[index];
-        }
-        
         public static List<T> Shuffle<T>(this List<T> list)
         {
             for (var index = 0; index < list.Count - 1; index++)

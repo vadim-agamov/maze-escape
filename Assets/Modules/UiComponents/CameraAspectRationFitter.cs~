@@ -1,0 +1,46 @@
+using UnityEngine;
+
+namespace Modules.UiComponents
+{
+    [ExecuteInEditMode]
+    [RequireComponent(typeof(Camera))]
+    public class CameraAspectRationFitter : MonoBehaviour
+    {
+        // Set this to the in-world distance between the left & right edges of your scene.
+        // public float sceneWidth = 10;
+        public float DesiredRatio = 0.56f; // 9:16
+
+        public float CameraSize = 5.06f;
+
+        public float Factor = 1f;
+    
+        [SerializeField]
+        private Camera _camera;
+        
+#if UNITY_EDITOR
+        private void Update() => DoScale();
+#endif
+
+        private void Start() => DoScale();
+
+        private void DoScale()
+        {
+            var ratio = Screen.width / (float)Screen.height;
+            if (ratio > DesiredRatio)
+            {
+                _camera.orthographicSize = CameraSize;
+                return;
+            }
+
+            var delta = DesiredRatio - ratio;
+
+
+            _camera.orthographicSize = CameraSize + Factor * Factor * delta;
+        }
+
+        private void OnValidate()
+        {
+            _camera = GetComponent<Camera>();
+        }
+    }
+}

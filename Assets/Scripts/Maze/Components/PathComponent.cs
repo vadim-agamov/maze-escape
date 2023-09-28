@@ -3,19 +3,15 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
+using Maze.Events;
 using Maze.Service;
 using Modules.InputService;
 using Modules.ServiceLocator;
+using Modules.Utils;
 using UnityEngine;
-using Utils;
 
 namespace Maze.Components
 {
-    public struct PathUpdatedEvent
-    {
-        public LinkedList<CellView> Cells;
-    }
-
     public class PathComponent : MonoBehaviour, IComponent
     {
         [SerializeField] 
@@ -30,6 +26,7 @@ namespace Maze.Components
         private Camera _camera;
         private bool _initialized;
         private readonly LinkedList<CellView> _path = new LinkedList<CellView>();
+        private readonly ValueChangedTrigger<bool> _touchTrigger = new ValueChangedTrigger<bool>();
         private FieldViewComponent _fieldViewComponent;
         private IInputService _inputService;
 
@@ -40,55 +37,34 @@ namespace Maze.Components
             
             if(!_context.Active)
                 return;
-            
-            if (_inputService.TouchesCount > 0)
+
+            var touchChanged = _touchTrigger.SetValue(_inputService.TouchesCount > 0);
+
+
+            if (_touchTrigger.Value)
             {
                 var hitPosition = _camera.ScreenToWorldPoint(_inputService.Touch0);
                 hitPosition = new Vector3(hitPosition.x, hitPosition.y, 0);
-                // _cursor.transform.position = new Vector3(hitPosition.x, hitPosition.y, 0);
-                // var pathCell = _path.Last.Value;//GetNearestCellFromPath(hitPosition);
-                // AddCellToPath(pathCell);
+                var cellView = _path.FirstOrDefault(cell => Vector3.Distance(cell.transform.position, hitPosition) < 0.5f);
                 
-                var cell = GetNearestNeighbour(_path.Last.Value, hitPosition);
-                AddCellToPath(cell);
+                // touch cell in path -> cut loop
+                if (touchChanged && cellView != null)
+                {
+                    AddCellToPath(cellView);
+                }
 
-                // var distance = Vector3.Distance(cell.transform.position, hitPosition);
-                // var t = 0.5f / distance;
-                _cursor.transform.position = cell.transform.position;// Vector3.Lerp(cell.transform.position, hitPosition, t);
-                
-                // Debug.Log($"pathCell {pathCell.Row},{pathCell.Col}, cell {cell.Row},{cell.Col}");
-                // AddCellToPath(pathCell);
-                // AddCellToPath(cell);
+                // touch cell not in path -> add cell to path
+                else 
+                {
+                    var cell = GetNearestNeighbour(_path.Last.Value, hitPosition);
+                    AddCellToPath(cell);
+                }
+            }
 
-                UpdateLineRenderer();
-                Event<PathUpdatedEvent>.Publish(new PathUpdatedEvent { Cells = _path});
-            }
-            else
-            {
-                _cursor.transform.position = _path.Last.Value.transform.position;
-            }
-            
+            _cursor.transform.position = _path.Last.Value.transform.position;
             _cursor.SetActive(_context.Active);
-        }
-
-        private CellView GetNearestCellFromPath(Vector3 position)
-        {
-            // var prevDistance = float.MaxValue;
-            var cell = _path.First.Value;
-            foreach (var p in _path)
-            {
-                var distance = Vector3.Distance(p.transform.position, position);
-                Debug.Log($"distance {distance}");
-                if (distance < 1.5f)
-                    return p;
-                // if (distance < prevDistance)
-                // {
-                // prevDistance = distance;
-                // cell = p;
-                // }
-            }
-
-            return _path.Last.Value;
+            
+            UpdateLineRenderer();
         }
 
         private CellView GetNearestNeighbour(CellView cell, Vector3 hitPosition)
@@ -144,8 +120,6 @@ namespace Maze.Components
             {
                 if (r >= 0 && r < _context.Cells.GetLength(0) &&
                     c >= 0 && c < _context.Cells.GetLength(1))
-                    // Contact()
-                    // _path.Count(x => x.Row == r && x.Col == c) == 0)
                 {
                     neighbors.Add(_fieldViewComponent.GetCellView(r,c));
                 }
@@ -154,20 +128,16 @@ namespace Maze.Components
 
         private void AddCellToPath(CellView cell)
         {
-            if (_path.Contains(cell))
+            var deltaCells = new List<CellView>();
+            while (_path.Contains(cell))
             {
-                while(true)
-                {
-                    if(_path.Last.Value == cell)
-                        break;
-                    
-                    _path.RemoveLast();
-                }
+                deltaCells.Add(_path.Last.Value);
+                _path.RemoveLast();
             }
-            else
-            {
-                _path.AddLast(cell);
-            }
+
+            deltaCells.Add(cell);
+            _path.AddLast(cell);
+            Event<PathUpdatedEvent>.Publish(new PathUpdatedEvent { Cells = deltaCells });
         }
 
         private void UpdateLineRenderer()
@@ -186,14 +156,14 @@ namespace Maze.Components
             _lineRenderer.useWorldSpace = true;
         }
 
-        private void OnDrawGizmos()
-        {
-            for (var i = 0; i < _lineRenderer.positionCount; i++)
-            {
-                Gizmos.color = Color.red;
-                Gizmos.DrawSphere(_lineRenderer.GetPosition(i), 0.05f);
-            }
-        }
+        // private void OnDrawGizmos()
+        // {
+        //     for (var i = 0; i < _lineRenderer.positionCount; i++)
+        //     {
+        //         Gizmos.color = Color.red;
+        //         Gizmos.DrawSphere(_lineRenderer.GetPosition(i), 0.05f);
+        //     }
+        // }
 
         // private void OnDrawGizmos()
         // {
@@ -211,49 +181,7 @@ namespace Maze.Components
         //         Gizmos.DrawSphere(point, 0.1f);
         //     }
         // }
-
-        private bool Contact(CellView a, CellView b)
-        {
-            if (a.Col == b.Col && a.Row == b.Row)
-                return true;
-            
-            if (a.Col == b.Col)
-            {
-                if (b.Row < a.Row)
-                {
-                    (a, b) = (b, a);
-                }
-
-                for (var r = a.Row; r < b.Row; r++)
-                {
-                    var cell = _context.Cells[r, a.Col];
-                    if (cell.HasFlag(CellType.DownWall))
-                        return false;
-                }
-
-                return true;
-            }
-            
-            if (a.Row == b.Row)
-            {
-                if (b.Col < a.Col)
-                {
-                    (a, b) = (b, a);
-                }
-
-                for (var c = a.Col; c < b.Col; c++)
-                {
-                    var cell = _context.Cells[a.Row, c];
-                    if (cell.HasFlag(CellType.RightWall))
-                        return false;
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
+        
         public UniTask Initialize(Context context, IMazeService mazeService)
         {
             _inputService = ServiceLocator.Get<IInputService>();

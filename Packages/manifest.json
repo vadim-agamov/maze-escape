@@ -1,8 +1,9 @@
 {
   "dependencies": {
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.mackysoft.serializereference-extensions": "https://github.com/mackysoft/Unity-SerializeReferenceExtensions.git?path=Assets/MackySoft/MackySoft.SerializeReferenceExtensions",
     "com.tayx.graphy": "https://github.com/Tayx94/graphy.git",
-    "com.unity.addressables": "1.21.15",
+    "com.unity.addressables": "1.21.17",
     "com.unity.ai.navigation": "1.1.4",
     "com.unity.collab-proxy": "2.0.7",
     "com.unity.feature.2d": "2.0.0",

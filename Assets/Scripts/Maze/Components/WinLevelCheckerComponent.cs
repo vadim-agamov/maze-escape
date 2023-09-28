@@ -1,7 +1,9 @@
+using System.Linq;
 using Actions;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
 using Maze.Configs;
+using Maze.Events;
 using Maze.Service;
 
 namespace Maze.Components
@@ -21,7 +23,7 @@ namespace Maze.Components
 
         private void OnPathUpdated(PathUpdatedEvent pathUpdatedEvent)
         {
-            if (pathUpdatedEvent.Cells.Last.Value.CellType.HasFlag(CellType.Finish))
+            if (pathUpdatedEvent.Cells.Last().CellType.HasFlag(CellType.Finish))
             {
                 WinLevelAction().SuppressCancellationThrow().Forget();
             }
@@ -30,8 +32,9 @@ namespace Maze.Components
         private async UniTask WinLevelAction()
         {
             _context.Active = false;
-            
-            await UniTask.WaitUntil(() => _characterComponent.IsWalking == false, cancellationToken: Bootstrapper.SessionToken);
+            Event<WinLevelEvent>.Publish();
+
+            await _characterComponent.WaitCharacter(Bootstrapper.SessionToken);
             await new WinLevelAction().Execute(Bootstrapper.SessionToken);
         }
 

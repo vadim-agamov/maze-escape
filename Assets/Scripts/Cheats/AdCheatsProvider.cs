@@ -1,8 +1,8 @@
 using Cysharp.Threading.Tasks;
 using Modules.CheatService;
 using Modules.CheatService.Controls;
+using Modules.PlatformService;
 using Modules.ServiceLocator;
-using Modules.SocialNetworkService;
 
 namespace Cheats
 {
@@ -25,7 +25,7 @@ namespace Cheats
         {
             _showRewardedInterstitial = new CheatButton(cheatService, "Show Rewarded Interstitial", () =>
             {
-                ServiceLocator.Get<ISocialNetworkService>()
+                ServiceLocator.Get<IPlatformService>()
                     .ShowRewardedInterstitial()
                     .ContinueWith(x => _isRewardedAdShown = x);
             });
@@ -33,7 +33,7 @@ namespace Cheats
             
             _showInterstitial = new CheatButton(cheatService, "Show Interstitial", () =>
             {
-                ServiceLocator.Get<ISocialNetworkService>()
+                ServiceLocator.Get<IPlatformService>()
                     .ShowInterstitial()
                     .ContinueWith(x => _isInterstitialAdShown = x);
             });
@@ -41,7 +41,7 @@ namespace Cheats
             
             _showRewardedVideo = new CheatButton(cheatService, "Show Rewarded Video", () =>
             {
-                ServiceLocator.Get<ISocialNetworkService>()
+                ServiceLocator.Get<IPlatformService>()
                     .ShowRewardedVideo()
                     .ContinueWith(x => _isRewardedVideoAdShown = x);
             });

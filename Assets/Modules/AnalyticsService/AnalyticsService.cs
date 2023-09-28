@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -10,7 +9,18 @@ namespace Modules.AnalyticsService
     public class AnalyticsService: IAnalyticsService
     {
         private readonly List<IAnalytic> _analytics = new List<IAnalytic>();
-
+        
+        private readonly Dictionary<string, object> _parameters = new Dictionary<string, object>()
+        {
+#if UNITY_EDITOR
+            {"sn", "editor"}
+#elif FB
+            {"sn", "fb"}
+#elif DUMMY_WEBGL
+            {"sn", "dummy"}
+#endif
+        };
+        
         public AnalyticsService()
         {
             _analytics.Add(new UnityAnalytic());
@@ -40,6 +50,12 @@ namespace Modules.AnalyticsService
 
         void IAnalyticsService.TrackEvent(string eventName, Dictionary<string, object> parameters)
         {
+            parameters ??= new Dictionary<string, object>();
+            foreach (var (key, value) in _parameters)
+            {
+                parameters[key] = value;
+            }  
+            
             _analytics.ForEach(a => a.TrackEvent(eventName, parameters));
         }
     }

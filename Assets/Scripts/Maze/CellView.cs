@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Maze.Configs;
 using Modules.Extensions;
 using UnityEngine;
-using Utils;
 
 namespace Maze
 {

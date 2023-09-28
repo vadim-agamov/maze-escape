@@ -16,6 +16,9 @@ namespace Services.PlayerDataService
         public DateTime LastSessionDate;
         
         [JsonProperty]
+        public DateTime AdsLastShownDate;
+        
+        [JsonProperty]
         public int Level;
         
         public PlayerData()

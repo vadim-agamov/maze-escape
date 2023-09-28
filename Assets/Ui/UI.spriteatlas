@@ -27,34 +27,62 @@ SpriteAtlas:
       blockOffset: 1
       allowAlphaSplitting: 0
       enableRotation: 1
-      enableTightPacking: 1
+      enableTightPacking: 0
       enableAlphaDilation: 0
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: ac0a1e0df39424dff908455df01b9b30, type: 3}
+    - {fileID: 102900000, guid: a28539ed8707d49979c41ad9e4c37a1b, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
     - a0df4b8075960413cb9da347c2b967c6: 21300000
-    - 57807256cb6544f7fb99039a4bf2045e: 21300000
-    - 49de3f1865dc043fbb16ce64bb3d6d66: 21300000
+    - b3775ef1d8c71b64391bff6deeb6adb1: 1362046142
+    - b3775ef1d8c71b64391bff6deeb6adb1: -1659025985
+    - b3775ef1d8c71b64391bff6deeb6adb1: -1279144892
+    - b3775ef1d8c71b64391bff6deeb6adb1: 1779530204
+    - b3775ef1d8c71b64391bff6deeb6adb1: -22890835
+    - b3775ef1d8c71b64391bff6deeb6adb1: 1046350131
+    - b3775ef1d8c71b64391bff6deeb6adb1: 115457094
+    - b3775ef1d8c71b64391bff6deeb6adb1: 1447845157
+    - 5f27f6828d8a049539b303d04a18853f: 21300000
+    - 80f51ee74999840a5a018047d3dee224: 21300000
     - 9cad8a1a4133b47c6a144ab6d7c8ddc0: 21300000
     - 81f552ea0adf24df28d71cdeba64b34a: 21300000
+    - 0047ca7e2e4d148ff9bbde26ef80c871: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: a0df4b8075960413cb9da347c2b967c6, type: 3}
-  - {fileID: 21300000, guid: 57807256cb6544f7fb99039a4bf2045e, type: 3}
-  - {fileID: 21300000, guid: 49de3f1865dc043fbb16ce64bb3d6d66, type: 3}
+  - {fileID: 1362046142, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: -1659025985, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: -1279144892, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: 1779530204, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: -22890835, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: 1046350131, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: 115457094, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: 1447845157, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
+  - {fileID: 21300000, guid: 5f27f6828d8a049539b303d04a18853f, type: 3}
+  - {fileID: 21300000, guid: 80f51ee74999840a5a018047d3dee224, type: 3}
   - {fileID: 21300000, guid: 9cad8a1a4133b47c6a144ab6d7c8ddc0, type: 3}
   - {fileID: 21300000, guid: 81f552ea0adf24df28d71cdeba64b34a, type: 3}
+  - {fileID: 21300000, guid: 0047ca7e2e4d148ff9bbde26ef80c871, type: 3}
   m_PackedSpriteNamesToIndex:
   - Plane
-  - Sound
+  - confetti_6
+  - confetti_7
+  - confetti_4
+  - confetti_5
+  - confetti_2
+  - confetti_3
+  - confetti_0
+  - confetti_1
+  - LoadingBack
   - NoSound
   - RePlay
   - Play
+  - Sound
   m_RenderDataMap: {}
   m_Tag: UI
   m_IsVariant: 0

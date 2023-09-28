@@ -20,6 +20,7 @@ namespace Services.JumpScreenService
         
         async UniTask IJumpScreenService.Show(CancellationToken cancellationToken)
         {
+            gameObject.SetActive(true);
             _progressText.gameObject.SetActive(false);
             _canvasGroup.alpha = 0;
             await _canvasGroup
@@ -34,6 +35,7 @@ namespace Services.JumpScreenService
                 .DOFade(0, 0.5f)
                 .SetEase(Ease.InQuad)
                 .ToUniTask(cancellationToken: cancellationToken);
+            gameObject.SetActive(false);
         }
 
         float IJumpScreenService.Progress

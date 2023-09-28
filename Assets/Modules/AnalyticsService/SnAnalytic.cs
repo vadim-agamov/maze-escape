@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Modules.SocialNetworkService;
+using Modules.PlatformService;
 
 namespace Modules.AnalyticsService
 {
     public class SnAnalytic : IAnalytic
     {
-        private ISocialNetworkService _snService;
+        private IPlatformService _snService;
 
         async UniTask IAnalytic.Initialize(CancellationToken token)
         {
-            _snService = await ServiceLocator.ServiceLocator.GetAsync<ISocialNetworkService>(token);
+            _snService = await ServiceLocator.ServiceLocator.GetAsync<IPlatformService>(token);
         }
 
         void IAnalytic.Start()

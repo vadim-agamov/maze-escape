@@ -50,9 +50,9 @@ namespace UI
             _replayButton.onClick.AddListener(Model.OnReplay);
         }
 
-        public override async UniTask Hide(CancellationToken cancellationToken = default)
+        protected override async UniTask OnHide(CancellationToken cancellationToken = default)
         {
-             await base.Hide(cancellationToken);
+             await base.OnHide(cancellationToken);
              Model.OnPlay();
         }
     }

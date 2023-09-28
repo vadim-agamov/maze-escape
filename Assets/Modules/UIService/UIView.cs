@@ -5,26 +5,17 @@ using UnityEngine;
 
 namespace Modules.UIService
 {
-    public abstract class UIViewBase : MonoBehaviour
+    public abstract class UIView : MonoBehaviour, IViewControl
     {
-        [SerializeReference] 
+        [SerializeReference, SubclassSelector] 
         private IViewAnimation _showAnimation;
         
-        [SerializeReference] 
+        [SerializeReference, SubclassSelector] 
         private IViewAnimation _hideAnimation;
 
-        [SerializeField]
-        private Animator _animator;
-
-        [SerializeField]
-        public CanvasGroup _canvasGroup;
-
         protected UIModel BaseModel;
-        
-        public Animator Animator => _animator;
-        public CanvasGroup CanvasGroup => _canvasGroup;
-        
-        public virtual async UniTask Show(CancellationToken cancellationToken = default)
+
+        protected virtual async UniTask OnShow(CancellationToken cancellationToken = default)
         {
             gameObject.SetActive(true);
             if (_showAnimation != null)
@@ -33,7 +24,7 @@ namespace Modules.UIService
             }
         }
 
-        public virtual async UniTask Hide(CancellationToken cancellationToken = default)
+        protected virtual async UniTask OnHide(CancellationToken cancellationToken = default)
         {
             if (_hideAnimation != null)
             {
@@ -48,18 +39,18 @@ namespace Modules.UIService
             OnSetModel();
         }
         
-        public void UnsetModel()
-        {
-            BaseModel = null;
-            OnUnsetModel();
-        }
-
         protected virtual void OnSetModel() { }
-        internal virtual void OnUpdateModel() { }
-        protected virtual void OnUnsetModel() { }
+        protected virtual void OnUpdateModel() { }
+        
+        #region IViewControl
+        UniTask IViewControl.Show(CancellationToken cancellationToken) => OnShow(cancellationToken);
+        UniTask IViewControl.Hide(CancellationToken cancellationToken) => OnHide(cancellationToken);
+        void IViewControl.UpdateModel() => OnUpdateModel();
+        GameObject IViewControl.GameObject => gameObject;
+        #endregion
     }
 
-    public abstract class UIView<TModel> : UIViewBase where TModel : UIModel
+    public abstract class UIView<TModel> : UIView where TModel : UIModel
     {
         protected TModel Model => (TModel)BaseModel;
     }

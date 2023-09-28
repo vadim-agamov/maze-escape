@@ -14,15 +14,18 @@ namespace Modules.UIService.ViewAnimation
         [SerializeField] 
         private float _duration = 0.5f;
         
-        public async UniTask PlayAsync(UIViewBase viewBase, CancellationToken cancellationToken = default)
+        [SerializeField]
+        private Animator _animator;
+        
+        public async UniTask PlayAsync(UIView viewBase, CancellationToken cancellationToken)
         {
-            if (viewBase.Animator == null)
+            if (_animator == null)
             {
                 Debug.LogError($"Animator in view base is null {viewBase.gameObject.name}");
                 return;
             }
             
-            viewBase.Animator.SetTrigger(_trigger);
+            _animator.SetTrigger(_trigger);
             await UniTask.Delay(TimeSpan.FromSeconds(_duration), cancellationToken: cancellationToken);
         }
     }

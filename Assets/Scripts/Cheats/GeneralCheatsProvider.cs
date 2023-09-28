@@ -12,6 +12,7 @@ namespace Cheats
         private readonly CheatButton _reset;
         private readonly CheatLabel _installDate;
         private readonly CheatLabel _lastSessionDate;
+        private readonly CheatLabel _adsLastShownDate;
 
         public GeneralCheatsProvider(ICheatService cheatService, IPlayerDataService playerDataService)
         {
@@ -25,12 +26,14 @@ namespace Cheats
             
             _installDate = new CheatLabel(() => $"Install date: {_playerDataService.Data?.InstallDate}");
             _lastSessionDate = new CheatLabel(() => $"Last Session date: {_playerDataService.Data?.LastSessionDate}");
+            _adsLastShownDate = new CheatLabel(() => $"Ads Shown date: {_playerDataService.Data?.AdsLastShownDate}");
         }
 
         void ICheatsProvider.OnGUI()
         {
             _installDate.OnGUI();
             _lastSessionDate.OnGUI();
+            _adsLastShownDate.OnGUI();
             _reset.OnGUI();
         }
 

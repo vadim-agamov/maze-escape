@@ -5,6 +5,6 @@ namespace Modules.UIService.ViewAnimation
 {
     public interface IViewAnimation
     {
-        UniTask PlayAsync(UIViewBase viewBase, CancellationToken cancellationToken = default);
+        UniTask PlayAsync(UIView viewBase, CancellationToken cancellationToken);
     }
 }

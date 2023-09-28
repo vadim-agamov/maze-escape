@@ -110,50 +110,25 @@ namespace Maze.Configs.Editor
             
             currentPath.Push((Row: r, Col: c));
             cells[r, c] |= CellType.Visited;
-            // while (true)
-            // {
-            //     var neighbours = GetUnvisitedReachableNeighbours(r, c, cells);
-            //     if(neighbours.Count == 0)
-            //         break;
-            //
-            //     var (neighbourRow, neighbourCol,_ , _) = neighbours.First();
-            //     FindPath(neighbourRow, neighbourCol, cells, currentPath, paths);
-            // }
-            
-            // var neighbours = GetUnvisitedReachableNeighbours(r, c, cells);
-            // foreach (var (neighbourRow, neighbourCol, _, _) in neighbours)
-            // {
-                // FindPath(neighbourRow, neighbourCol, cells, currentPath, paths);
-                // if (res)
-                // {
-                    // cells[r, c] |= CellType.Path;
-                    // currentPath.Pop();
-                    // return true;
-                // }
-            // }
             
             var cell = cells[r, c];
             if (!cell.HasFlag(CellType.UpWall) && r > 0 && !cells[r - 1, c].HasFlag(CellType.Visited))
             {
-                // neighbours.Add((NeigbourRow: r-1, NeigbourCol: c, SelfWall: CellType.UpWall, NeigbourWall: CellType.DownWall));
                 FindPath(r - 1, c, cells, currentPath, paths);
             }
             
             if (!cell.HasFlag(CellType.DownWall) && r < cells.GetLength(0) - 1 && !cells[r + 1, c].HasFlag(CellType.Visited))
             {
-                // neighbours.Add((NeigbourRow: r+1, NeigbourCol: c, SelfWall: CellType.DownWall, NeigbourWall: CellType.UpWall));
                 FindPath(r + 1, c, cells, currentPath, paths);
             }
             
             if (!cell.HasFlag(CellType.LeftWall) && c > 0 && !cells[r, c-1].HasFlag(CellType.Visited))
             {
-                // neighbours.Add((NeigbourRow: r, NeigbourCol: c-1, SelfWall: CellType.LeftWall, NeigbourWall: CellType.RightWall));
                 FindPath(r, c - 1, cells, currentPath, paths);
             }
             
             if (!cell.HasFlag(CellType.RightWall) && c < cells.GetLength(1) - 1 && !cells[r, c+1].HasFlag(CellType.Visited))
             {
-                // neighbours.Add((NeigbourRow: r, NeigbourCol: c+1, SelfWall: CellType.RightWall, NeigbourWall: CellType.LeftWall));
                 FindPath(r, c+1, cells, currentPath, paths);
             }
 

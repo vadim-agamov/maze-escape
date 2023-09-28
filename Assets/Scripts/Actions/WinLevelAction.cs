@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze;
@@ -22,7 +23,10 @@ namespace Actions
             var action = await model.WaitAction(token);
             if (action == LevelWinModel.LevelWinAction.PlayNext)
             {
-                AnalyticsService.TrackEvent($"WinLevel_{DataService.Data.Level}");
+                AnalyticsService.TrackEvent("WinLevel", new Dictionary<string, object>
+                {
+                    {"level", DataService.Data.Level.ToString()}
+                });
                 DataService.Data.Level++;
                 DataService.Commit();
             }

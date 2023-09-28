@@ -7,9 +7,9 @@ namespace Modules.Events
 {
     public static class Event<TEvent> 
     {
-        private static HashSet<Action<TEvent>> _subscribers = new HashSet<Action<TEvent>>();
-        private static HashSet<Action<TEvent>> _subscribersToAdd = new HashSet<Action<TEvent>>();
-        private static HashSet<Action<TEvent>> _subscribersToRemove = new HashSet<Action<TEvent>>();
+        private static readonly HashSet<Action<TEvent>> _subscribers = new HashSet<Action<TEvent>>();
+        private static readonly HashSet<Action<TEvent>> _subscribersToAdd = new HashSet<Action<TEvent>>();
+        private static readonly HashSet<Action<TEvent>> _subscribersToRemove = new HashSet<Action<TEvent>>();
         private static UniTaskCompletionSource<TEvent> _completionSource;
 
         public static void Subscribe(Action<TEvent> method)

@@ -7,17 +7,6 @@ namespace Modules.AnalyticsService
 {
     public class UnityAnalytic : IAnalytic
     {
-        private readonly Dictionary<string, object> _parameters = new Dictionary<string, object>()
-        {
-#if UNITY_EDITOR
-            {"sn", "editor"}
-#elif FB
-            {"sn", "fb"}
-#elif DUMMY_WEBGL
-            {"sn", "dummy"}
-#endif
-        };
-        
         async UniTask IAnalytic.Initialize(CancellationToken token)
         {
             Debug.Log($"UnityAnalytic Initialize begin");
@@ -39,12 +28,6 @@ namespace Modules.AnalyticsService
 
         void IAnalytic.TrackEvent(string eventName, Dictionary<string, object> parameters)
         {
-            parameters ??= new Dictionary<string, object>();
-            foreach (var (key, value) in _parameters)
-            {
-                parameters[key] = value;
-            }   
-            
             Unity.Services.Analytics.AnalyticsService.Instance.CustomData(eventName, parameters);
         }
     }

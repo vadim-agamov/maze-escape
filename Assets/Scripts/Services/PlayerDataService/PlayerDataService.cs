@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Modules.PlatformService;
 using Modules.ServiceLocator;
-using Modules.SocialNetworkService;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -11,16 +11,16 @@ namespace Services.PlayerDataService
     public class PlayerDataService: IPlayerDataService
     {
         private PlayerData _data;
-        private ISocialNetworkService _socialNetworkService;
+        private IPlatformService _platformService;
         
         
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(PlayerDataService)}] Initialize begin");
 
-            _socialNetworkService = await ServiceLocator.GetAsync<ISocialNetworkService>(cancellationToken);
+            _platformService = await ServiceLocator.GetAsync<IPlatformService>(cancellationToken);
             
-            var data = await _socialNetworkService.LoadPlayerProgress();
+            var data = await _platformService.LoadPlayerProgress();
             if (string.IsNullOrEmpty(data))
             {
                 _data = new PlayerData();
@@ -50,7 +50,7 @@ namespace Services.PlayerDataService
         void IPlayerDataService.Commit()
         {
             var data = JsonConvert.SerializeObject(_data);
-            _socialNetworkService.SavePlayerProgress(data);
+            _platformService.SavePlayerProgress(data);
         }
 
         void IPlayerDataService.Reset()

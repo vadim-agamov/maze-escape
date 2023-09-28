@@ -1,13 +1,13 @@
 using Cysharp.Threading.Tasks;
 using Modules.ServiceLocator;
-using Modules.SocialNetworkService;
 using Modules.SoundService;
+using Services.AdsService;
 
 namespace Actions
 {
     public class ShowInterstitialAction
     {
-        private readonly ISocialNetworkService _snService = ServiceLocator.Get<ISocialNetworkService>();
+        private readonly IAdsService _adsService = ServiceLocator.Get<IAdsService>();
         private readonly ISoundService _soundService = ServiceLocator.Get<ISoundService>();
 
         public async UniTask Execute()
@@ -18,7 +18,7 @@ namespace Actions
                 _soundService.Mute();
             }
 
-            await _snService.ShowInterstitial();
+            await _adsService.ShowInterstitial();
 
             if (!isMuted)
             {

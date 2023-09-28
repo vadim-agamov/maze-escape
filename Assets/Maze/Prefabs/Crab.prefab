@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 143978104418128557}
   - component: {fileID: 4689137909807416912}
+  - component: {fileID: 8450851106715026502}
   m_Layer: 0
   m_Name: pivot
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 486165837496539841}
   m_Father: {fileID: 8335069137549971400}
@@ -85,6 +86,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &8450851106715026502
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2755027399789247946}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e43ab9421fb6c42d9a5e9cedfee2c571, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8432374181907833326
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,8 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c786c35a6f5f4591b609f0aa15a9d480, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 5
+  _speed: 3
   _attentionFx: {fileID: 3936190365453659962}
+  _animator: {fileID: 8450851106715026502}
 --- !u!1001 &7424915339776724133
 PrefabInstance:
   m_ObjectHideFlags: 0

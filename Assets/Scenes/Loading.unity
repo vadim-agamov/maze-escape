@@ -131,6 +131,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 706725600845334159, guid: 29ecb0e9eca83437fa9b16181a51e508, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -43.62793
+      objectReference: {fileID: 0}
     - target: {fileID: 2643049261199476765, guid: 29ecb0e9eca83437fa9b16181a51e508, type: 3}
       propertyPath: m_Name
       value: JumpScreen

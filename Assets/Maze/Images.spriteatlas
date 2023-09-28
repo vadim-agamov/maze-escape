@@ -66,6 +66,7 @@ SpriteAtlas:
     - 12137020456524821a630c0835355a2e: 21300000
     - f2b1fc60409cc4bcda84ca8783367e35: 21300000
     - 743852a15ee714ed996ff350370c6daf: 21300000
+    - 4668c874c9167414aaecb02c22c293b8: 21300000
     - 89010547c8f2746c9825f349bdc63e35: 21300000
     - eb2b7af7d125a44e39a922aec7efabb3: 21300000
     - 9d3f4d08ca9394f68ae70b65eec5739f: 21300000
@@ -84,6 +85,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 12137020456524821a630c0835355a2e, type: 3}
   - {fileID: 21300000, guid: f2b1fc60409cc4bcda84ca8783367e35, type: 3}
   - {fileID: 21300000, guid: 743852a15ee714ed996ff350370c6daf, type: 3}
+  - {fileID: 21300000, guid: 4668c874c9167414aaecb02c22c293b8, type: 3}
   - {fileID: 21300000, guid: 89010547c8f2746c9825f349bdc63e35, type: 3}
   - {fileID: 21300000, guid: eb2b7af7d125a44e39a922aec7efabb3, type: 3}
   - {fileID: 21300000, guid: 9d3f4d08ca9394f68ae70b65eec5739f, type: 3}
@@ -101,6 +103,7 @@ SpriteAtlas:
   - h_0
   - 1
   - Cursor
+  - star
   - attention
   - 2
   - h_1

@@ -1,23 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Maze.Configs;
+using Maze.Events;
 using Maze.Service;
 using Modules.Events;
+using Modules.Utils;
 using UnityEngine;
 
 namespace Maze.Components
 {
-    public struct CharacterMoveBeginEvent
-    {
-    }
-    
-    public struct CharacterMoveEndEvent
-    {
-    }
-    
-    
     public class CharacterComponent : MonoBehaviour, IComponent, IAttentionFxControl
     {
         [SerializeField] 
@@ -26,25 +20,20 @@ namespace Maze.Components
         [SerializeField]
         private GameObject _attentionFx;
 
-        private LinkedList<Vector3> _waypoints;
-        private Vector3 _currentWaypoint;
+        [SerializeField] 
+        private Animator _animator;
+
+        private readonly LinkedList<Vector3> _waypoints = new LinkedList<Vector3>();
         private Context _context;
         private bool _initialized;
-        private const int IdleState = 0;
-        private const int WalkState = 1;
-        private const int JumpState = 2;
+        private readonly ValueChangedTrigger<bool> _isWalkingTrigger = new ValueChangedTrigger<bool>();
+        private CancellationTokenSource _teleportToken;
 
-        private int _currentState = IdleState;
-
-        private static readonly int State = Animator.StringToHash("state");
-
-        public bool IsWalking { get; private set; }
+        public bool IsWalking => _isWalkingTrigger.Value;
 
         UniTask IComponent.Initialize(Context context, IMazeService mazeService)
         {
             _context = context;
-            _waypoints = new LinkedList<Vector3>();
-            _currentWaypoint = Vector3.zero;
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             SetupStartPosition();
             _initialized = true;
@@ -61,42 +50,26 @@ namespace Maze.Components
                 }
             }
         }
-        
-        private void OnPathUpdated(PathUpdatedEvent evt)
-        {
-            if(!_context.Active)
-                return;
-            
-            var point = evt.Cells.Last().transform.position;
 
-            if (_waypoints.Count(w => w == point) > 0) 
+        private void OnPathUpdated(PathUpdatedEvent @event)
+        {
+            var cells = @event.Cells.Select(x => x.transform.position);
+
+            if (!_context.Active)
             {
-                while(true)
+                return;
+            }
+
+            foreach (var cell in cells)
+            {
+                while (_waypoints.Any(p => p == cell))
                 {
-                    var waypoint = _waypoints.Last.Value;
-            
-                    if(waypoint == point)
-                        break;
-                    
                     _waypoints.RemoveLast();
                 }
-            }
-            else
-            {
-                _waypoints.AddLast(point);
+                
+                _waypoints.AddLast(cell);
             }
         }
-
-        // private void SetState(int state)
-        // {
-        //     if (_currentState == state)
-        //     {
-        //         return;
-        //     }
-        //
-        //     _currentState = state;
-        //     _animator.SetInteger(State, _currentState);
-        // }
 
         private void Update()
         {
@@ -104,38 +77,75 @@ namespace Maze.Components
             {
                 return;
             }
-
-            if (_currentWaypoint == Vector3.zero && _waypoints.Count > 0)
+            
+            if (_waypoints.Count == 0)
             {
-                _currentWaypoint = _waypoints.Last.Value;
-                _waypoints.RemoveLast();
-            }
-
-            if (_currentWaypoint == Vector3.zero)
-            {
-                // SetState(_context.Active ? IdleState : JumpState);
-                IsWalking = false;
+                _teleportToken?.Cancel();
+                _teleportToken = null;
                 return;
             }
 
-            transform.position  = Vector3.MoveTowards(transform.position, _currentWaypoint, _speed * Time.deltaTime);
-            IsWalking = true;
-            // SetState(WalkState);
-
-            if (Vector3.Distance(transform.position, _currentWaypoint) < 0.1f)
+            if (Vector3.Distance(transform.position, _waypoints.First.Value) < 0.01f)
             {
-                if (_waypoints.Count > 0)
+                _waypoints.RemoveFirst();
+            }
+
+            DoStep();
+        }
+
+        private void DoStep()
+        {
+            if (_waypoints.Count == 0)
+            {
+                if (_isWalkingTrigger.SetValue(false))
                 {
-                    _currentWaypoint = _waypoints.First.Value;
-                    _waypoints.RemoveFirst();
+                    _animator.SetTrigger("Stop");
+                    Debug.Log($">>> stop");
+                    Event<EndWalkEvent>.Publish();
                 }
-                else
-                {
-                    _currentWaypoint = Vector3.zero;
-                }
+
+                return;
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, _waypoints.First.Value, _speed * Time.deltaTime);
+
+            if (_isWalkingTrigger.SetValue(true))
+            {
+                _animator.SetTrigger("Walk");
+                Debug.Log($">>> walk");
+                Event<BeginWalkEvent>.Publish();
             }
         }
-        
+
+        public async UniTask WaitCharacter(CancellationToken token)
+        {
+            _teleportToken = new CancellationTokenSource();
+
+            try
+            {
+                await UniTask
+                    .Delay(TimeSpan.FromSeconds(2), cancellationToken: token)
+                    .AttachExternalCancellation(_teleportToken.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            
+            _animator.SetTrigger("Dissapear");
+            Debug.Log($">>> dissapear");
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
+            
+            transform.position = _waypoints.Last.Value;
+
+            _animator.SetTrigger("Appear");
+            Debug.Log($">>> appear");
+            _waypoints.Clear();
+
+            await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: token);
+        }
+
         void IDisposable.Dispose()
         {
             _initialized = false;
@@ -144,5 +154,20 @@ namespace Maze.Components
 
         void IAttentionFxControl.Show() => _attentionFx.SetActive(true);
         void IAttentionFxControl.Hide() => _attentionFx.SetActive(false);
+        
+        private void OnDrawGizmos()
+        {
+            foreach (var waypoint in _waypoints)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(waypoint, 0.1f);
+            }
+
+            if (_waypoints.Count > 0)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(_waypoints.First.Value, 0.2f);
+            }
+        }
     }
 }

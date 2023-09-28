@@ -5,22 +5,27 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Modules.ServiceLocator;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 namespace Modules.SoundService
 {
     public class SoundService: MonoBehaviour, ISoundService
     {
+        private SoundsConfig _config;
         private ObjectPool<AudioSource> _objectPool;
         private List<AudioSource> _activeSources;
         private CancellationTokenSource _cancellationToken;
         private bool _isMuted;
 
-        UniTask IService.Initialize(CancellationToken _)
+        async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             Debug.Log($"[{nameof(SoundService)}] Initialize begin");
-
+            
             DontDestroyOnLoad(gameObject);
+            _config = await Addressables.LoadAssetAsync<SoundsConfig>("SoundsConfig").ToUniTask(cancellationToken: cancellationToken);
+            
             gameObject.name = $"[{nameof(SoundService)}]";
             gameObject.AddComponent<AudioListener>();
             _objectPool = new ObjectPool<AudioSource>(OnCreateAudioSource, OnGetAudioSource, OnReleaseAudioSource, OnDestroyAudioSource);
@@ -28,11 +33,11 @@ namespace Modules.SoundService
             _cancellationToken = new CancellationTokenSource();
             
             Debug.Log($"[{nameof(SoundService)}] Initialize end");
-            return UniTask.CompletedTask;
         }
 
         void IService.Dispose()
         {
+            Addressables.Release(_config);
             _cancellationToken.Cancel();
             _objectPool.Dispose();
             Destroy(this);
@@ -43,7 +48,8 @@ namespace Modules.SoundService
             var source = _objectPool.Get();
             if (source.clip == null || source.clip.name != soundId)
             {
-                source.clip = Resources.Load<AudioClip>($"Sounds/{soundId}");
+                source.clip = _config.GetSound(soundId);
+                source.clip.name = soundId;
             }
 
             source.loop = true;
@@ -56,7 +62,8 @@ namespace Modules.SoundService
             var source = _objectPool.Get();
             if (source.clip == null || source.clip.name != soundId)
             {
-                source.clip = Resources.Load<AudioClip>($"Sounds/{soundId}");
+                source.clip = _config.GetSound(soundId);
+                source.clip.name = soundId;
             }
 
             source.loop = false;
