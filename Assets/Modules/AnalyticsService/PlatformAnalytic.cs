@@ -1,30 +1,30 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
+using Modules.PlatformService;
 
 namespace Modules.AnalyticsService
 {
-    public class UnityAnalytic : IAnalytic
+    public class PlatformAnalytic : IAnalytic
     {
+        private IPlatformService _platformService;
+
         async UniTask IAnalytic.Initialize(CancellationToken token)
         {
-            await Unity.Services.Core.UnityServices.InitializeAsync();
+            _platformService = await ServiceLocator.ServiceLocator.GetAsync<IPlatformService>(token);
         }
 
         void IAnalytic.Start()
         {
-            Unity.Services.Analytics.AnalyticsService.Instance.StartDataCollection();
         }
 
         void IAnalytic.Stop()
         {
-            Unity.Services.Analytics.AnalyticsService.Instance.StopDataCollection();
         }
 
         void IAnalytic.TrackEvent(string eventName, Dictionary<string, object> parameters)
         {
-            Unity.Services.Analytics.AnalyticsService.Instance.CustomData(eventName, parameters);
+            _platformService.LogEvent(eventName, parameters);
         }
     }
 }

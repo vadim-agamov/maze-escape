@@ -32,13 +32,13 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 102900000, guid: ac0a1e0df39424dff908455df01b9b30, type: 3}
     - {fileID: 102900000, guid: a28539ed8707d49979c41ad9e4c37a1b, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
-    - a0df4b8075960413cb9da347c2b967c6: 21300000
+    - 8f7b3410cbab84a2c8f4f4be968e1ab7: 21300000
+    - 73f75090b02734d85870e86874e9adad: 21300000
     - b3775ef1d8c71b64391bff6deeb6adb1: 1362046142
     - b3775ef1d8c71b64391bff6deeb6adb1: -1659025985
     - b3775ef1d8c71b64391bff6deeb6adb1: -1279144892
@@ -48,13 +48,16 @@ SpriteAtlas:
     - b3775ef1d8c71b64391bff6deeb6adb1: 115457094
     - b3775ef1d8c71b64391bff6deeb6adb1: 1447845157
     - 5f27f6828d8a049539b303d04a18853f: 21300000
-    - 80f51ee74999840a5a018047d3dee224: 21300000
-    - 9cad8a1a4133b47c6a144ab6d7c8ddc0: 21300000
-    - 81f552ea0adf24df28d71cdeba64b34a: 21300000
-    - 0047ca7e2e4d148ff9bbde26ef80c871: 21300000
+    - c0451e92db4d5408b9a0bb5775a72bd6: 21300000
+    - 262b3b94a1ea74c81af12c2e7a7caf83: 21300000
+    - fe0e6955a8b97416b9d2d2a2e3b67db4: 21300000
+    - 323383955d90f479f8c23d5e1d7ea2cb: 21300000
+    - 5851a558446da4887b54120acb3a8d70: 21300000
+    - 3208e17ba60434753991665d1f3c9ebb: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: a0df4b8075960413cb9da347c2b967c6, type: 3}
+  - {fileID: 21300000, guid: 8f7b3410cbab84a2c8f4f4be968e1ab7, type: 3}
+  - {fileID: 21300000, guid: 73f75090b02734d85870e86874e9adad, type: 3}
   - {fileID: 1362046142, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: -1659025985, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: -1279144892, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
@@ -64,12 +67,15 @@ SpriteAtlas:
   - {fileID: 115457094, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: 1447845157, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: 21300000, guid: 5f27f6828d8a049539b303d04a18853f, type: 3}
-  - {fileID: 21300000, guid: 80f51ee74999840a5a018047d3dee224, type: 3}
-  - {fileID: 21300000, guid: 9cad8a1a4133b47c6a144ab6d7c8ddc0, type: 3}
-  - {fileID: 21300000, guid: 81f552ea0adf24df28d71cdeba64b34a, type: 3}
-  - {fileID: 21300000, guid: 0047ca7e2e4d148ff9bbde26ef80c871, type: 3}
+  - {fileID: 21300000, guid: c0451e92db4d5408b9a0bb5775a72bd6, type: 3}
+  - {fileID: 21300000, guid: 262b3b94a1ea74c81af12c2e7a7caf83, type: 3}
+  - {fileID: 21300000, guid: fe0e6955a8b97416b9d2d2a2e3b67db4, type: 3}
+  - {fileID: 21300000, guid: 323383955d90f479f8c23d5e1d7ea2cb, type: 3}
+  - {fileID: 21300000, guid: 5851a558446da4887b54120acb3a8d70, type: 3}
+  - {fileID: 21300000, guid: 3208e17ba60434753991665d1f3c9ebb, type: 3}
   m_PackedSpriteNamesToIndex:
-  - Plane
+  - body
+  - orange_btn
   - confetti_6
   - confetti_7
   - confetti_4
@@ -79,10 +85,12 @@ SpriteAtlas:
   - confetti_0
   - confetti_1
   - LoadingBack
-  - NoSound
-  - RePlay
-  - Play
-  - Sound
+  - crab400
+  - sound_on
+  - sound_off
+  - blue_btn
+  - header
+  - rays_white
   m_RenderDataMap: {}
   m_Tag: UI
   m_IsVariant: 0

@@ -10,7 +10,6 @@ namespace Editor.Build
 {
     public static class BuildFb
     {
-        //constants
         private const string FbDefine = "FB";
         private const string FbWebGLTemplate = "PROJECT:FbMinimal";
         private const string AppId = "644999433795437";
@@ -18,17 +17,30 @@ namespace Editor.Build
         
         private static UnityWebRequest _request;
 
-        [MenuItem("Game/Build/FB/Build")]
-        public static void Build()
+        [MenuItem("Game/Build/FB/BuildDev")]
+        public static void BuildDev()
         {
             SetFbDebugDefines();
-            
+            DoBuild();
+        }
+        
+        
+        [MenuItem("Game/Build/FB/BuildProd")]
+        public static void BuildProd()
+        {
+            SetFbProdDefines();
+            DoBuild();
+        }
+        
+        private static void DoBuild()
+        {
             BuildBase.IncrementBuildNumber();
             PlayerSettings.WebGL.template = FbWebGLTemplate;
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
             var now = DateTime.Now;
-            var path = Application.dataPath.Replace("/Assets", $"/Builds/fb/v_{now.Day}.{now.Month}-{now.Hour}.{now.Minute}.{now.Second}");
+            var path = Application.dataPath.Replace("/Assets",
+                $"/Builds/fb/v_{now.Day}.{now.Month}-{now.Hour}.{now.Minute}.{now.Second}");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path);
@@ -40,10 +52,10 @@ namespace Editor.Build
             {
                 return;
             }
-            
+
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetProdScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
-                
+            BuildPipeline.BuildPlayer(BuildBase.GetScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
+
             var zipFile = ZipBuild(path);
             UploadToFb(zipFile);
 
@@ -84,24 +96,17 @@ namespace Editor.Build
         [MenuItem("Game/Build/FB/Set Defines Dev")]
         public static void SetFbDebugDefines()
         {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbDebugDefines());
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, FbDebugDefines);
         }
         
         [MenuItem("Game/Build/FB/Set Defines Prod")]
         public static void SetFbProdDefines()
         {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL ,GetFbProdDefines());
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, FbProdDefines);
         }
         
-        private static string GetFbDebugDefines()
-        {
-            return BuildBase.GetDebugDefines() + ";" + FbDefine;
-        }
-
-        private static string GetFbProdDefines()
-        {
-            return BuildBase.GetProdDefines() + ";" + FbDefine;
-        }
+        private static string FbDebugDefines => $"{BuildBase.DebugDefines};{FbDefine}";
+        private static string FbProdDefines => $"{BuildBase.ProdDefines};{FbDefine}";
     }
 }
 

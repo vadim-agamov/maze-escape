@@ -29,19 +29,19 @@ namespace Editor.Build
             }
             
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetProdScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
+            BuildPipeline.BuildPlayer(BuildBase.GetScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
         }
 
         [MenuItem("Game/Build/WebGl/Set Defines Dev")]
         public static void SetDev()
         {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, $"{BuildBase.GetDebugDefines()};DUMMY_WEBGL");
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, $"{BuildBase.DebugDefines};DUMMY_WEBGL");
         }
         
         [MenuItem("Game/Build/WebGl/Set Defines Prod")]
         public static void SetProd()
         {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, $"{BuildBase.GetProdDefines()};DUMMY_WEBGL");
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, $"{BuildBase.ProdDefines};DUMMY_WEBGL");
         }
     }
 }

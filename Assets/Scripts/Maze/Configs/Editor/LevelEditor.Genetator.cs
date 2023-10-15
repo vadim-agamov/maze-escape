@@ -104,10 +104,6 @@ namespace Maze.Configs.Editor
                 var neighbours = GetUnvisitedNeighbours(r, c, cells);
                 if (neighbours.Count == 0)
                     break;
-
-                // var (neighbourRow, neighbourCol, selfWall, neighbourWall) = neighbours.Random();
-                // cells[r, c] &= ~selfWall;
-                // cells[neighbourRow, neighbourCol] &= ~neighbourWall;
                 
                 if (Random.Range(0, 20) < 1)
                 {

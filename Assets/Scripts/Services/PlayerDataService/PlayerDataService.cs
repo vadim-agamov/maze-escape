@@ -13,11 +13,8 @@ namespace Services.PlayerDataService
         private PlayerData _data;
         private IPlatformService _platformService;
         
-        
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
-            Debug.Log($"[{nameof(PlayerDataService)}] Initialize begin");
-
             _platformService = await ServiceLocator.GetAsync<IPlatformService>(cancellationToken);
             
             var data = await _platformService.LoadPlayerProgress();
@@ -38,7 +35,6 @@ namespace Services.PlayerDataService
             }
 
             _data ??= new PlayerData();
-            Debug.Log($"[{nameof(PlayerDataService)}] Initialize end");
         }
 
         void IService.Dispose()

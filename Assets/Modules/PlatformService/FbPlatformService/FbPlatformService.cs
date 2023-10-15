@@ -70,7 +70,6 @@ namespace Modules.PlatformService.FbPlatformService
 
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
-            Debug.Log($"[{nameof(FbPlatformService)}] Initialize");
             DontDestroyOnLoad(gameObject);
             _startGameCompletionSource = new UniTaskCompletionSource();
             FBStartGame();

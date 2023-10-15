@@ -7,6 +7,7 @@ using Maze.Configs;
 using Maze.Events;
 using Maze.Service;
 using Modules.Events;
+using Modules.UiComponents;
 using Modules.Utils;
 using UnityEngine;
 
@@ -19,23 +20,23 @@ namespace Maze.Components
         
         [SerializeField]
         private GameObject _attentionFx;
-
-        [SerializeField] 
-        private Animator _animator;
-
+        
         private readonly LinkedList<Vector3> _waypoints = new LinkedList<Vector3>();
         private Context _context;
         private bool _initialized;
         private readonly ValueChangedTrigger<bool> _isWalkingTrigger = new ValueChangedTrigger<bool>();
-        private CancellationTokenSource _teleportToken;
 
-        public bool IsWalking => _isWalkingTrigger.Value;
+        [SerializeField]
+        private AnimatorAsync _animator;
 
+        private CancellationTokenSource _disposalTokenSource;
+        
         UniTask IComponent.Initialize(Context context, IMazeService mazeService)
         {
             _context = context;
             Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             SetupStartPosition();
+            _disposalTokenSource = new CancellationTokenSource();
             _initialized = true;
             return UniTask.CompletedTask;
         }
@@ -73,15 +74,8 @@ namespace Maze.Components
 
         private void Update()
         {
-            if (!_initialized)
+            if (!_initialized || _waypoints.Count == 0)
             {
-                return;
-            }
-            
-            if (_waypoints.Count == 0)
-            {
-                _teleportToken?.Cancel();
-                _teleportToken = null;
                 return;
             }
 
@@ -100,7 +94,6 @@ namespace Maze.Components
                 if (_isWalkingTrigger.SetValue(false))
                 {
                     _animator.SetTrigger("Stop");
-                    Debug.Log($">>> stop");
                     Event<EndWalkEvent>.Publish();
                 }
 
@@ -112,42 +105,36 @@ namespace Maze.Components
             if (_isWalkingTrigger.SetValue(true))
             {
                 _animator.SetTrigger("Walk");
-                Debug.Log($">>> walk");
                 Event<BeginWalkEvent>.Publish();
             }
         }
 
         public async UniTask WaitCharacter(CancellationToken token)
         {
-            _teleportToken = new CancellationTokenSource();
-
-            try
+            if (_waypoints.Count < 10)
             {
-                await UniTask
-                    .Delay(TimeSpan.FromSeconds(2), cancellationToken: token)
-                    .AttachExternalCancellation(_teleportToken.Token);
-            }
-            catch (OperationCanceledException)
-            {
+                await UniTask.WaitUntil(() => _waypoints.Count <= 1, cancellationToken: token);
                 return;
             }
-            
-            _animator.SetTrigger("Dissapear");
-            Debug.Log($">>> dissapear");
-            
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
-            
-            transform.position = _waypoints.Last.Value;
 
-            _animator.SetTrigger("Appear");
-            Debug.Log($">>> appear");
+            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
+            
+            // Do teleport
+            await _animator.SetTrigger("Dissapear", "CrabDissapear", _disposalTokenSource.Token)
+                .SuppressCancellationThrow();
+
+            transform.position = _waypoints.Last.Previous.Value;
             _waypoints.Clear();
 
-            await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: token);
+            Debug.Log($">>> appear");
+            await _animator.SetTrigger("Appear", "CrabAppear", _disposalTokenSource.Token)
+                .SuppressCancellationThrow();
         }
 
         void IDisposable.Dispose()
         {
+            _disposalTokenSource?.Cancel();
+            _disposalTokenSource = null;
             _initialized = false;
             Event<PathUpdatedEvent>.Unsubscribe(OnPathUpdated);
         }

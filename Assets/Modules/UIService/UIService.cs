@@ -22,9 +22,7 @@ namespace Modules.UIService
 
         UniTask IService.Initialize(CancellationToken _)
         {
-            Debug.Log($"[{nameof(UIService)}] Initialize begin");
             SetupCanvas();
-            Debug.Log($"[{nameof(UIService)}] Initialize end");
             return UniTask.CompletedTask;
         }
 

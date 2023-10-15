@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 143978104418128557}
   - component: {fileID: 4689137909807416912}
   - component: {fileID: 8450851106715026502}
+  - component: {fileID: 8004949744268230414}
   m_Layer: 0
   m_Name: pivot
   m_TagString: Untagged
@@ -107,6 +108,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8004949744268230414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2755027399789247946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233047078a9941af8387f619f13936d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 8450851106715026502}
 --- !u!1 &8432374181907833326
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,7 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 3
   _attentionFx: {fileID: 3936190365453659962}
-  _animator: {fileID: 8450851106715026502}
+  _animator: {fileID: 8004949744268230414}
 --- !u!1001 &7424915339776724133
 PrefabInstance:
   m_ObjectHideFlags: 0

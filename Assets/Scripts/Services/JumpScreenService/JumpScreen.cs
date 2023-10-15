@@ -37,22 +37,20 @@ namespace Services.JumpScreenService
                 .ToUniTask(cancellationToken: cancellationToken);
             gameObject.SetActive(false);
         }
-
-        float IJumpScreenService.Progress
-        {
-            set
-            {
-                _progressText.gameObject.SetActive(true);
-                _progressText.text = $"{(100 * value):0}%";
-            }
-        }
-
+        
         UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             _progressText.gameObject.SetActive(false);
             _appVersionText.text = $"v{Application.version}";
             DontDestroyOnLoad(gameObject);
             return UniTask.CompletedTask;
+        }
+
+        public void Report(float value)
+        {
+            Debug.Log($"[{nameof(JumpScreen)}] progress: {value}");
+            _progressText.gameObject.SetActive(true);
+            _progressText.text = $"{(100 * value):0}%";
         }
 
         void IService.Dispose()

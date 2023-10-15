@@ -70,7 +70,6 @@ namespace Maze.Configs.Editor
         private void OnGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            // _levelConfig = (LevelConfig)EditorGUILayout.ObjectField(_levelConfig, typeof(LevelConfig), true);
             EditorGUILayout.EndHorizontal();
 
             GenerateButton();
@@ -112,7 +111,6 @@ namespace Maze.Configs.Editor
 
             var cellsRect = new Rect(10, 10, rect.width - 20, rect.height - 20);
             GUI.BeginGroup(cellsRect);
-            // EditorGUI.DrawRect(new Rect(0,0, cellsRect.width, cellsRect.height), Color.blue);
 
             var elementSize = (cellsRect.width) / cols;
             var itemRect = new Rect(Vector2.zero, Vector2.one * elementSize);

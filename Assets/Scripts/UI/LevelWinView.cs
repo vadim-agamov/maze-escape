@@ -1,6 +1,9 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Modules.ServiceLocator;
 using Modules.UIService;
+using Services.PlayerDataService;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +11,8 @@ namespace UI
 {
     public class LevelWinModel: UIModel
     {
+        private IPlayerDataService PlayerDataService { get; } = ServiceLocator.Get<IPlayerDataService>();
+
         public enum LevelWinAction
         {
             Replay,
@@ -15,7 +20,7 @@ namespace UI
         }
         
         private UniTaskCompletionSource<LevelWinAction> _completionSource = new UniTaskCompletionSource<LevelWinAction>();
-
+        
         public void OnPlay()
         {
             _completionSource?.TrySetResult(LevelWinAction.PlayNext);
@@ -30,6 +35,8 @@ namespace UI
 
         public UniTask<LevelWinAction> WaitAction(CancellationToken token) =>
             _completionSource.Task.AttachExternalCancellation(token);
+
+        public int Level => PlayerDataService.Data.Level;
     }
     
     public class LevelWinView: UIView<LevelWinModel>
@@ -42,12 +49,22 @@ namespace UI
         
         [SerializeField] 
         private Button _replayButton;
+
+        [SerializeField]
+        private TMP_Text _level;
         
         protected override void OnSetModel()
         {
+            base.OnSetModel();
             _closeButton.onClick.AddListener(Model.OnPlay);
             _playButton.onClick.AddListener(Model.OnPlay);
             _replayButton.onClick.AddListener(Model.OnReplay);
+        }
+
+        protected override async UniTask OnShow(CancellationToken cancellationToken = default)
+        {
+            _level.text = $"Level {Model.Level}";
+            await base.OnShow(cancellationToken);
         }
 
         protected override async UniTask OnHide(CancellationToken cancellationToken = default)

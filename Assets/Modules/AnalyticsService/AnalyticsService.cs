@@ -24,14 +24,12 @@ namespace Modules.AnalyticsService
         public AnalyticsService()
         {
             _analytics.Add(new UnityAnalytic());
-            _analytics.Add(new SnAnalytic());
+            _analytics.Add(new PlatformAnalytic());
         }
 
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
-            Debug.Log($"[{nameof(AnalyticsService)}] Initialize begin");
             await UniTask.WhenAll(_analytics.Select(a => a.Initialize(cancellationToken)));
-            Debug.Log($"[{nameof(AnalyticsService)}] Initialize end");
         }
 
         void IService.Dispose()

@@ -17,6 +17,9 @@ namespace Maze.Service
         private readonly List<IComponent> _components = new List<IComponent>();
         private readonly Context _context = new Context();
         private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
+        private IPlayerDataService DataService { get; } = ServiceLocator.Get<IPlayerDataService>();
+
+        private const int InitialLevels = 5;
 
         public T GetComponent<T>() where T : IComponent
         {
@@ -31,13 +34,10 @@ namespace Maze.Service
 
         public Context Context => _context;
 
+
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
-            Debug.Log($"[{nameof(MazeService)}] Initialize begin");
-
-            var playerDataService = ServiceLocator.Get<IPlayerDataService>();
-            var levels = await Addressables.LoadAssetAsync<LevelsConfig>("LevelsConfig");
-            Context.Level = levels.LevelsConfigs[playerDataService.Data.Level % levels.LevelsConfigs.Length];
+            await SetupLevel(cancellationToken);
             Context.Camera = GameObject.Find("Camera").GetComponent<Camera>();
             
             _components.Add(GameObject.Find("Field").GetComponent<FieldViewComponent>());
@@ -51,8 +51,10 @@ namespace Maze.Service
                 await component.Initialize(_context, this);
             }
             
-            Debug.Log($"[{nameof(MazeService)}] Initialize end");
-            AnalyticsService.TrackEvent($"StartLevel_{playerDataService.Data.Level}");
+            AnalyticsService.TrackEvent("StartLevel", new Dictionary<string, object>
+            {
+                {"level", DataService.Data.Level}
+            });
         }
 
         void IService.Dispose()
@@ -60,6 +62,21 @@ namespace Maze.Service
             foreach (var checker in _components)
             {
                 checker.Dispose();
+            }
+        }
+
+        private async UniTask SetupLevel(CancellationToken cancellationToken)
+        {
+            var levels = await Addressables.LoadAssetAsync<LevelsConfig>("LevelsConfig").ToUniTask(cancellationToken: cancellationToken);
+
+            if (DataService.Data.Level <= InitialLevels)
+            {
+                Context.Level = levels.LevelsConfigs[DataService.Data.Level];
+            }
+            else
+            {
+                var index = InitialLevels + DataService.Data.Level % (levels.LevelsConfigs.Length - InitialLevels);
+                Context.Level = levels.LevelsConfigs[index];
             }
         }
     }

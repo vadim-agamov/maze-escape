@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
@@ -8,22 +7,16 @@ namespace Editor.Build
 {
     public static class BuildBase 
     {
-        public static string[] GetDebugLevels()
+        public static string[] GetScenes()
         {
-            var levels = GetProdScenes().ToList();
-            return levels.ToArray();
-        }
-       
-        public static string[] GetProdScenes()
-        {
-            var levels = new []
+            var scenes = new []
             {
                 "Assets/Scenes/Loading.unity",
                 "Assets/Scenes/CoreMaze.unity",
                 "Assets/Scenes/Empty.unity"
             };
 
-            return levels;
+            return scenes;
         }
         
         public static void BuildAddressables()
@@ -34,15 +27,9 @@ namespace Editor.Build
             Debug.Log("BuildAddressablesProcessor.PreExport done");
         }
         
-        public static string GetDebugDefines()
-        {
-            return "DEV;UNITASK_DOTWEEN_SUPPORT;ANALYTICS";
-        }
-        public static string GetProdDefines()
-        {
-            return "UNITASK_DOTWEEN_SUPPORT;ANALYTICS;RELEASE";
-        }
-        
+        public static string DebugDefines => $"UNITASK_DOTWEEN_SUPPORT;ANALYTICS;DEV;";
+        public static string ProdDefines => "UNITASK_DOTWEEN_SUPPORT;ANALYTICS;RELEASE";
+
         public static void IncrementBuildNumber()
         {
             var buildNumber = PlayerSettings.bundleVersion.Split('.');

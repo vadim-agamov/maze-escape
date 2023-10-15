@@ -7,7 +7,6 @@ using Modules.ServiceLocator;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
-using UnityEngine.UI;
 
 namespace Modules.SoundService
 {
@@ -21,8 +20,6 @@ namespace Modules.SoundService
 
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
-            Debug.Log($"[{nameof(SoundService)}] Initialize begin");
-            
             DontDestroyOnLoad(gameObject);
             _config = await Addressables.LoadAssetAsync<SoundsConfig>("SoundsConfig").ToUniTask(cancellationToken: cancellationToken);
             
@@ -31,8 +28,6 @@ namespace Modules.SoundService
             _objectPool = new ObjectPool<AudioSource>(OnCreateAudioSource, OnGetAudioSource, OnReleaseAudioSource, OnDestroyAudioSource);
             _activeSources = new List<AudioSource>();
             _cancellationToken = new CancellationTokenSource();
-            
-            Debug.Log($"[{nameof(SoundService)}] Initialize end");
         }
 
         void IService.Dispose()

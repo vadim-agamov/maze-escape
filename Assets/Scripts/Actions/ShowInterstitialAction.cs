@@ -7,22 +7,22 @@ namespace Actions
 {
     public class ShowInterstitialAction
     {
-        private readonly IAdsService _adsService = ServiceLocator.Get<IAdsService>();
-        private readonly ISoundService _soundService = ServiceLocator.Get<ISoundService>();
+        private IAdsService AdsService { get; } = ServiceLocator.Get<IAdsService>();
+        private ISoundService SoundService { get; } = ServiceLocator.Get<ISoundService>();
 
         public async UniTask Execute()
         {
-            var isMuted = _soundService.IsMuted;
+            var isMuted = SoundService.IsMuted;
             if (!isMuted)
             {
-                _soundService.Mute();
+                SoundService.Mute();
             }
 
-            await _adsService.ShowInterstitial();
+            await AdsService.ShowInterstitial();
 
             if (!isMuted)
             {
-                _soundService.UnMute();
+                SoundService.UnMute();
             }
         }
     }

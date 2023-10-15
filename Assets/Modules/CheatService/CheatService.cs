@@ -16,10 +16,8 @@ namespace Modules.CheatService
         
         UniTask IService.Initialize(CancellationToken cancellationToken)
         {
-            Debug.Log($"[{nameof(CheatService)}] Initialize begin");
             DontDestroyOnLoad(gameObject);
             gameObject.name = $"[{nameof(CheatService)}]";
-            Debug.Log($"[{nameof(CheatService)}] Initialize end");
             return UniTask.CompletedTask;
         }
 

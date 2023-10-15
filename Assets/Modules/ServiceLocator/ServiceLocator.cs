@@ -73,7 +73,9 @@ namespace Modules.ServiceLocator
             {
                 try
                 {
+                    Debug.Log($"[{nameof(ServiceLocator)}] Initialize begin {typeof(TService)}");
                     await service.Initialize(cancellationToken);
+                    Debug.Log($"[{nameof(ServiceLocator)}] Initialize end {typeof(TService)}");
                     taskCompletionSource.TrySetResult();
                 }
                 catch (OperationCanceledException _)

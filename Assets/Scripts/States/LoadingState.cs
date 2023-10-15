@@ -60,11 +60,7 @@ namespace States
 #endif
             };
 
-            await tasks.WhenAll(new Progress<float>(p =>
-            {
-                Debug.Log($"[{nameof(LoadingState)}] progress {p}");
-                jumpScreenService.Progress = p;
-            }));
+            await tasks.WhenAll(jumpScreenService);
             
             Debug.Log($"[{nameof(LoadingState)}] all services registered");
 
