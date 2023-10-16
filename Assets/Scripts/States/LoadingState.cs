@@ -22,6 +22,8 @@ using UnityEngine;
     using Modules.PlatformService.EditorPlatformService;
 #elif FB
     using Modules.PlatformService.FbPlatformService;
+#elif YANDEX
+    using Modules.PlatformService.YandexPlatformService;
 #elif DUMMY_WEBGL
     using Modules.PlatformService.DummyPlatformService;
 #endif
@@ -42,6 +44,8 @@ namespace States
             var socialNetworkService = new GameObject("EditorSN").AddComponent<EditorPlatformService>();
 #elif FB
             var socialNetworkService = new GameObject("FbBridge").AddComponent<FbPlatformService>();
+#elif YANDEX
+            var socialNetworkService = new GameObject("Yandex").AddComponent<YandexPlatformService>();
 #elif DUMMY_WEBGL
             var socialNetworkService = new GameObject("DummySN").AddComponent<DummyPlatformService>();
 #endif

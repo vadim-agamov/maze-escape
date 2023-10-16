@@ -1,3 +1,5 @@
+#if FB 
+
 using System.Runtime.InteropServices;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
@@ -32,3 +34,4 @@ namespace Modules.PlatformService.FbPlatformService
         public void OnInterstitialNotShown(string e) => _interstitialAdController.OnNotShown(e);
     }
 }
+#endif

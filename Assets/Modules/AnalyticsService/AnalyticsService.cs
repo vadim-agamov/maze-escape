@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Modules.ServiceLocator;
-using UnityEngine;
 
 namespace Modules.AnalyticsService
 {
@@ -16,6 +15,8 @@ namespace Modules.AnalyticsService
             {"sn", "editor"}
 #elif FB
             {"sn", "fb"}
+#elif YANDEX
+            {"sn", "yandex"}
 #elif DUMMY_WEBGL
             {"sn", "dummy"}
 #endif

@@ -1,4 +1,4 @@
-#if FB
+#if YANDEX
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -8,55 +8,54 @@ using JetBrains.Annotations;
 using Modules.ServiceLocator;
 using UnityEngine;
 
-namespace Modules.PlatformService.FbPlatformService
+namespace Modules.PlatformService.YandexPlatformService
 {
-    // https://docs.unity3d.com/Manual/webgl-interactingwithbrowserscripting.html
-    public partial class FbPlatformService : MonoBehaviour, IPlatformService
+    public partial class YandexPlatformService : MonoBehaviour, IPlatformService
     {
         [DllImport("__Internal")]
-        private static extern string FbGetUserId();
+        private static extern string YandexGetUserId();
         
         [DllImport("__Internal")]
-        private static extern void FBGetData();
-    
-        [DllImport("__Internal")]
-        private static extern void FBSetData(string data);
+        private static extern void YandexGetData();
         
         [DllImport("__Internal")]
-        private static extern void FBLogEvent(string eventName);
+        private static extern void YandexSetData(string data);
         
         [DllImport("__Internal")]
-        private static extern void FBStartGame();
+        private static extern void YandexLogEvent(string eventName);
+        
+        [DllImport("__Internal")]
+        private static extern void YandexStartGame();
         
         private IPlatformService This => this;
         private UniTaskCompletionSource<string> _loadPlayerProgressCompletionSource;
         private UniTaskCompletionSource _startGameCompletionSource;
         
         public bool IsInitialized { get; private set; }
-        
-        string IPlatformService.GetUserId() => FbGetUserId();
+
+        string IPlatformService.GetUserId() => YandexGetUserId();
 
         #region Player Progress
 
         UniTask<string> IPlatformService.LoadPlayerProgress()
         {
             _loadPlayerProgressCompletionSource = new UniTaskCompletionSource<string>();
-            FBGetData();
+            YandexGetData();
             return _loadPlayerProgressCompletionSource.Task;
         }
 
         [UsedImplicitly]
-        public void OnPlayerProgressLoaded(string dataStr)
+        public void YandexOnPlayerProgressLoaded(string dataStr)
         {
-            Debug.Log($"[{nameof(FbPlatformService)}] OnPlayerProgressLoaded: {dataStr}");
+            Debug.Log($"[{nameof(YandexPlatformService)}] OnPlayerProgressLoaded: {dataStr}");
             _loadPlayerProgressCompletionSource.TrySetResult(dataStr);
             _loadPlayerProgressCompletionSource = null;
         }
 
         UniTask IPlatformService.SavePlayerProgress(string data)
         {
-            Debug.Log($"[{nameof(FbPlatformService)}] SavePlayerProgress: {data}");
-            FBSetData(data);
+            Debug.Log($"[{nameof(YandexPlatformService)}] SavePlayerProgress: {data}");
+            YandexSetData(data);
             return UniTask.CompletedTask;
         }
 
@@ -64,16 +63,15 @@ namespace Modules.PlatformService.FbPlatformService
 
         public void LogEvent(string eventName, Dictionary<string, object> _)
         {
-            Debug.Log($"[{nameof(FbPlatformService)}] LogEvent: {eventName}");
-            
-            FBLogEvent(eventName);
+            Debug.Log($"[{nameof(YandexPlatformService)}] LogEvent: {eventName}");
+            YandexLogEvent(eventName);
         }
 
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             DontDestroyOnLoad(gameObject);
             _startGameCompletionSource = new UniTaskCompletionSource();
-            FBStartGame();
+            YandexStartGame();
             await _startGameCompletionSource.Task;
             
             This.PreloadInterstitial();
@@ -87,17 +85,17 @@ namespace Modules.PlatformService.FbPlatformService
         }
 
         [UsedImplicitly]
-        public void OnGameStarted()
+        public void YandexOnGameStarted()
         {
-            Debug.Log($"[{nameof(FbPlatformService)}] OnGameStarted");
+            Debug.Log($"[{nameof(YandexPlatformService)}] OnGameStarted");
             _startGameCompletionSource.TrySetResult();
             _startGameCompletionSource = null;
         }
         
         [UsedImplicitly]
-        public void OnGameNotStarted(string message)
+        public void YandexOnGameNotStarted(string message)
         {
-            Debug.Log($"[{nameof(FbPlatformService)}] OnGameNotStarted: {message}");
+            Debug.Log($"[{nameof(YandexPlatformService)}] OnGameNotStarted: {message}");
             _startGameCompletionSource.TrySetException(new Exception(message));
             _startGameCompletionSource = null;
         }

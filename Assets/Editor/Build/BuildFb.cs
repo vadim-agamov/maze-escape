@@ -54,7 +54,7 @@ namespace Editor.Build
             }
 
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
+            BuildPipeline.BuildPlayer(BuildBase.GetScenes(), path, BuildTarget.WebGL, BuildOptions.None);
 
             var zipFile = ZipBuild(path);
             UploadToFb(zipFile);
