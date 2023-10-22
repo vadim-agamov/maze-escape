@@ -17,6 +17,9 @@ public static class Bootstrapper
         Time.fixedDeltaTime = 1f / Application.targetFrameRate;
         Application.quitting += OnApplicationQuit;
         _applicationCancellation = new CancellationTokenSource();
+
+        Screen.orientation = ScreenOrientation.Portrait;
+        
         Fsm.Enter(new LoadingState(), _applicationCancellation.Token).Forget();
     }
 

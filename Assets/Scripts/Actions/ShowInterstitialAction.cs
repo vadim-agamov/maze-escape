@@ -18,7 +18,7 @@ namespace Actions
                 SoundService.Mute();
             }
 
-            await AdsService.ShowInterstitial();
+            await AdsService.ShowInterstitial(Bootstrapper.SessionToken);
 
             if (!isMuted)
             {

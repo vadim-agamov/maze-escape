@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="style.css">
     <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
-    <style>
-      html,
-      body,
-      canvas { height: 100%; width: 100%; border: 0px; margin: 0px; }
-    </style>
   </head>
-  <body style="text-align: center">
+  <body bgcolor="#05A3A9">
+    <div class="container" id="container">
+      <div class="progress"><div class="progress-inner" id="loader"></div></div>
+    </div>
+    
     <canvas id="unity-canvas"></canvas>
-
+    
     <script src="https://yandex.ru/games/sdk/v2"></script>
     
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
@@ -27,10 +27,13 @@
 
       let ysdk = null;
       let player;
-      let logic_progress = 0;
-      let visual_progress = 0;
       let unityInstance = null;
 
+      let loadingBar = document.querySelector("#loader");
+      let container = document.querySelector("#container");
+      
+      loadingBar.style.backgroundSize = "0%";
+      
       YaGames.init()
               .then(function (_sdk)
               {
@@ -43,28 +46,6 @@
                 LoadUnityInstance();
                 StartVis()
               });
-
-      function lerp(a, b, t)
-      {
-        return (1 - t) * a + t * b;
-      }
-      
-      function StartVis()
-      {
-        let timer = setInterval(function()
-        {
-            visual_progress = lerp( visual_progress, logic_progress, 0.03);
-            visual_progress = Math.ceil(visual_progress * 100) / 100;
-            console.log("visual progress: " + visual_progress + ", logic progress: " + logic_progress);
-            // FBInstant.setLoadingProgress(visual_progress * 100);
-
-          if (visual_progress > 0.99 || logic_progress > 0.99)
-          {
-            // FBInstant.setLoadingProgress(100);
-            clearInterval(timer);
-          }
-        }, 100);
-      }
 
       function LoadUnityInstance()
       {
@@ -87,10 +68,13 @@
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       },
-      (p) => 
+      (progress) => 
       {
-        logic_progress = p;
-        if(logic_progress > 1) logic_progress = 1;
+        console.log("progress: " + progress);
+        loadingBar.style.inset = "0 " + 100*(1-progress) + "% 0 0";
+        if(progress >= 1) {
+          container.parentElement.removeChild(container);
+        }
       }).then((instance) => {
         console.log("startGameAsync load");
         unityInstance = instance;

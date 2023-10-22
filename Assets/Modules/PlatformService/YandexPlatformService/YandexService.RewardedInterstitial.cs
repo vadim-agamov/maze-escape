@@ -1,4 +1,5 @@
 #if YANDEX
+using System.Threading;
 using Cysharp.Threading.Tasks;
 
 namespace Modules.PlatformService.YandexPlatformService
@@ -9,7 +10,7 @@ namespace Modules.PlatformService.YandexPlatformService
         {
         }
 
-        UniTask<bool> IPlatformService.ShowRewardedInterstitial() => UniTask.FromResult<bool>(false);
+        UniTask<bool> IPlatformService.ShowRewardedInterstitial(CancellationToken token) => UniTask.FromResult<bool>(false);
     }
 }
 #endif

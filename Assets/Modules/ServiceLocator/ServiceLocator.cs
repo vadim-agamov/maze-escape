@@ -56,11 +56,6 @@ namespace Modules.ServiceLocator
         
         public static async UniTask Register<TService>(TService service, CancellationToken cancellationToken = default) where TService : class, IService
         {
-#if UNITY_EDITOR
-            if (!typeof(TService).IsInterface)
-                throw new InvalidOperationException($"Register: Service of type {typeof(TService)} is not interface.");
-#endif
-            
             if(_services.Any(s => s.Key.GetType() == typeof(TService)))
                 throw new InvalidOperationException($"Register: Service of type {typeof(TService)} already registered.");
 

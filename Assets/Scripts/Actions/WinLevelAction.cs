@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -5,7 +6,7 @@ using Maze;
 using Modules.AnalyticsService;
 using Modules.ServiceLocator;
 using Modules.UIService;
-using Services.PlayerDataService;
+using Services.GamePlayerDataService;
 using UI;
 
 namespace Actions
@@ -13,7 +14,7 @@ namespace Actions
     public class WinLevelAction
     {
         private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
-        private IPlayerDataService DataService { get; } = ServiceLocator.Get<IPlayerDataService>();
+        private GamePlayerDataService DataService { get; } = ServiceLocator.Get<GamePlayerDataService>();
 
         public async UniTask Execute(CancellationToken token)
         {
@@ -25,10 +26,9 @@ namespace Actions
             {
                 AnalyticsService.TrackEvent("WinLevel", new Dictionary<string, object>
                 {
-                    {"level", DataService.Data.Level.ToString()}
+                    {"level", DataService.PlayerData.Level.ToString()}
                 });
-                DataService.Data.Level++;
-                DataService.Commit();
+                DataService.PlayerData.Level++;
             }
 
             await model.HideAndClose(token);

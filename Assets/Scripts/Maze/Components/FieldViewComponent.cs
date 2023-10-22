@@ -29,7 +29,7 @@ namespace Maze.Components
 
         private Context _context;
         private const float CellSize = 1.5f;
-
+        
         public UniTask Initialize(Context context, IMazeService mazeService)
         {
             var portraitScreen = Screen.width < Screen.height;

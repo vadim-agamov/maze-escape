@@ -23,13 +23,13 @@ namespace Modules.PlatformService.DummyPlatformService
 
         UniTask<string> IPlatformService.LoadPlayerProgress() => UniTask.FromResult(string.Empty);
 
-        UniTask IPlatformService.SavePlayerProgress(string playerProgress) => UniTask.CompletedTask;
+        UniTask IPlatformService.SavePlayerProgress(string playerProgress, CancellationToken token) => UniTask.CompletedTask;
 
         void IPlatformService.PreloadRewardedVideo()
         {
         }
 
-        async UniTask<bool> IPlatformService.ShowRewardedVideo()
+        async UniTask<bool> IPlatformService.ShowRewardedVideo(CancellationToken token)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             return true;
@@ -39,7 +39,7 @@ namespace Modules.PlatformService.DummyPlatformService
         {
         }
 
-        async UniTask<bool> IPlatformService.ShowInterstitial()
+        async UniTask<bool> IPlatformService.ShowInterstitial(CancellationToken token)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             return true;
@@ -49,13 +49,17 @@ namespace Modules.PlatformService.DummyPlatformService
         {
         }
 
-        async UniTask<bool> IPlatformService.ShowRewardedInterstitial()
+        async UniTask<bool> IPlatformService.ShowRewardedInterstitial(CancellationToken token)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             return true;
         }
 
         void IPlatformService.LogEvent(string eventName, Dictionary<string, object> parameters)
+        {
+        }
+
+        void IPlatformService.GameReady()
         {
         }
     }

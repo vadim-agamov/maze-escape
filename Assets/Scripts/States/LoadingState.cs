@@ -13,9 +13,10 @@ using Modules.PlatformService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
 using Modules.UIService;
+using Modules.Utils;
 using Services.AdsService;
+using Services.GamePlayerDataService;
 using Services.JumpScreenService;
-using Services.PlayerDataService;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -41,22 +42,26 @@ namespace States
             await jumpScreenService.Show(cancellationToken);
             
 #if UNITY_EDITOR
-            var socialNetworkService = new GameObject("EditorSN").AddComponent<EditorPlatformService>();
+            IPlatformService platformService = new GameObject("EditorSN").AddComponent<EditorPlatformService>();
 #elif FB
-            var socialNetworkService = new GameObject("FbBridge").AddComponent<FbPlatformService>();
+            IPlatformService platformService = new GameObject("FbBridge").AddComponent<FbPlatformService>();
 #elif YANDEX
-            var socialNetworkService = new GameObject("Yandex").AddComponent<YandexPlatformService>();
+            IPlatformService platformService = new GameObject("Yandex").AddComponent<YandexPlatformService>();
 #elif DUMMY_WEBGL
-            var socialNetworkService = new GameObject("DummySN").AddComponent<DummyPlatformService>();
+            IPlatformService platformService = new GameObject("DummySN").AddComponent<DummyPlatformService>();
 #endif
 
+            var playerDataService = new GameObject().AddComponent<GamePlayerDataService>();
+            var soundService = new GameObject().AddComponent<SoundService>()
+                .BindProperty(playerDataService.MuteSoundProperty);
+            
             var tasks = new[]
             {
-                ServiceLocator.Register<IPlatformService>(socialNetworkService, cancellationToken: cancellationToken),
-                ServiceLocator.Register<IPlayerDataService>(new PlayerDataService(), cancellationToken: cancellationToken),
+                ServiceLocator.Register(platformService, cancellationToken: cancellationToken),
+                ServiceLocator.Register(playerDataService, cancellationToken: cancellationToken),
                 ServiceLocator.Register<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
                 RegisterUI(cancellationToken),
-                ServiceLocator.Register<ISoundService>(new GameObject().AddComponent<SoundService>(), cancellationToken: cancellationToken),
+                ServiceLocator.Register<ISoundService>(soundService, cancellationToken: cancellationToken),
                 ServiceLocator.Register<IInputService>(new InputService(), cancellationToken: cancellationToken),
                 ServiceLocator.Register<IAdsService>(new AdsService(), cancellationToken: cancellationToken),
 #if DEV
@@ -68,13 +73,15 @@ namespace States
             
             Debug.Log($"[{nameof(LoadingState)}] all services registered");
 
-            ServiceLocator.Get<IPlayerDataService>().Data.LastSessionDate = DateTime.Now;
+            ServiceLocator.Get<GamePlayerDataService>().PlayerData.LastSessionDate = DateTime.Now;
             ServiceLocator.Get<IAnalyticsService>().Start();
-            ServiceLocator.Get<IAnalyticsService>().TrackEvent($"Loaded");
-
+            
             await Fsm.Enter(new MazeState(), cancellationToken);
             
             await jumpScreenService.Hide(cancellationToken);
+            
+            platformService.GameReady();
+            ServiceLocator.Get<IAnalyticsService>().TrackEvent($"Loaded");
         }
 
         private async UniTask RegisterUI(CancellationToken token)
@@ -97,7 +104,7 @@ namespace States
         {
             ICheatService cheatService = new GameObject().AddComponent<CheatService>();
             await ServiceLocator.Register(cheatService, cancellationToken: token);
-            var playerDataService = await ServiceLocator.GetAsync<IPlayerDataService>(token);
+            var playerDataService = await ServiceLocator.GetAsync<GamePlayerDataService>(token);
             cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService, playerDataService));
             cheatService.RegisterCheatProvider(new AdCheatsProvider(cheatService));
         }  

@@ -4,7 +4,7 @@ using Maze.Service;
 using Modules.CheatService;
 using Modules.CheatService.Controls;
 using Modules.ServiceLocator;
-using Services.PlayerDataService;
+using Services.GamePlayerDataService;
 using UnityEngine;
 
 namespace Maze.Cheats
@@ -29,16 +29,15 @@ namespace Maze.Cheats
             var levelConfig = mazeService.Context.Level;
             _levelInfo = new CheatLabel(() => $"Level Info: #{levelConfig.LevelId}, min path:{levelConfig.MinPath}");
             
-            var playerDataService = ServiceLocator.Get<IPlayerDataService>();
+            var playerDataService = ServiceLocator.Get<GamePlayerDataService>();
             _level = new CheatIntInput(
                 cheatService,
                 "Level",
-                () => playerDataService.Data.Level,
+                () => playerDataService.PlayerData.Level,
                 level =>
                 {
                     Debug.Log("Set level to " + level);
-                    playerDataService.Data.Level = level;
-                    playerDataService.Commit();
+                    playerDataService.PlayerData.Level = level;
                     new GotoStateAction(new MazeState(), true).Execute(Bootstrapper.SessionToken).Forget();
                 });
             

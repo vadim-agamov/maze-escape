@@ -31,9 +31,7 @@ namespace Editor.Build
             PlayerSettings.WebGL.template = FbWebGLTemplate;
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
-            var now = DateTime.Now;
-            var path = Application.dataPath.Replace("/Assets",
-                $"/Builds/yandex/v_{now.Day}.{now.Month}-{now.Hour}.{now.Minute}.{now.Second}");
+            var path = Application.dataPath.Replace("/Assets", $"/Builds/yandex/v{PlayerSettings.bundleVersion}");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path);
@@ -47,7 +45,7 @@ namespace Editor.Build
             }
 
             BuildBase.BuildAddressables();
-            BuildPipeline.BuildPlayer(BuildBase.GetScenes(), path, BuildTarget.WebGL, BuildOptions.None);
+            BuildPipeline.BuildPlayer(BuildBase.GetScenes(), path, BuildTarget.WebGL, BuildOptions.CleanBuildCache);
             ZipBuild(path);
         }
 

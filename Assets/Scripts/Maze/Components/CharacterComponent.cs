@@ -126,7 +126,6 @@ namespace Maze.Components
             transform.position = _waypoints.Last.Previous.Value;
             _waypoints.Clear();
 
-            Debug.Log($">>> appear");
             await _animator.SetTrigger("Appear", "CrabAppear", _disposalTokenSource.Token)
                 .SuppressCancellationThrow();
         }

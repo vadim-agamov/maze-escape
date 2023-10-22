@@ -11,7 +11,6 @@ mergeInto(LibraryManager.library, {
     // initialize
     YandexStartGame: function () {
         console.log("YandexStartGame");
-        ysdk.features.LoadingAPI.ready();
 
         ysdk.getPlayer().then(_player => {
             player = _player;
@@ -19,6 +18,12 @@ mergeInto(LibraryManager.library, {
         }).catch(err => {
             unityInstance.SendMessage('Yandex', 'YandexOnGameNotStarted', error.message);
         });
+    },
+
+    // initialize
+    YandexGameReady: function () {
+        console.log("YandexStartGame");
+        ysdk.features.LoadingAPI.ready();
     },
 
     // interstitial

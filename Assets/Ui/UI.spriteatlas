@@ -54,6 +54,7 @@ SpriteAtlas:
     - 323383955d90f479f8c23d5e1d7ea2cb: 21300000
     - 5851a558446da4887b54120acb3a8d70: 21300000
     - 3208e17ba60434753991665d1f3c9ebb: 21300000
+    - 0dc53acd283b7492aace91b0408ed3c6: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 8f7b3410cbab84a2c8f4f4be968e1ab7, type: 3}
@@ -73,6 +74,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 323383955d90f479f8c23d5e1d7ea2cb, type: 3}
   - {fileID: 21300000, guid: 5851a558446da4887b54120acb3a8d70, type: 3}
   - {fileID: 21300000, guid: 3208e17ba60434753991665d1f3c9ebb, type: 3}
+  - {fileID: 21300000, guid: 0dc53acd283b7492aace91b0408ed3c6, type: 3}
   m_PackedSpriteNamesToIndex:
   - body
   - orange_btn
@@ -91,6 +93,7 @@ SpriteAtlas:
   - blue_btn
   - header
   - rays_white
+  - rays 1
   m_RenderDataMap: {}
   m_Tag: UI
   m_IsVariant: 0

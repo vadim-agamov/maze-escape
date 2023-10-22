@@ -26,7 +26,7 @@ namespace Cheats
             _showRewardedInterstitial = new CheatButton(cheatService, "Show Rewarded Interstitial", () =>
             {
                 ServiceLocator.Get<IPlatformService>()
-                    .ShowRewardedInterstitial()
+                    .ShowRewardedInterstitial(Bootstrapper.SessionToken)
                     .ContinueWith(x => _isRewardedAdShown = x);
             });
             _isRewardedAdShownLabel = new CheatLabel(()=> $"Is Rewarded Interstitial Shown: {_isRewardedAdShown}");
@@ -34,7 +34,7 @@ namespace Cheats
             _showInterstitial = new CheatButton(cheatService, "Show Interstitial", () =>
             {
                 ServiceLocator.Get<IPlatformService>()
-                    .ShowInterstitial()
+                    .ShowInterstitial(Bootstrapper.SessionToken)
                     .ContinueWith(x => _isInterstitialAdShown = x);
             });
             _isInterstitialAdShownLabel = new CheatLabel(()=> $"Is Interstitial Shown: {_isInterstitialAdShown}");
@@ -42,7 +42,7 @@ namespace Cheats
             _showRewardedVideo = new CheatButton(cheatService, "Show Rewarded Video", () =>
             {
                 ServiceLocator.Get<IPlatformService>()
-                    .ShowRewardedVideo()
+                    .ShowRewardedVideo(Bootstrapper.SessionToken)
                     .ContinueWith(x => _isRewardedVideoAdShown = x);
             });
             _isRewardedVideoAdShownLabel = new CheatLabel(()=> $"Is Rewarded Video Shown: {_isRewardedVideoAdShown}");

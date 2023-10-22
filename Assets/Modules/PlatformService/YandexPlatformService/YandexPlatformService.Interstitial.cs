@@ -1,5 +1,6 @@
 #if YANDEX
 using System.Runtime.InteropServices;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 
@@ -14,7 +15,7 @@ namespace Modules.PlatformService.YandexPlatformService
 
         void IPlatformService.PreloadInterstitial() {}
 
-        UniTask<bool> IPlatformService.ShowInterstitial() => _interstitialAdController.Show();
+        UniTask<bool> IPlatformService.ShowInterstitial(CancellationToken token) => _interstitialAdController.Show();
         
 
         [UsedImplicitly]

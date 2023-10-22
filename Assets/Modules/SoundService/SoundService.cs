@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Modules.PlayerDataService;
 using Modules.ServiceLocator;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -16,11 +17,19 @@ namespace Modules.SoundService
         private ObjectPool<AudioSource> _objectPool;
         private List<AudioSource> _activeSources;
         private CancellationTokenSource _cancellationToken;
-        private bool _isMuted;
+        private IPropertyProvider<bool> IsMuted { get; set; }
+        
+        public SoundService BindProperty(IPropertyProvider<bool> isMuted)
+        {
+            IsMuted = isMuted;
+            return this;
+        }
 
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             DontDestroyOnLoad(gameObject);
+            gameObject.name = $"[{nameof(SoundService)}]";
+            
             _config = await Addressables.LoadAssetAsync<SoundsConfig>("SoundsConfig").ToUniTask(cancellationToken: cancellationToken);
             
             gameObject.name = $"[{nameof(SoundService)}]";
@@ -48,7 +57,7 @@ namespace Modules.SoundService
             }
 
             source.loop = true;
-            source.mute = _isMuted;
+            source.mute = IsMuted.Value;
             source.Play();
         }
 
@@ -62,7 +71,7 @@ namespace Modules.SoundService
             }
 
             source.loop = false;
-            source.mute = _isMuted;
+            source.mute = IsMuted.Value;
             source.Play();
 
             await UniTask
@@ -89,7 +98,7 @@ namespace Modules.SoundService
 
         void ISoundService.Mute()
         {
-            _isMuted = true;
+            IsMuted.Value = true;
             foreach (var activeSource in _activeSources)
             {
                 activeSource.mute = true;
@@ -98,13 +107,13 @@ namespace Modules.SoundService
 
         void ISoundService.UnMute()
         {
-            _isMuted = false;
+            IsMuted.Value = false;
             foreach (var activeSource in _activeSources)
             {
                 activeSource.mute = false;
             }
         }
-        bool ISoundService.IsMuted => _isMuted;
+        bool ISoundService.IsMuted => IsMuted.Value;
 
         #region Pool
 

@@ -1,5 +1,6 @@
 #if YANDEX
 using System.Runtime.InteropServices;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 
@@ -14,7 +15,7 @@ namespace Modules.PlatformService.YandexPlatformService
 
         void IPlatformService.PreloadRewardedVideo() { }
 
-        UniTask<bool> IPlatformService.ShowRewardedVideo() => _rewardedVideoAdController.Show();
+        UniTask<bool> IPlatformService.ShowRewardedVideo(CancellationToken token) => _rewardedVideoAdController.Show();
         
         [UsedImplicitly]
         public void YandexOnRewardedVideoShown() => _rewardedVideoAdController.OnShown();

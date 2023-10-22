@@ -3,22 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="style.css">
     <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
-    <style>
-        html, body {
-        height: 100%;
-        margin: 0;
-      }
-      canvas {
-        width: 100%;
-        height: 100%;
-        display: block;
-        position: absolute;
-      }
-    </style>
   </head>
-  <body style="text-align: center">
+  <body bgcolor="#05A3A9">
+    <div class="container" id="container">
+      <div class="progress"><div class="progress-inner" id="loader"></div></div>
+    </div>
+    
     <canvas id="unity-canvas"></canvas>
+    
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -28,6 +22,9 @@
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
         document.getElementsByTagName('head')[0].appendChild(meta);
       }
+
+      var loadingBar = document.querySelector("#loader");
+      var container = document.querySelector("#container");
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
         dataUrl: "Build/{{{ DATA_FILENAME }}}",
@@ -47,6 +44,12 @@
       productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
       // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
       // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      },
+      (progress) => {
+        loadingBar.style.inset = "0 " + 100*(1-progress) + "% 0 0";
+        if(progress >= 1) {
+          container.parentElement.removeChild(container);
+        }
       });
     </script>
   </body>

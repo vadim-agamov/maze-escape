@@ -2,7 +2,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Modules.ServiceLocator;
 using Modules.UIService;
-using Services.PlayerDataService;
+using Services.GamePlayerDataService;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +11,7 @@ namespace UI
 {
     public class LevelWinModel: UIModel
     {
-        private IPlayerDataService PlayerDataService { get; } = ServiceLocator.Get<IPlayerDataService>();
+        private GamePlayerDataService PlayerDataService { get; } = ServiceLocator.Get<GamePlayerDataService>();
 
         public enum LevelWinAction
         {
@@ -36,7 +36,7 @@ namespace UI
         public UniTask<LevelWinAction> WaitAction(CancellationToken token) =>
             _completionSource.Task.AttachExternalCancellation(token);
 
-        public int Level => PlayerDataService.Data.Level;
+        public int Level => PlayerDataService.PlayerData.Level;
     }
     
     public class LevelWinView: UIView<LevelWinModel>

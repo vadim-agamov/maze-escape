@@ -6,7 +6,7 @@ using Maze.Components;
 using Maze.Configs;
 using Modules.AnalyticsService;
 using Modules.ServiceLocator;
-using Services.PlayerDataService;
+using Services.GamePlayerDataService;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -17,7 +17,7 @@ namespace Maze.Service
         private readonly List<IComponent> _components = new List<IComponent>();
         private readonly Context _context = new Context();
         private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
-        private IPlayerDataService DataService { get; } = ServiceLocator.Get<IPlayerDataService>();
+        private GamePlayerDataService DataService { get; } = ServiceLocator.Get<GamePlayerDataService>();
 
         private const int InitialLevels = 5;
 
@@ -53,7 +53,7 @@ namespace Maze.Service
             
             AnalyticsService.TrackEvent("StartLevel", new Dictionary<string, object>
             {
-                {"level", DataService.Data.Level}
+                {"level", DataService.PlayerData.Level}
             });
         }
 
@@ -69,13 +69,13 @@ namespace Maze.Service
         {
             var levels = await Addressables.LoadAssetAsync<LevelsConfig>("LevelsConfig").ToUniTask(cancellationToken: cancellationToken);
 
-            if (DataService.Data.Level <= InitialLevels)
+            if (DataService.PlayerData.Level <= InitialLevels)
             {
-                Context.Level = levels.LevelsConfigs[DataService.Data.Level];
+                Context.Level = levels.LevelsConfigs[DataService.PlayerData.Level];
             }
             else
             {
-                var index = InitialLevels + DataService.Data.Level % (levels.LevelsConfigs.Length - InitialLevels);
+                var index = InitialLevels + DataService.PlayerData.Level % (levels.LevelsConfigs.Length - InitialLevels);
                 Context.Level = levels.LevelsConfigs[index];
             }
         }

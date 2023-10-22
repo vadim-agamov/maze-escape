@@ -27,6 +27,9 @@ namespace Modules.PlatformService.YandexPlatformService
         [DllImport("__Internal")]
         private static extern void YandexStartGame();
         
+        [DllImport("__Internal")]
+        private static extern void YandexGameReady();
+        
         private IPlatformService This => this;
         private UniTaskCompletionSource<string> _loadPlayerProgressCompletionSource;
         private UniTaskCompletionSource _startGameCompletionSource;
@@ -52,7 +55,7 @@ namespace Modules.PlatformService.YandexPlatformService
             _loadPlayerProgressCompletionSource = null;
         }
 
-        UniTask IPlatformService.SavePlayerProgress(string data)
+        UniTask IPlatformService.SavePlayerProgress(string data, CancellationToken token)
         {
             Debug.Log($"[{nameof(YandexPlatformService)}] SavePlayerProgress: {data}");
             YandexSetData(data);
@@ -80,6 +83,8 @@ namespace Modules.PlatformService.YandexPlatformService
             IsInitialized = true;
         }
 
+        void IPlatformService.GameReady() => YandexGameReady();
+        
         void IService.Dispose()
         {
         }

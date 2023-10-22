@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Services.PlayerDataService
+namespace Services.GamePlayerDataService
 {
     public class PlayerData
     {
@@ -21,6 +20,9 @@ namespace Services.PlayerDataService
         [JsonProperty]
         public int Level;
         
+        [JsonProperty]
+        public bool MuteSound;
+        
         public PlayerData()
         {
             Reset();
@@ -32,6 +34,7 @@ namespace Services.PlayerDataService
             MaxScore = default;
             InstallDate = DateTime.Now;
             LastSessionDate = DateTime.Now;
+            MuteSound = true;
         }
     }
 }

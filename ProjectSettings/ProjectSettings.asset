@@ -135,7 +135,7 @@ PlayerSettings:
   vulkanEnableLateAcquireNextImage: 0
   vulkanEnableCommandBufferRecycling: 1
   loadStoreDebugModeEnabled: 0
-  bundleVersion: 0.45
+  bundleVersion: 0.64
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -512,7 +512,7 @@ PlayerSettings:
   openGLRequireES31AEP: 0
   openGLRequireES32: 0
   m_TemplateCustomTags:
-    PRODUCT_DESCRIPTION: 
+    PRODUCT_DESCRIPTION: Maze
   mobileMTRendering:
     Android: 1
     iPhone: 1
@@ -768,7 +768,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: PROJECT:Yandex
+  webGLTemplate: PROJECT:Minimal
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 2
@@ -784,7 +784,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    WebGL: UNITASK_DOTWEEN_SUPPORT;ANALYTICS;RELEASE;YANDEX
+    WebGL: UNITASK_DOTWEEN_SUPPORT;ANALYTICS;DEV;DUMMY_WEBGL
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

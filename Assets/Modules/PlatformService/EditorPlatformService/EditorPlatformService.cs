@@ -29,7 +29,7 @@ namespace Modules.PlatformService.EditorPlatformService
 			return UniTask.FromResult(playerData);
 		}
 
-		UniTask IPlatformService.SavePlayerProgress(string playerData)
+		UniTask IPlatformService.SavePlayerProgress(string playerData, CancellationToken token)
 		{
 			File.WriteAllText(PlayerProgressPath, playerData);
 			return UniTask.CompletedTask;
@@ -39,13 +39,13 @@ namespace Modules.PlatformService.EditorPlatformService
 		{
 		}
 
-		async UniTask<bool> IPlatformService.ShowRewardedVideo()
+		async UniTask<bool> IPlatformService.ShowRewardedVideo(CancellationToken token)
 		{
 			await UniTask.Delay(TimeSpan.FromSeconds(1));
 			return true;
 		}
 
-		async UniTask<bool> IPlatformService.ShowInterstitial()
+		async UniTask<bool> IPlatformService.ShowInterstitial(CancellationToken token)
 		{
 			await UniTask.Delay(TimeSpan.FromSeconds(1));
 			return true;
@@ -55,13 +55,17 @@ namespace Modules.PlatformService.EditorPlatformService
 		{
 		}
 
-		async UniTask<bool> IPlatformService.ShowRewardedInterstitial()
+		async UniTask<bool> IPlatformService.ShowRewardedInterstitial(CancellationToken token)
 		{
 			await UniTask.Delay(TimeSpan.FromSeconds(1));
 			return true;
 		}
 
 		void IPlatformService.LogEvent(string eventName, Dictionary<string, object> parameters)
+		{
+		}
+
+		void IPlatformService.GameReady()
 		{
 		}
 
