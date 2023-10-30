@@ -12,7 +12,6 @@ namespace Cheats
         private readonly CheatButton _showInterstitial;
         private readonly CheatButton _showRewardedVideo;
         
-        
         private readonly CheatLabel _isRewardedAdShownLabel;
         private readonly CheatLabel _isInterstitialAdShownLabel;
         private readonly CheatLabel _isRewardedVideoAdShownLabel;

@@ -5,6 +5,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Modules.ServiceLocator;
+using Modules.UIService;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
@@ -23,15 +24,10 @@ namespace Modules.FlyItemsService
     public class FlyItemsService: IFlyItemsService 
     {
         private ObjectPool<Image> _pool;
-        private readonly Canvas _canvas;
+        private Canvas _canvas;
         private FlyItemsConfig _config;
         private List<FlyItemAnchor> _anchors = new List<FlyItemAnchor>();
-
-        public FlyItemsService(Canvas canvas)
-        {
-            _canvas = canvas;
-        }
-
+        
         private void OnReleaseItem(Image item)
         {
             item.gameObject.SetActive(false); 
@@ -65,14 +61,15 @@ namespace Modules.FlyItemsService
             return Fly(name, from.transform.position, from.Play, to.transform.position, to.Play, count);
         }
         
-        public UniTask Initialize(CancellationToken cancellationToken = default)
+        UniTask IService.Initialize(CancellationToken cancellationToken)
         {
+            _canvas = ServiceLocator.ServiceLocator.Get<IUIService>().Canvas;
             _pool = new ObjectPool<Image>(OnCreateItem, OnGetItem, OnReleaseItem);
             _config = Resources.Load<FlyItemsConfig>("FlyItemsConfig");
             return UniTask.CompletedTask;
         }
-
-        public void Dispose()
+        
+        void IService.Dispose()
         {
         }
 

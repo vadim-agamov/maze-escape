@@ -9,6 +9,7 @@ using Modules.Extensions;
 using Modules.FlyItemsService;
 using Modules.FSM;
 using Modules.InputService;
+using Modules.LocalizationService;
 using Modules.PlatformService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
@@ -33,13 +34,13 @@ namespace States
 {
     public class LoadingState : IState
     {
-        async UniTask IState.Enter(CancellationToken cancellationToken)
+        async UniTask IState.Enter(CancellationToken token)
         {
             SetupEventSystem();
 
             IJumpScreenService jumpScreenService = GameObject.Find("JumpScreen").GetComponent<JumpScreen>();
-            await ServiceLocator.Register(jumpScreenService, cancellationToken: cancellationToken);
-            await jumpScreenService.Show(cancellationToken);
+            await ServiceLocator.Register(jumpScreenService, token);
+            await jumpScreenService.Show(token);
             
 #if UNITY_EDITOR
             IPlatformService platformService = new GameObject("EditorSN").AddComponent<EditorPlatformService>();
@@ -57,15 +58,17 @@ namespace States
             
             var tasks = new[]
             {
-                ServiceLocator.Register(platformService, cancellationToken: cancellationToken),
-                ServiceLocator.Register(playerDataService, cancellationToken: cancellationToken),
-                ServiceLocator.Register<IAnalyticsService>(new AnalyticsService(), cancellationToken: cancellationToken),
-                RegisterUI(cancellationToken),
-                ServiceLocator.Register<ISoundService>(soundService, cancellationToken: cancellationToken),
-                ServiceLocator.Register<IInputService>(new InputService(), cancellationToken: cancellationToken),
-                ServiceLocator.Register<IAdsService>(new AdsService(), cancellationToken: cancellationToken),
+                ServiceLocator.Register(platformService, token),
+                ServiceLocator.Register(playerDataService, token,typeof(IPlatformService)),
+                ServiceLocator.Register<IAnalyticsService>(new AnalyticsService(), token,typeof(IPlatformService)),
+                ServiceLocator.Register<IUIService>(new UIService(new Vector2(1080, 1920)), token),
+                ServiceLocator.Register<IFlyItemsService>(new FlyItemsService(), token, typeof(IUIService)),
+                ServiceLocator.Register<ISoundService>(soundService, token),
+                ServiceLocator.Register<IInputService>(new InputService(), token),
+                ServiceLocator.Register<IAdsService>(new AdsService(), token, typeof(GamePlayerDataService), typeof(IPlatformService), typeof(IAnalyticsService)),
+                ServiceLocator.Register<ILocalizationService>(new LocalizationService(), token, typeof(IPlatformService)),
 #if DEV
-                RegisterCheats(cancellationToken)
+                RegisterCheats(token)
 #endif
             };
 
@@ -76,19 +79,12 @@ namespace States
             ServiceLocator.Get<GamePlayerDataService>().PlayerData.LastSessionDate = DateTime.Now;
             ServiceLocator.Get<IAnalyticsService>().Start();
             
-            await Fsm.Enter(new MazeState(), cancellationToken);
+            await Fsm.Enter(new MazeState(), token);
             
-            await jumpScreenService.Hide(cancellationToken);
+            await jumpScreenService.Hide(token);
             
             platformService.GameReady();
             ServiceLocator.Get<IAnalyticsService>().TrackEvent($"Loaded");
-        }
-
-        private async UniTask RegisterUI(CancellationToken token)
-        {
-            IUIService uiService = new UIService(new Vector2(1080, 1920));
-            await ServiceLocator.Register(uiService, cancellationToken: token);
-            await ServiceLocator.Register<IFlyItemsService>(new FlyItemsService(uiService.Canvas), cancellationToken: token);
         }
         
         private static void SetupEventSystem()
@@ -103,10 +99,10 @@ namespace States
         private async UniTask RegisterCheats(CancellationToken token)
         {
             ICheatService cheatService = new GameObject().AddComponent<CheatService>();
-            await ServiceLocator.Register(cheatService, cancellationToken: token);
-            var playerDataService = await ServiceLocator.GetAsync<GamePlayerDataService>(token);
-            cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService, playerDataService));
+            await ServiceLocator.Register(cheatService, token, typeof(GamePlayerDataService));
+            cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService, ServiceLocator.Get<GamePlayerDataService>()));
             cheatService.RegisterCheatProvider(new AdCheatsProvider(cheatService));
+            cheatService.RegisterCheatProvider(new LocalizationCheatsProvider(cheatService));
         }  
 #endif
         

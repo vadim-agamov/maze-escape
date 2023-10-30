@@ -1,7 +1,7 @@
 mergeInto(LibraryManager.library, {
 
     YandexGetUserId: function () {
-        var returnStr = FBInstant.player.getID() || "";
+        var returnStr = "";
         var bufferSize = lengthBytesUTF8(returnStr) + 1;
         var buffer = _malloc(bufferSize);
         stringToUTF8(returnStr, buffer, bufferSize);
@@ -93,6 +93,15 @@ mergeInto(LibraryManager.library, {
             });
     },
 
+    YandexGetLanguage: function () {
+        var lang = ysdk.environment.i18n.lang || "en";
+        console.log("GetLanguage: " + lang);
+        var bufferSize = lengthBytesUTF8(lang) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(lang, buffer, bufferSize);
+        return buffer;
+    },
+    
     // Event
     YandexLogEvent: function (eventName) {
     }

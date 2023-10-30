@@ -9,95 +9,80 @@ namespace Modules.ServiceLocator
 {
     public static class ServiceLocator
     {
-        private static readonly Dictionary<IService, UniTaskCompletionSource> _services = new();
+        private class ServiceItem
+        {
+            public IService Service;
+            public bool IsReady;
+        }
+        
+        private static readonly HashSet<ServiceItem> _services = new();
         
         public static TService Get<TService>() where TService : class, IService
         {
-            foreach (var (service, taskCompletionSource) in _services)
+            foreach (var serviceItem in _services)
             {
-                if (service is TService serviceImplementation)
+                if (serviceItem.Service is TService serviceImplementation)
                 {
-                    if (taskCompletionSource.Task.Status == UniTaskStatus.Succeeded)
-                        return serviceImplementation;
-
-                    throw new InvalidOperationException($"Get: Service of type {typeof(TService)} is not initialized.");
-                }
-            }
-
-            throw new InvalidOperationException($"Get: Service of type {typeof(TService)} is not registered.");
-        }
-        
-        public static async UniTask<TService> GetAsync<TService>(CancellationToken token) where TService : class, IService
-        {
-            foreach (var (service, taskCompletionSource) in _services)
-            {
-                if (service is TService serviceImplementation)
-                {
-                    if (taskCompletionSource.Task.Status == UniTaskStatus.Succeeded)
+                    if (!serviceItem.IsReady)
                     {
-                        return serviceImplementation;
-                    }
-
-                    try
-                    {
-                        await taskCompletionSource.Task.AttachExternalCancellation(token);
-                    }
-                    catch (OperationCanceledException canceledException)
-                    {
-                        throw new InvalidOperationException($"Get: Service of type {typeof(TService)} is not initialized.", canceledException);
+                        throw new InvalidOperationException($"[{nameof(ServiceLocator)}] Get: Service of type {typeof(TService).Name} is not ready.");
                     }
                     
                     return serviceImplementation;
                 }
             }
-            
-            throw new InvalidOperationException($"Get: Service of type {typeof(TService)} is not registered.");
+
+            throw new InvalidOperationException($"[{nameof(ServiceLocator)}] Get: Service of type {typeof(TService).Name} is not registered.");
         }
         
-        public static async UniTask Register<TService>(TService service, CancellationToken cancellationToken = default) where TService : class, IService
+        public static async UniTask Register<TService>(TService service, CancellationToken token, params Type[] dependency) where TService : class, IService
         {
-            if(_services.Any(s => s.Key.GetType() == typeof(TService)))
-                throw new InvalidOperationException($"Register: Service of type {typeof(TService)} already registered.");
-
-            var taskCompletionSource = new UniTaskCompletionSource();
-            _services.Add(service, taskCompletionSource);
-            AwaitServiceInitialization().Forget();
-            await taskCompletionSource.Task;
-
-            async UniTask AwaitServiceInitialization()
+            if (_services.Any(s => s.Service.GetType() == typeof(TService)))
             {
-                try
-                {
-                    Debug.Log($"[{nameof(ServiceLocator)}] Initialize begin {typeof(TService)}");
-                    await service.Initialize(cancellationToken);
-                    Debug.Log($"[{nameof(ServiceLocator)}] Initialize end {typeof(TService)}");
-                    taskCompletionSource.TrySetResult();
-                }
-                catch (OperationCanceledException _)
-                {
-                    taskCompletionSource.TrySetCanceled();
-                }
-                catch (Exception e)
-                {
-                    taskCompletionSource.TrySetException(e);
-                }    
+                throw new InvalidOperationException($"[{nameof(ServiceLocator)}] Register: Service of type {typeof(TService)} already registered.");
             }
+
+            var serviceItem = new ServiceItem { Service = service, IsReady = false };
+            _services.Add(serviceItem);
+            
+            if (dependency.Any())
+            {
+                var services = new List<ServiceItem>();
+                foreach (var dep in dependency)
+                {
+                    foreach (var item in _services)
+                    {
+                        var type = item.Service.GetType();
+                        if (dep.IsAssignableFrom(type))
+                        {
+                            services.Add(item);
+                        }
+                    }
+                }
+                
+                await UniTask.WaitWhile(() => services.Any(s => !s.IsReady), cancellationToken: token);
+            }
+            
+            Debug.Log($"[{nameof(ServiceLocator)}] Initialize begin {typeof(TService).Name}");
+            await service.Initialize(token);
+            serviceItem.IsReady = true;
+            Debug.Log($"[{nameof(ServiceLocator)}] Initialize end {typeof(TService).Name}");
         }
         
         public static void UnRegister<TService>() where TService : class, IService
         {
-            foreach (var (service, _) in _services)
+            foreach (var service in _services)
             {
-                if (service is TService _)
+                if (service.Service is TService _)
                 {
-                    Debug.Log($"[{nameof(ServiceLocator)}] UnRegister {typeof(TService)}, {service}");
-                    service.Dispose();
+                    Debug.Log($"[{nameof(ServiceLocator)}] UnRegister {typeof(TService).Name}, {service}");
+                    service.Service.Dispose();
                     _services.Remove(service);
                     return;
                 }
             }
             
-            throw new InvalidOperationException($"UnRegister: No service of type {typeof(TService)}.");
+            throw new InvalidOperationException($"[{nameof(ServiceLocator)}] UnRegister: No service of type {typeof(TService).Name}");
         }
     }
 }

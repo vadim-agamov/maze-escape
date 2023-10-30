@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Maze.Components;
 using Maze.Configs;
 using Modules.AnalyticsService;
+using Modules.LocalizationService;
 using Modules.ServiceLocator;
 using Services.GamePlayerDataService;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Maze.Service
     {
         private readonly List<IComponent> _components = new List<IComponent>();
         private readonly Context _context = new Context();
+        private LocalizationProviderConfig _localizationProvider;
         private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
         private GamePlayerDataService DataService { get; } = ServiceLocator.Get<GamePlayerDataService>();
 
@@ -33,8 +35,7 @@ namespace Maze.Service
         }
 
         public Context Context => _context;
-
-
+        
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             await SetupLevel(cancellationToken);
@@ -49,7 +50,7 @@ namespace Maze.Service
             foreach (var component in _components)
             {
                 await component.Initialize(_context, this);
-            }
+            } 
             
             AnalyticsService.TrackEvent("StartLevel", new Dictionary<string, object>
             {
@@ -64,7 +65,7 @@ namespace Maze.Service
                 checker.Dispose();
             }
         }
-
+        
         private async UniTask SetupLevel(CancellationToken cancellationToken)
         {
             var levels = await Addressables.LoadAssetAsync<LevelsConfig>("LevelsConfig").ToUniTask(cancellationToken: cancellationToken);

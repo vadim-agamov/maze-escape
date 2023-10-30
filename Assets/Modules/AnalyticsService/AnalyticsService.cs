@@ -24,28 +24,23 @@ namespace Modules.AnalyticsService
         
         public AnalyticsService()
         {
+#if !UNITY_EDITOR
             _analytics.Add(new UnityAnalytic());
             _analytics.Add(new PlatformAnalytic());
+#endif
         }
 
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             await UniTask.WhenAll(_analytics.Select(a => a.Initialize(cancellationToken)));
         }
-
+        
         void IService.Dispose()
         {
         }
         
-        void IAnalyticsService.Start()
-        {
-            _analytics.ForEach(a => a.Start());
-        }
-
-        void IAnalyticsService.Stop()
-        {
-            _analytics.ForEach(a => a.Stop());
-        }
+        void IAnalyticsService.Start() => _analytics.ForEach(a => a.Start());
+        void IAnalyticsService.Stop() => _analytics.ForEach(a => a.Stop());
 
         void IAnalyticsService.TrackEvent(string eventName, Dictionary<string, object> parameters)
         {

@@ -10,43 +10,44 @@ namespace Modules.PlayerDataService
 {
     public abstract class PlayerDataService<TData> : MonoBehaviour, IService where TData : new()
     {
+        private IPlatformService PlatformService { get; set; }
+        
         protected TData Data;
-        private IPlatformService _platformService;
         private bool _needSave;
         private bool _savingIsInProgress;
-        private CancellationTokenSource _cancellationTokenSource;
-        
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
+            PlatformService = ServiceLocator.ServiceLocator.Get<IPlatformService>();
+            
             DontDestroyOnLoad(gameObject);
             gameObject.name = $"[{nameof(PlayerDataService)}]";
-            _cancellationTokenSource = new CancellationTokenSource();
-            _platformService = await ServiceLocator.ServiceLocator.GetAsync<IPlatformService>(cancellationToken);
-            
-            var data = await _platformService.LoadPlayerProgress();
+
+            var data = await PlatformService.LoadPlayerProgress();
             if (string.IsNullOrEmpty(data))
             {
                 Data = new TData();
                 Debug.Log($"[{nameof(PlayerDataService)}] Initialized with empty data");
-                return;
             }
-            
-            try
+            else
             {
-                Data = JsonConvert.DeserializeObject<TData>(data);
-            }
-            catch(Exception e)
-            {
-                Debug.LogError($"[{nameof(PlayerDataService)}] Unable to deserialize player data:\r\n{e}");
-            }
+                try
+                {
+                    Data = JsonConvert.DeserializeObject<TData>(data);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[{nameof(PlayerDataService)}] Unable to deserialize player data:\r\n{e}");
+                }
 
-            Data ??= new TData();
+                Data ??= new TData();
+            }
         }
 
         void IService.Dispose()
         {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource = null;
+            _cancellationTokenSource.Cancel();
         }
         
         protected void SetDirty()
@@ -73,7 +74,7 @@ namespace Modules.PlayerDataService
                 {
                     _savingIsInProgress = true;
                     var data = JsonConvert.SerializeObject(Data);
-                    await _platformService.SavePlayerProgress(data, _cancellationTokenSource.Token);
+                    await PlatformService.SavePlayerProgress(data, _cancellationTokenSource.Token);
                 }
                 catch(Exception exception)
                 {

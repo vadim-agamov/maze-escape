@@ -7,6 +7,7 @@ namespace Modules.PlatformService
 {
 	public interface IPlatformService : IService
 	{
+		Language GetLocale();
 		string GetUserId();
 		UniTask<string> LoadPlayerProgress();
 		UniTask SavePlayerProgress(string playerProgress, CancellationToken token);

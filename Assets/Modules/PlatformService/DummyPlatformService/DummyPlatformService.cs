@@ -19,6 +19,8 @@ namespace Modules.PlatformService.DummyPlatformService
         {
         }
 
+        Language IPlatformService.GetLocale() => Language.English;
+
         string IPlatformService.GetUserId() => SystemInfo.deviceUniqueIdentifier;
 
         UniTask<string> IPlatformService.LoadPlayerProgress() => UniTask.FromResult(string.Empty);

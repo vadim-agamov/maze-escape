@@ -1,5 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Modules.LocalizationService;
 using Modules.ServiceLocator;
 using Modules.UIService;
 using Services.GamePlayerDataService;
@@ -49,9 +50,9 @@ namespace UI
         
         [SerializeField] 
         private Button _replayButton;
-
-        [SerializeField]
-        private TMP_Text _level;
+        
+        [SerializeField] 
+        private Localization _level;
         
         protected override void OnSetModel()
         {
@@ -63,7 +64,7 @@ namespace UI
 
         protected override async UniTask OnShow(CancellationToken cancellationToken = default)
         {
-            _level.text = $"Level {Model.Level}";
+            _level.SetParameters(Model.Level+1);
             await base.OnShow(cancellationToken);
         }
 

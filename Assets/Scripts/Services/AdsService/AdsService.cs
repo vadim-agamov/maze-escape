@@ -10,36 +10,38 @@ namespace Services.AdsService
 {
     public class AdsService: IAdsService
     {
-        private GamePlayerDataService.GamePlayerDataService _playerDataService;
-        private IPlatformService _platformService;
-        private IAnalyticsService _analyticsService;
+        private GamePlayerDataService.GamePlayerDataService PlayerDataService { get; set; }
+        private IAnalyticsService AnalyticsService { get; set; } 
+        private IPlatformService PlatformService { get; set; }
         
         private readonly TimeSpan _adsCooldown = TimeSpan.FromMinutes(5);
         private readonly int _minLevelToShowAds = 5;
-        async UniTask IService.Initialize(CancellationToken cancellationToken)
+        UniTask IService.Initialize(CancellationToken cancellationToken)
         {
-            _playerDataService = await ServiceLocator.GetAsync<GamePlayerDataService.GamePlayerDataService>(cancellationToken);
-            _platformService = await ServiceLocator.GetAsync<IPlatformService>(cancellationToken);
-            _analyticsService = await ServiceLocator.GetAsync<IAnalyticsService>(cancellationToken);
+            PlatformService =  ServiceLocator.Get<IPlatformService>();
+            PlayerDataService = ServiceLocator.Get<GamePlayerDataService.GamePlayerDataService>();
+            AnalyticsService = ServiceLocator.Get<IAnalyticsService>();
+            
+            return UniTask.CompletedTask;
         }
-
+        
         void IService.Dispose()
         {
         }
 
-        UniTask<bool> IAdsService.ShowRewardedVideo(CancellationToken token) => TryShowAd(_platformService.ShowRewardedVideo, token);
-        UniTask<bool> IAdsService.ShowInterstitial(CancellationToken token) => TryShowAd(_platformService.ShowInterstitial, token);
-        UniTask<bool> IAdsService.ShowRewardedInterstitial(CancellationToken token) => TryShowAd(_platformService.ShowRewardedInterstitial, token);
+        UniTask<bool> IAdsService.ShowRewardedVideo(CancellationToken token) => TryShowAd(PlatformService.ShowRewardedVideo, token);
+        UniTask<bool> IAdsService.ShowInterstitial(CancellationToken token) => TryShowAd(PlatformService.ShowInterstitial, token);
+        UniTask<bool> IAdsService.ShowRewardedInterstitial(CancellationToken token) => TryShowAd(PlatformService.ShowRewardedInterstitial, token);
   
 
         private bool CanShow()
         {
-            if (_minLevelToShowAds > _playerDataService.PlayerData.Level)
+            if (_minLevelToShowAds > PlayerDataService.PlayerData.Level)
             {
                 return false;
             }
 
-            if(DateTime.Now - _playerDataService.PlayerData.AdsLastShownDate < _adsCooldown)
+            if(DateTime.Now - PlayerDataService.PlayerData.AdsLastShownDate < _adsCooldown)
             {
                 return false;
             }
@@ -51,16 +53,16 @@ namespace Services.AdsService
         {
             if (!CanShow())
             {
-                _analyticsService.TrackEvent("AdsNotShown");
+                AnalyticsService.TrackEvent("AdsNotShown");
                 return false;
             }
 
             var result = await action.Invoke(token);
-            _analyticsService.TrackEvent("AdsShown", new Dictionary<string, object>{{"success", result}});
+            AnalyticsService.TrackEvent("AdsShown", new Dictionary<string, object>{{"success", result}});
 
             if (result)
             {
-                _playerDataService.PlayerData.AdsLastShownDate = DateTime.Now;
+                PlayerDataService.PlayerData.AdsLastShownDate = DateTime.Now;
             }
             return result;
         }

@@ -30,11 +30,24 @@ namespace Modules.PlatformService.YandexPlatformService
         [DllImport("__Internal")]
         private static extern void YandexGameReady();
         
+        [DllImport("__Internal")]
+        private static extern string YandexGetLanguage();
+        
         private IPlatformService This => this;
         private UniTaskCompletionSource<string> _loadPlayerProgressCompletionSource;
         private UniTaskCompletionSource _startGameCompletionSource;
-        
-        public bool IsInitialized { get; private set; }
+
+        Language IPlatformService.GetLocale()
+        {
+            var locale = YandexGetLanguage();
+            return locale switch
+            {
+                "ru" => Language.Russian,
+                "en" => Language.English,
+                "tr" => Language.Turkish,
+                _ => Language.English
+            };
+        }
 
         string IPlatformService.GetUserId() => YandexGetUserId();
 
@@ -70,6 +83,8 @@ namespace Modules.PlatformService.YandexPlatformService
             YandexLogEvent(eventName);
         }
 
+        void IPlatformService.GameReady() => YandexGameReady();
+
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             DontDestroyOnLoad(gameObject);
@@ -80,11 +95,8 @@ namespace Modules.PlatformService.YandexPlatformService
             This.PreloadInterstitial();
             This.PreloadRewardedVideo();
             This.PreloadRewardedInterstitial();
-            IsInitialized = true;
         }
 
-        void IPlatformService.GameReady() => YandexGameReady();
-        
         void IService.Dispose()
         {
         }

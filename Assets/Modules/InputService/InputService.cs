@@ -20,7 +20,7 @@ namespace Modules.InputService
             _raycastResult = new List<RaycastResult>();
             return UniTask.CompletedTask;
         }
-
+        
         void IService.Dispose()
         {
         }

@@ -30,9 +30,9 @@ namespace Modules.UIService
         {
             var rootGameObject = new GameObject(
                 "[RootCanvas]",
-                typeof(GraphicRaycaster),
                 typeof(Canvas),
-                typeof(CanvasScaler));
+                typeof(CanvasScaler),
+                typeof(GraphicRaycaster));
 
             var canvasScaler = rootGameObject.GetComponent<CanvasScaler>();
             canvasScaler.referenceResolution = ReferenceResolution;

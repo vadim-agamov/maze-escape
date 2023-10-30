@@ -11,7 +11,9 @@ namespace Modules.PlatformService.EditorPlatformService
 	public class EditorPlatformService : MonoBehaviour, IPlatformService
 	{
 		private static string PlayerProgressPath => Path.Combine(Application.persistentDataPath, "player_progress.json");
-		
+
+		Language IPlatformService.GetLocale() => Language.English;
+
 		string IPlatformService.GetUserId() => SystemInfo.deviceUniqueIdentifier;
 
 		UniTask<string> IPlatformService.LoadPlayerProgress()

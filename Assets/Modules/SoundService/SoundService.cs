@@ -16,9 +16,10 @@ namespace Modules.SoundService
         private SoundsConfig _config;
         private ObjectPool<AudioSource> _objectPool;
         private List<AudioSource> _activeSources;
-        private CancellationTokenSource _cancellationToken;
         private IPropertyProvider<bool> IsMuted { get; set; }
-        
+
+        private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
+
         public SoundService BindProperty(IPropertyProvider<bool> isMuted)
         {
             IsMuted = isMuted;
@@ -36,7 +37,6 @@ namespace Modules.SoundService
             gameObject.AddComponent<AudioListener>();
             _objectPool = new ObjectPool<AudioSource>(OnCreateAudioSource, OnGetAudioSource, OnReleaseAudioSource, OnDestroyAudioSource);
             _activeSources = new List<AudioSource>();
-            _cancellationToken = new CancellationTokenSource();
         }
 
         void IService.Dispose()

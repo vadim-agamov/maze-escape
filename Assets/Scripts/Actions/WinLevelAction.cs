@@ -26,7 +26,7 @@ namespace Actions
             {
                 AnalyticsService.TrackEvent("WinLevel", new Dictionary<string, object>
                 {
-                    {"level", DataService.PlayerData.Level.ToString()}
+                    {"level", DataService.PlayerData.Level}
                 });
                 DataService.PlayerData.Level++;
             }
