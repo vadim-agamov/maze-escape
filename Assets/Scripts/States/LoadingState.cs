@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cheats;
 using Cysharp.Threading.Tasks;
@@ -76,7 +77,10 @@ namespace States
             
             Debug.Log($"[{nameof(LoadingState)}] all services registered");
 
-            ServiceLocator.Get<GamePlayerDataService>().PlayerData.LastSessionDate = DateTime.Now;
+            var newInstall = playerDataService.PlayerData.InstallDate == playerDataService.PlayerData.LastSessionDate;
+            playerDataService.PlayerData.LastSessionDate = DateTime.Now;
+            playerDataService.Commit();
+            
             ServiceLocator.Get<IAnalyticsService>().Start();
             
             await Fsm.Enter(new MazeState(), token);
@@ -84,7 +88,10 @@ namespace States
             await jumpScreenService.Hide(token);
             
             platformService.GameReady();
-            ServiceLocator.Get<IAnalyticsService>().TrackEvent($"Loaded");
+            ServiceLocator.Get<IAnalyticsService>().TrackEvent($"Loaded", new Dictionary<string, object>
+            {
+                { "new_install", newInstall }
+            });
         }
         
         private static void SetupEventSystem()

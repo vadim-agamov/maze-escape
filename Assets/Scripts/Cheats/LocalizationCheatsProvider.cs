@@ -16,20 +16,17 @@ namespace Cheats
 
         public LocalizationCheatsProvider(ICheatService cheatService)
         {
-            _langRussian = new CheatButton(cheatService, Language.Russian.ToString(), () =>
-            {
-                LocalizationService.SetLanguage(Language.Russian);
-            });
-            _langEnglish = new CheatButton(cheatService, Language.English.ToString(), () =>
-            {
-                LocalizationService.SetLanguage(Language.English);
-            });
-            _langTurkish = new CheatButton(cheatService, Language.Turkish.ToString(), () =>
-            {
-                LocalizationService.SetLanguage(Language.Turkish);
-            });
-            
-            _currentLang = new CheatLabel(()=> $"Current language: {LocalizationService.CurrentLanguage}");
+            _langRussian = new CheatButton(cheatService, Language.Russian.ToString(),
+                () => LocalizationService.SetLanguage(Language.Russian),
+                false);
+            _langEnglish = new CheatButton(cheatService, Language.English.ToString(),
+                () => LocalizationService.SetLanguage(Language.English),
+                false);
+            _langTurkish = new CheatButton(cheatService, Language.Turkish.ToString(),
+                () => LocalizationService.SetLanguage(Language.Turkish),
+                false);
+
+            _currentLang = new CheatLabel(() => $"Current language: {LocalizationService.CurrentLanguage}");
         }
 
         public void OnGUI()

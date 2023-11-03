@@ -29,6 +29,7 @@ namespace Actions
                     {"level", DataService.PlayerData.Level}
                 });
                 DataService.PlayerData.Level++;
+                DataService.Commit();
             }
 
             await model.HideAndClose(token);

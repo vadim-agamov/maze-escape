@@ -14,6 +14,7 @@ mergeInto(LibraryManager.library, {
 
         ysdk.getPlayer().then(_player => {
             player = _player;
+            console.log("YandexStartGame: player mode: " + player.getMode());
             unityInstance.SendMessage('Yandex', 'YandexOnGameStarted');
         }).catch(err => {
             unityInstance.SendMessage('Yandex', 'YandexOnGameNotStarted', error.message);
@@ -76,15 +77,24 @@ mergeInto(LibraryManager.library, {
             .then(function () {
                 console.log('SetData done');
             });
+        localStorage.setItem('data', result);
     },
 
     YandexGetData: function () {
         player
-            .getData(["data"])
+            .getData(['data'])
             .then(function (response) {
                 console.log('GetData: respose: ' + response);
-                var data = JSON.stringify(response["data"] || {});
-                console.log('GetData: loaded: ' + data);
+                var data = {};
+                if(response['data'] == null) {
+                    data = JSON.stringify(localStorage.getItem('data') || {})
+                    console.log('GetData: loaded from local storage: ' + data)
+                }
+                else {
+                    data = JSON.stringify(response["data"] || {});
+                    console.log('GetData: loaded from player: ' + data)
+                }
+                
                 unityInstance.SendMessage('Yandex', 'YandexOnPlayerProgressLoaded', data);
             })
             .catch(function (error) {

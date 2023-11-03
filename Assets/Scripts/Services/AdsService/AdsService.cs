@@ -58,7 +58,7 @@ namespace Services.AdsService
             }
 
             var result = await action.Invoke(token);
-            AnalyticsService.TrackEvent("AdsShown", new Dictionary<string, object>{{"success", result}});
+            AnalyticsService.TrackEvent("AdsShown");
 
             if (result)
             {

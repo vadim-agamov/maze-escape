@@ -2,12 +2,16 @@ using System.Collections.Generic;
 using System.Threading;
 using Modules.ServiceLocator;
 using Cysharp.Threading.Tasks;
+using Modules.Events;
 using Modules.PlatformService;
 using UnityEngine;
 
-
 namespace Modules.LocalizationService
 {
+    public class LocalizationChangedEvent
+    {
+    }
+
     public class LocalizationService: ILocalizationService
     {
         private HashSet<LocalizationProviderConfig> _providers = new ();
@@ -38,6 +42,8 @@ namespace Modules.LocalizationService
                     _keys.Add(key.Key, key.Value);
                 }
             }
+            
+            Event<LocalizationChangedEvent>.Publish();
         }
 
         void ILocalizationService.Register(LocalizationProviderConfig providerConfig)

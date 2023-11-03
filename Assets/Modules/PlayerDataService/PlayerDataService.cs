@@ -61,6 +61,8 @@ namespace Modules.PlayerDataService
             SetDirty();
         }
 
+        public void Commit() => SetDirty();
+
         private void Update()
         {
             if (_needSave && !_savingIsInProgress)

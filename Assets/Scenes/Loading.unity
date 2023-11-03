@@ -139,6 +139,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: JumpScreen
       objectReference: {fileID: 0}
+    - target: {fileID: 5698731735680794956, guid: 29ecb0e9eca83437fa9b16181a51e508, type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7447257017117373306, guid: 29ecb0e9eca83437fa9b16181a51e508, type: 3}
       propertyPath: m_Pivot.x
       value: 0

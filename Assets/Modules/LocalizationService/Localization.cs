@@ -1,4 +1,5 @@
 using System;
+using Modules.Events;
 using TMPro;
 using UnityEngine;
 
@@ -19,6 +20,17 @@ namespace Modules.LocalizationService
         private void OnEnable()
         {
             LocalizationService = ServiceLocator.ServiceLocator.Get<ILocalizationService>();
+            Localize();
+            Event<LocalizationChangedEvent>.Subscribe(OnLocalizationChanged);
+        }
+
+        private void OnDisable()
+        {
+            Event<LocalizationChangedEvent>.Unsubscribe(OnLocalizationChanged);
+        }
+
+        private void OnLocalizationChanged(LocalizationChangedEvent _)
+        {
             Localize();
         }
 

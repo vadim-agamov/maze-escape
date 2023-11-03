@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Modules.ServiceLocator;
+using Modules.UIService;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Modules.CheatService
 {
@@ -25,9 +28,19 @@ namespace Modules.CheatService
         {
         }
 
-        void ICheatService.Show() => _isShown = true;
+        void ICheatService.Show()
+        {
+            _isShown = true;
+            var canvas = ServiceLocator.ServiceLocator.Get<IUIService>().Canvas;
+            canvas.GetComponent<GraphicRaycaster>().enabled = false;
+        }
 
-        void ICheatService.Hide() => _isShown = false;
+        void ICheatService.Hide()
+        {
+            _isShown = false;
+            var canvas = ServiceLocator.ServiceLocator.Get<IUIService>().Canvas;
+            canvas.GetComponent<GraphicRaycaster>().enabled = true;
+        }
 
         void ICheatService.RegisterCheatProvider(ICheatsProvider cheatsProvider) => _cheatsProviders.Add(cheatsProvider);
 
@@ -42,13 +55,14 @@ namespace Modules.CheatService
             GUI.skin.textField.fontSize = 40;
             GUI.skin.box.fontSize = 40;
             GUI.skin.box.fontStyle = FontStyle.Bold;
-  
-
-            ShowCheats();
-
+            
             if (_isShown)
             {
                 DrawCheats();
+            }
+            else
+            {
+                ShowCheats();
             }
         }
 
@@ -57,8 +71,7 @@ namespace Modules.CheatService
             if (_isShown)
             {
                 var touchCount = Input.touchCount > 0 ? Input.touchCount : Input.GetMouseButton(0) ? 1 : 0;
-                if (touchCount > 0 &&
-                    GUIUtility.hotControl == 0)
+                if (touchCount > 0 && GUIUtility.hotControl == 0)
                 {
                     This.Hide();
                 }

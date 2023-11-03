@@ -7,11 +7,13 @@ namespace Modules.CheatService.Controls
     {
         private readonly string _name;
         private readonly Action _action;
+        private readonly bool _hideCheats;
         
-        public CheatButton(ICheatService cheatService, string name, Action action): base(cheatService)
+        public CheatButton(ICheatService cheatService, string name, Action action, bool hideCheats = true): base(cheatService)
         {
             _name = name;
             _action = action;
+            _hideCheats = hideCheats;
         }
         
         public void OnGUI()
@@ -19,7 +21,10 @@ namespace Modules.CheatService.Controls
             if (GUILayout.Button(_name))
             {
                 _action?.Invoke();
-                HideCheats();
+                if(_hideCheats)
+                {
+                    HideCheats();
+                }
             }
         }
     }
