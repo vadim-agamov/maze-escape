@@ -5,19 +5,19 @@ using UnityEngine;
 
 namespace Editor.Build
 {
-    public static class BuildYandex
+    public static class BuildCrazy
     {
-        private const string YandexDefine = "YANDEX";
-        private const string WebGLTemplate = "PROJECT:Yandex";
+        private const string CrazyDefine = "CRAZY";
+        private const string WebGLTemplate = "PROJECT:Crazy_2020";
 
-        [MenuItem("Game/Build/YANDEX/BuildDev")]
+        [MenuItem("Game/Build/Crazy/BuildDev")]
         public static void BuildDev()
         {
             SetFbDebugDefines();
             DoBuild();
         }
         
-        [MenuItem("Game/Build/YANDEX/BuildProd")]
+        [MenuItem("Game/Build/Crazy/BuildProd")]
         public static void BuildProd()
         {
             SetFbProdDefines();
@@ -28,9 +28,9 @@ namespace Editor.Build
         {
             BuildBase.IncrementBuildNumber();
             PlayerSettings.WebGL.template = WebGLTemplate;
-            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
 
-            var path = Application.dataPath.Replace("/Assets", $"/Builds/yandex/v{PlayerSettings.bundleVersion}");
+            var path = Application.dataPath.Replace("/Assets", $"/Builds/crazy/v{PlayerSettings.bundleVersion}");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path);
@@ -55,20 +55,19 @@ namespace Editor.Build
             return zipFile;
         }
         
-        [MenuItem("Game/Build/YANDEX/Set Defines Dev")]
+        [MenuItem("Game/Build/Crazy/Set Defines Dev")]
         public static void SetFbDebugDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, DebugDefines);
         }
         
-        [MenuItem("Game/Build/YANDEX/Set Defines Prod")]
+        [MenuItem("Game/Build/Crazy/Set Defines Prod")]
         public static void SetFbProdDefines()
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WebGL, ProdDefines);
         }
         
-        private static string DebugDefines => $"{BuildBase.DebugDefines};{YandexDefine}";
-        private static string ProdDefines => $"{BuildBase.ProdDefines};{YandexDefine}";
+        private static string DebugDefines => $"{BuildBase.DebugDefines};{CrazyDefine}";
+        private static string ProdDefines => $"{BuildBase.ProdDefines};{CrazyDefine}";
     }
 }
-

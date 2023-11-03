@@ -135,7 +135,7 @@ PlayerSettings:
   vulkanEnableLateAcquireNextImage: 0
   vulkanEnableCommandBufferRecycling: 1
   loadStoreDebugModeEnabled: 0
-  bundleVersion: 0.76
+  bundleVersion: 0.84
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -771,7 +771,7 @@ PlayerSettings:
   webGLTemplate: PROJECT:Yandex
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
-  webGLCompressionFormat: 2
+  webGLCompressionFormat: 1
   webGLWasmArithmeticExceptions: 0
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0

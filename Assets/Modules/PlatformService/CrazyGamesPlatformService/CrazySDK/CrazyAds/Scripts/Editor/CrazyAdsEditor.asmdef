@@ -1,0 +1,16 @@
+{
+    "name": "CrazyAdsEditor",
+    "rootNamespace": "",
+    "references": ["GUID:ae25a3bbdd56484bb19ecc8eb358d723"],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

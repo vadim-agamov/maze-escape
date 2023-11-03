@@ -15,7 +15,6 @@ using Modules.PlatformService;
 using Modules.ServiceLocator;
 using Modules.SoundService;
 using Modules.UIService;
-using Modules.Utils;
 using Services.AdsService;
 using Services.GamePlayerDataService;
 using Services.JumpScreenService;
@@ -27,6 +26,8 @@ using UnityEngine;
     using Modules.PlatformService.FbPlatformService;
 #elif YANDEX
     using Modules.PlatformService.YandexPlatformService;
+#elif CRAZY
+    using Modules.PlatformService.CrazyGamesPlatformService;
 #elif DUMMY_WEBGL
     using Modules.PlatformService.DummyPlatformService;
 #endif
@@ -49,6 +50,8 @@ namespace States
             IPlatformService platformService = new GameObject("FbBridge").AddComponent<FbPlatformService>();
 #elif YANDEX
             IPlatformService platformService = new GameObject("Yandex").AddComponent<YandexPlatformService>();
+#elif CRAZY
+            IPlatformService platformService = new CrazyPlatformService();
 #elif DUMMY_WEBGL
             IPlatformService platformService = new GameObject("DummySN").AddComponent<DummyPlatformService>();
 #endif
@@ -106,7 +109,7 @@ namespace States
         private async UniTask RegisterCheats(CancellationToken token)
         {
             ICheatService cheatService = new GameObject().AddComponent<CheatService>();
-            await ServiceLocator.Register(cheatService, token, typeof(GamePlayerDataService));
+            await ServiceLocator.Register(cheatService, token, typeof(GamePlayerDataService), typeof(ILocalizationService));
             cheatService.RegisterCheatProvider(new GeneralCheatsProvider(cheatService, ServiceLocator.Get<GamePlayerDataService>()));
             cheatService.RegisterCheatProvider(new AdCheatsProvider(cheatService));
             cheatService.RegisterCheatProvider(new LocalizationCheatsProvider(cheatService));

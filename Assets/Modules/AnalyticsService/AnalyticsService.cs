@@ -17,6 +17,8 @@ namespace Modules.AnalyticsService
             {"sn", "fb"}
 #elif YANDEX
             {"sn", "yandex"}
+#elif CRAZY 
+            {"sn", "crazy"}
 #elif DUMMY_WEBGL
             {"sn", "dummy"}
 #endif
