@@ -25,12 +25,12 @@ namespace Maze.Configs
         public void FetchLevels()
         {
             Clear();
-            var levels = AssetDatabase.FindAssets($"t:{nameof(LevelConfig)}")    
+            var levels = AssetDatabase.FindAssets($"t:{nameof(LevelConfig)}")
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .Select(AssetDatabase.LoadAssetAtPath<LevelConfig>)
-                .ToList();
+                .ToList()
+                .OrderBy(l => l.Complexity);
             
-            levels.Sort((a,b) => a.MinPath - b.MinPath);
             _levels = levels.ToArray();
         }
 

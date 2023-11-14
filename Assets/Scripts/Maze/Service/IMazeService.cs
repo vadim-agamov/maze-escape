@@ -5,7 +5,7 @@ namespace Maze.Service
 {
     public interface IMazeService : IService
     {
-        T GetComponent<T>() where T : IComponent;
+        T GetMazeComponent<T>() where T : IComponent;
         Context Context { get; }
     }
 }

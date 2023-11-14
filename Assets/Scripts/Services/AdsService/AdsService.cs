@@ -14,8 +14,8 @@ namespace Services.AdsService
         private IAnalyticsService AnalyticsService { get; set; } 
         private IPlatformService PlatformService { get; set; }
         
-        private readonly TimeSpan _adsCooldown = TimeSpan.FromMinutes(5);
-        private readonly int _minLevelToShowAds = 5;
+        private readonly TimeSpan _adsCooldown = TimeSpan.FromMinutes(1);
+        private readonly int _minLevelToShowAds = 2;
         UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             PlatformService =  ServiceLocator.Get<IPlatformService>();

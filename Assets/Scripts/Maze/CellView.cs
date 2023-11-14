@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Maze.Configs;
 using Modules.Extensions;
@@ -55,7 +56,19 @@ namespace Maze
         public CellType CellType => _cellType;
         public int Row => _row;
         public int Col => _col;
+
+        public void AddType(CellType cellType)
+        {
+            _cellType |= cellType;
+            _finish.SetActive(_cellType.HasFlag(CellType.Finish));
+        }
         
+        public void RemoveType(CellType cellType)
+        {
+            _cellType &= ~cellType;
+            _finish.SetActive(_cellType.HasFlag(CellType.Finish));
+        }
+
         public void Setup(CellType cellType, int r, int c, HashSet<string> walls)
         {
             _cellType = cellType;

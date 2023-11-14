@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Maze.Configs
@@ -19,13 +20,21 @@ namespace Maze.Configs
         Path2 = 1 << 8,
         PathItem = 1 << 9,
 
-        Visited = 1 << 15,
+        Visited = 1 << sizeof(int) * 8 - 1,
         
         Path =  Path0 | Path1 | Path2,
         PermanentTypes = LeftWall | RightWall | UpWall | DownWall | Start | Finish | Path | PathItem
     }
+    
+    [Serializable]
+    public class PathGoal
+    {
+        public int Row;
+        public int Col;
+        public int Length;
+    }
 
-    [CreateAssetMenu(menuName = "Create LevelConfig", fileName = "LevelConfig", order = 0)]
+
     public class LevelConfig : ScriptableObject
     {
         [SerializeField] 
@@ -41,16 +50,28 @@ namespace Maze.Configs
         private int _levelId;
 
         [SerializeField]
-        private int _minPath;
+        private PathGoal[] _goals;
 
         public int LevelId
         {
             get => _levelId;
-            set { _levelId = value; }
+            set => _levelId = value;
         }
 
-        public int MinPath => _minPath;
-        public void SetMinPath(int v) => _minPath = v;
+        public int Complexity => _goals.Sum(g => g.Length);
+
+        public PathGoal[] Goals
+        {
+            get => _goals;
+            set => _goals = value;
+        }
+        
+        public PathGoal[] PivotedGoals => _goals.Select(g => new PathGoal
+        {
+            Row = g.Col,
+            Col = g.Row,
+            Length = g.Length
+        }).ToArray();
         
         public CellType[,] PivotedCells
         {

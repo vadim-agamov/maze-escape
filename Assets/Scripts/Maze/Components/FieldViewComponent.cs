@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Maze.Configs;
 using Maze.Service;
@@ -37,6 +38,8 @@ namespace Maze.Components
             
             _context = context;
             _context.Cells = portraitScreen ? context.Level.Cells : context.Level.PivotedCells;
+            _context.Goals = portraitScreen ? context.Level.Goals : context.Level.PivotedGoals;
+            
             var rows = _context.Cells.GetLength(0);
             var cols = _context.Cells.GetLength(1);
 
@@ -59,12 +62,20 @@ namespace Maze.Components
                     _cellViews[r, c] = cell;
                 }
             }
+            
+            var firstGoal = context.Goals.First();
+            _cellViews[firstGoal.Row, firstGoal.Col].AddType(CellType.Finish);
 
             context.Active = true;
             
             _initialized?.Invoke();
             
             return UniTask.CompletedTask;
+        }
+        
+        void IComponent.Update()
+        {
+            // nothing
         }
         
         public CellView GetCellView(int r, int c) => _cellViews[r, c];

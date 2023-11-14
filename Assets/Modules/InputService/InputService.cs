@@ -14,6 +14,7 @@ namespace Modules.InputService
         private List<RaycastResult> _raycastResult;
         private IInputService This => this;
         private int TouchCount => Input.touchCount > 0 ? Input.touchCount : Input.GetMouseButton(0) ? 1 : 0;
+        private PointerEventData _eventDataCurrentPosition;
         
         UniTask IService.Initialize(CancellationToken cancellationToken)
         {
@@ -50,13 +51,11 @@ namespace Modules.InputService
         {
             if(GUIUtility.hotControl > 0)
                 return true;
-            
-            var eventDataCurrentPosition = new PointerEventData(EventSystem.current)
-            {
-                position = position
-            };
 
-            EventSystem.current.RaycastAll(eventDataCurrentPosition, _raycastResult);
+            _eventDataCurrentPosition ??= new PointerEventData(EventSystem.current);
+            _eventDataCurrentPosition.position = position;
+            
+            EventSystem.current.RaycastAll(_eventDataCurrentPosition, _raycastResult);
 
             foreach (var result in _raycastResult)
             {

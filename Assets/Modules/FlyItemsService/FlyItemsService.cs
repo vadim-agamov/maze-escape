@@ -7,6 +7,7 @@ using DG.Tweening;
 using Modules.ServiceLocator;
 using Modules.UIService;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -26,10 +27,11 @@ namespace Modules.FlyItemsService
         private ObjectPool<Image> _pool;
         private Canvas _canvas;
         private FlyItemsConfig _config;
-        private List<FlyItemAnchor> _anchors = new List<FlyItemAnchor>();
+        private readonly List<FlyItemAnchor> _anchors = new();
         
         private void OnReleaseItem(Image item)
         {
+            item.transform.position = Vector3.zero;
             item.gameObject.SetActive(false); 
         }
 
@@ -43,6 +45,8 @@ namespace Modules.FlyItemsService
             var go = new GameObject();
             go.transform.SetParent(_canvas.transform);
             go.transform.localScale = Vector3.one;
+            go.transform.transform.position = Vector3.zero;
+            go.name = "FlyItem";
             var image = go.AddComponent<Image>();
             image.preserveAspect = true;
             return image;
@@ -61,12 +65,11 @@ namespace Modules.FlyItemsService
             return Fly(name, from.transform.position, from.Play, to.transform.position, to.Play, count);
         }
         
-        UniTask IService.Initialize(CancellationToken cancellationToken)
+        async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             _canvas = ServiceLocator.ServiceLocator.Get<IUIService>().Canvas;
             _pool = new ObjectPool<Image>(OnCreateItem, OnGetItem, OnReleaseItem);
-            _config = Resources.Load<FlyItemsConfig>("FlyItemsConfig");
-            return UniTask.CompletedTask;
+            _config = await Addressables.LoadAssetAsync<FlyItemsConfig>("FlyItemsConfig");
         }
         
         void IService.Dispose()
@@ -80,27 +83,30 @@ namespace Modules.FlyItemsService
         private async UniTask Fly(string name, Vector3 from, Action<int> fromAction, Vector3 to, Action<int> toAction, int count)
         {
             var taskCompletionSource = new UniTaskCompletionSource();
+            from = new Vector3(from.x, from.y, _canvas.transform.position.z); 
 
+            var distance = Vector3.Distance(from, to);
+            
             var midPoint = Vector3.Lerp(from, to, 0.5f);
-            var xDelta = Screen.width * 0.2f;
-            var yDelta = 0;// Screen.height * 0.2f;
-            midPoint = new Vector3(midPoint.x + Random.Range(-xDelta, xDelta), midPoint.y + Random.Range(-yDelta, yDelta));
+            var xDelta = distance * 0.2f;
+            var yDelta = distance * 0.2f;
+            midPoint = new Vector3(midPoint.x + Random.Range(-xDelta, xDelta), midPoint.y + Random.Range(-yDelta, yDelta), midPoint.z);
                 
             for (var i = 0; i < count; i++)
             {
                 var item = _pool.Get();
                 item.sprite = _config.GetIcon(name);
-                item.transform.position = from;
                 item.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                item.transform.position = from;
 
                 fromAction?.Invoke(-1);
                 var localIndex = i;
 
                 var sequence = DOTween.Sequence();
                 sequence
-                    .Append(item.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.2f))
-                    .Append(item.transform.DOScale(Vector3.one, 0.2f))
-                    .Insert(i * 0.1f + 0.4f,item.transform.DOPath(new[] {midPoint, to}, 1f, PathType.CatmullRom)
+                    .Append(item.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.1f))
+                    .Append(item.transform.DOScale(Vector3.one, 0.1f))
+                    .Insert(i * 0.1f + 0.1f,item.transform.DOPath(new[] {midPoint, to}, distance * 0.05f, PathType.CatmullRom)
                         .SetEase(Ease.InCubic)
                         .OnComplete(() =>
                         {

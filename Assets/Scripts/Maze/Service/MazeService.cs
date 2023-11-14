@@ -10,20 +10,22 @@ using Modules.ServiceLocator;
 using Services.GamePlayerDataService;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using CharacterController = Maze.Components.CharacterController;
 
 namespace Maze.Service
 {
-    public class MazeService: IMazeService
+    public class MazeService: MonoBehaviour, IMazeService
     {
         private readonly List<IComponent> _components = new List<IComponent>();
         private readonly Context _context = new Context();
         private LocalizationProviderConfig _localizationProvider;
+        private bool _initialized;
         private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
         private GamePlayerDataService DataService { get; } = ServiceLocator.Get<GamePlayerDataService>();
 
         private const int InitialLevels = 5;
 
-        public T GetComponent<T>() where T : IComponent
+        public T GetMazeComponent<T>() where T : IComponent
         {
             foreach (var component in _components)
             {
@@ -43,9 +45,10 @@ namespace Maze.Service
             
             _components.Add(GameObject.Find("Field").GetComponent<FieldViewComponent>());
             _components.Add(GameObject.Find("Path").GetComponent<PathComponent>());
-            _components.Add(GameObject.Find("Crab").GetComponent<CharacterComponent>());
-            _components.Add(new WinLevelCheckerComponent());
-            _components.Add(new GameObject($"{nameof(AttentionFxComponent)}").AddComponent<AttentionFxComponent>());
+            _components.Add(GameObject.Find("Crab").GetComponent<CharacterController>());
+            _components.Add(new GoalsCheckerComponent());
+            _components.Add(new InputComponent());
+            // _components.Add(new GameObject($"{nameof(AttentionFxComponent)}").AddComponent<AttentionFxComponent>());
 
             foreach (var component in _components)
             {
@@ -56,10 +59,26 @@ namespace Maze.Service
             {
                 {"level", DataService.PlayerData.Level}
             });
+
+            _initialized = true;
+        }
+
+        private void Update()
+        {
+            if (!_initialized)
+            {
+                return;
+            }
+
+            foreach (var component in _components)
+            {
+                component.Update();
+            }
         }
 
         void IService.Dispose()
         {
+            _initialized = false;
             foreach (var checker in _components)
             {
                 checker.Dispose();

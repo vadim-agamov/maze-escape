@@ -23,7 +23,7 @@ namespace Maze.Components
             Event<WinLevelEvent>.Subscribe(OnWinLevel);
             
             _context = context;
-            _characterFx = mazeService.GetComponent<CharacterComponent>();
+            _characterFx = mazeService.GetMazeComponent<CharacterController>();
             _finishFx = context.CellViews
                 .FirstOrDefault(x => x.CellType.HasFlag(CellType.Finish))
                 .GetComponent<IAttentionFxControl>();
@@ -31,7 +31,11 @@ namespace Maze.Components
             StartCoroutine(ShowCharacterFx());
             return UniTask.CompletedTask;
         }
-
+        void IComponent.Update()
+        {
+            // nothing
+        }
+        
         private void OnWinLevel(WinLevelEvent _)
         {
             _characterFx.Hide();

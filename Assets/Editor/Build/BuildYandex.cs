@@ -28,7 +28,7 @@ namespace Editor.Build
         {
             BuildBase.IncrementBuildNumber();
             PlayerSettings.WebGL.template = WebGLTemplate;
-            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
 
             var path = Application.dataPath.Replace("/Assets", $"/Builds/yandex/v{PlayerSettings.bundleVersion}");
             if (Directory.Exists(path))

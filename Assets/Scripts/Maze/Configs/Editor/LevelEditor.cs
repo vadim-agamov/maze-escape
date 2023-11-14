@@ -11,16 +11,37 @@ namespace Maze.Configs.Editor
         [SerializeField] 
         private CellType _path = CellType.Path0;
         
+        private void GenerateButtonMultipleGoals()
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Size");
+            _sizeFiled = GUILayout.TextField(_sizeFiled);
+            if (int.TryParse(_sizeFiled, out var size))
+            {
+                _size = size;
+            }
+
+            if (GUILayout.Button("Generate"))
+            {
+                GenerateMaze();
+                GenerateGoals();
+                _levelConfigObject = null;
+                _levelName = $"level_{_size}_{Complexity}_{_cells.GetHashCode():X4}";
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+        
         private void DrawBoardItem(Rect rect, CellType cellType)
         {
             var wallColor = Color.white;
             
-            var style = new GUIStyle()
+            var style = new GUIStyle
             {
                 alignment = TextAnchor.MiddleCenter, 
                 fontStyle = FontStyle.Bold,
                 fontSize = (int)rect.height - 2,
-                normal = new GUIStyleState()
+                normal = new GUIStyleState
                 {
                     textColor = Color.white
                 }
@@ -53,18 +74,20 @@ namespace Maze.Configs.Editor
             
             if (cellType.HasFlag(CellType.Start))
             {
-                EditorGUI.TextArea(rect, "S", style);
+                EditorGUI.LabelField(rect, "S", style);
             }
 
             if (cellType.HasFlag(CellType.Finish))
             {
-                EditorGUI.TextArea(rect, "F", style);
+                EditorGUI.LabelField(rect, "F", style);
             }
             
             if (cellType.HasFlag(CellType.PathItem))
             {
-                EditorGUI.TextArea(rect, "*", style);
+                EditorGUI.LabelField(rect, "*", style);
             }
+            
+            // GUI.FocusControl("");
         }
         
         private void OnGUI()
@@ -72,7 +95,7 @@ namespace Maze.Configs.Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.EndHorizontal();
 
-            GenerateButton();
+            GenerateButtonMultipleGoals();
             SaveButton();
             LoadButton();
             DrawCells();
@@ -118,6 +141,12 @@ namespace Maze.Configs.Editor
             {
                 for (var c = 0; c < cols; c++)
                 {
+                    if (Event.current.type == EventType.MouseDown && itemRect.Contains(Event.current.mousePosition))
+                    {
+                        _cells[r, c] ^= CellType.PathItem;
+                        Debug.Log($"after {_cells[r, c]}");
+                    }
+                    
                     DrawBoardItem(itemRect, _cells[r, c]);
                     itemRect.x = itemRect.xMax;
                 }
@@ -125,7 +154,7 @@ namespace Maze.Configs.Editor
                 itemRect.x = 0;
                 itemRect.y = itemRect.yMax;
             }
-
+            
             GUI.EndGroup();
             GUI.EndGroup();
         }

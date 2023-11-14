@@ -1,5 +1,6 @@
 using System;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Services.GamePlayerDataService
 {
@@ -22,19 +23,15 @@ namespace Services.GamePlayerDataService
         
         [JsonProperty]
         public bool MuteSound;
+
+        [JsonProperty]
+        public string InstallVersion;
         
         public PlayerData()
         {
-            Reset();
-        }
-        
-        public void Reset()
-        {
-            Level = 0;
-            MaxScore = default;
             InstallDate = DateTime.Now;
             LastSessionDate = DateTime.Now;
-            MuteSound = true;
+            InstallVersion = Application.version;
         }
     }
 }

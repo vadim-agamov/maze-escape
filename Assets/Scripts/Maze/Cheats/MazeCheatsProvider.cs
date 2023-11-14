@@ -27,7 +27,7 @@ namespace Maze.Cheats
                 });
 
             var levelConfig = mazeService.Context.Level;
-            _levelInfo = new CheatLabel(() => $"Level Info: #{levelConfig.LevelId}, min path:{levelConfig.MinPath}");
+            _levelInfo = new CheatLabel(() => $"Level Info: #{levelConfig.LevelId}, Complexity :{levelConfig.Complexity}");
             
             var playerDataService = ServiceLocator.Get<GamePlayerDataService>();
             _level = new CheatIntInput(
