@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7232316001616902637
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7919100978047599892}
+  - component: {fileID: 8573093300602867980}
+  m_Layer: 0
+  m_Name: GoalsFactory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7919100978047599892
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7232316001616902637}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8573093300602867980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7232316001616902637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c03070ed70464958aa41d9583d0cc8fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _goalsViews:
+  - Id: goal_1
+    GoalView: {fileID: 8826466517858114727, guid: 5578e8664995647118948bd0216e6a67, type: 3}
+  - Id: goal_2
+    GoalView: {fileID: 5329198173625881285, guid: 81f2d0f0c16ee4b8ca2b45afb24ef29f, type: 3}
+  _rewards:
+  - shell_1
+  - shell_2
+  - shell_3
+  - starfish_1
+  - starfish_2
+  - starfish_3
+  - pearl
+  - bottle
+  - coral

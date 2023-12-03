@@ -23,7 +23,7 @@ namespace Maze.Service
         private IAnalyticsService AnalyticsService { get; } = ServiceLocator.Get<IAnalyticsService>();
         private GamePlayerDataService DataService { get; } = ServiceLocator.Get<GamePlayerDataService>();
 
-        private const int InitialLevels = 5;
+        private const int InitialLevels = 0;
 
         public T GetMazeComponent<T>() where T : IComponent
         {
@@ -43,6 +43,7 @@ namespace Maze.Service
             await SetupLevel(cancellationToken);
             Context.Camera = GameObject.Find("Camera").GetComponent<Camera>();
             
+            _components.Add(GameObject.Find("GoalsFactory").GetComponent<GoalsFactoryComponent>());
             _components.Add(GameObject.Find("Field").GetComponent<FieldViewComponent>());
             _components.Add(GameObject.Find("Path").GetComponent<PathComponent>());
             _components.Add(GameObject.Find("Crab").GetComponent<CharacterController>());
@@ -72,7 +73,7 @@ namespace Maze.Service
 
             foreach (var component in _components)
             {
-                component.Update();
+                component.Tick();
             }
         }
 

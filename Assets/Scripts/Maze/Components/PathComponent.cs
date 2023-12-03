@@ -25,7 +25,7 @@ namespace Maze.Components
             return UniTask.CompletedTask;
         }
         
-        void IComponent.Update()
+        void IComponent.Tick()
         {
             if (_context.Active && _context.Path.Count > 0)
             {

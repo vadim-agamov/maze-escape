@@ -18,6 +18,7 @@ namespace Modules.FlyItemsService
     {
         UniTask Fly(string name, string from, string to, int count);
         UniTask Fly(string name, Vector3 from, string to, int count);
+        UniTask Fly(IReadOnlyList<(string Id, int Count)> names, Vector3 from, string to);
         void RegisterAnchor(FlyItemAnchor anchor);
         void UnregisterAnchor(FlyItemAnchor anchor);
     }
@@ -55,16 +56,25 @@ namespace Modules.FlyItemsService
         public UniTask Fly(string name, Vector3 from, string toId, int count)
         {
             var to = _anchors.First(x => x.Id == toId);
-            return Fly(name, from, null, to.transform.position, to.Play, count);
+            var names = Enumerable.Repeat(name, count).ToList();
+            return Fly(names, from, null, to.transform.position, to.Play);
         }
 
         public UniTask Fly(string name, string fromId, string toId, int count)
         {
             var from = _anchors.First(x => x.Id == fromId);
             var to = _anchors.First(x => x.Id == toId);
-            return Fly(name, from.transform.position, from.Play, to.transform.position, to.Play, count);
+            var names = Enumerable.Repeat(name, count).ToList();
+            return Fly(names, from.transform.position, from.Play, to.transform.position, to.Play);
         }
-        
+
+        public UniTask Fly(IReadOnlyList<(string Id, int Count)> names, Vector3 from, string toId)
+        {
+            var to = _anchors.First(x => x.Id == toId);
+            var namesList = names.SelectMany(x => Enumerable.Repeat(x.Id, x.Count)).ToList();
+            return Fly(namesList, from, null, to.transform.position, to.Play);
+        }
+
         async UniTask IService.Initialize(CancellationToken cancellationToken)
         {
             _canvas = ServiceLocator.ServiceLocator.Get<IUIService>().Canvas;
@@ -80,33 +90,36 @@ namespace Modules.FlyItemsService
 
         void IFlyItemsService.UnregisterAnchor(FlyItemAnchor anchor) => _anchors.Remove(anchor);
 
-        private async UniTask Fly(string name, Vector3 from, Action<int> fromAction, Vector3 to, Action<int> toAction, int count)
+        private async UniTask Fly(IReadOnlyList<string> names, Vector3 from, Action<string,int> fromAction, Vector3 to, Action<string,int> toAction)
         {
             var taskCompletionSource = new UniTaskCompletionSource();
             from = new Vector3(from.x, from.y, _canvas.transform.position.z); 
 
             var distance = Vector3.Distance(from, to);
             
-            var midPoint = Vector3.Lerp(from, to, 0.5f);
+            var midPoint = Vector3.Lerp(from, to, 0.2f);
             var xDelta = distance * 0.2f;
             var yDelta = distance * 0.2f;
             midPoint = new Vector3(midPoint.x + Random.Range(-xDelta, xDelta), midPoint.y + Random.Range(-yDelta, yDelta), midPoint.z);
                 
-            for (var i = 0; i < count; i++)
+            var sequence = DOTween.Sequence();
+            sequence.timeScale = 1.2f;
+            sequence.Pause();
+            for (var i = 0; i < names.Count; i++)
             {
+                var id = names[i];
                 var item = _pool.Get();
-                item.sprite = _config.GetIcon(name);
-                item.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                item.sprite = _config.GetIcon(id);
+                item.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
                 item.transform.position = from;
 
-                fromAction?.Invoke(-1);
+                fromAction?.Invoke(id, -1);
                 var localIndex = i;
 
-                var sequence = DOTween.Sequence();
                 sequence
-                    .Append(item.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.1f))
-                    .Append(item.transform.DOScale(Vector3.one, 0.1f))
-                    .Insert(i * 0.1f + 0.1f,item.transform.DOPath(new[] {midPoint, to}, distance * 0.05f, PathType.CatmullRom)
+                    .Insert(i * 0.1f, item.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 0.2f))
+                    .Insert(i * 0.1f + 0.2f, item.transform.DOScale(Vector3.one, 0.2f))
+                    .Insert(i * 0.5f + 0.4f,item.transform.DOPath(new[] {midPoint, to}, distance * 0.05f, PathType.CatmullRom)
                         .SetEase(Ease.InCubic)
                         .OnComplete(() =>
                         {
@@ -118,9 +131,10 @@ namespace Modules.FlyItemsService
 
                             _pool.Release(item);
 
-                            toAction?.Invoke(1);
+                            toAction?.Invoke(id, 1);
                         }));
             }
+            sequence.Play();
 
             await taskCompletionSource.Task;
         }

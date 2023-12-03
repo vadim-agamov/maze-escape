@@ -13,5 +13,21 @@ MonoBehaviour:
   m_Name: FlyItemsConfig
   m_EditorClassIdentifier: 
   _icons:
-  - Icon: {fileID: 21300000, guid: 4668c874c9167414aaecb02c22c293b8, type: 3}
-    Name: goal
+  - Icon: {fileID: 21300000, guid: e8c61e6f6b87b4f9a9b1fba17e0fa3a1, type: 3}
+    Name: starfish_1
+  - Icon: {fileID: 21300000, guid: 6f0813c901acc4bb880b105209081d83, type: 3}
+    Name: starfish_2
+  - Icon: {fileID: 21300000, guid: 19cf32c947e844cec88b0782a70b7623, type: 3}
+    Name: starfish_3
+  - Icon: {fileID: 21300000, guid: 5386b6e9ac186437ea797ae42b79aac6, type: 3}
+    Name: pearl
+  - Icon: {fileID: 21300000, guid: 030aea40e1ff84013b37df80fc6dfb89, type: 3}
+    Name: shell_1
+  - Icon: {fileID: 21300000, guid: 4e9418266bcc049a682ba8ef5b6ef499, type: 3}
+    Name: shell_2
+  - Icon: {fileID: 21300000, guid: 55dee6bdd618745f8837be68f7ec7913, type: 3}
+    Name: shell_3
+  - Icon: {fileID: 21300000, guid: 9da9b732874fc4167a55cf546cb10915, type: 3}
+    Name: bottle
+  - Icon: {fileID: 21300000, guid: 4e0d0b53c122a495bbd36cf24c1cd70d, type: 3}
+    Name: coral

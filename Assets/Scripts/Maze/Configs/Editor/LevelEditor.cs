@@ -20,6 +20,27 @@ namespace Maze.Configs.Editor
             {
                 _size = size;
             }
+            
+            GUILayout.Label("Goals");
+            _goalsAmountString = GUILayout.TextField(_goalsAmountString ?? "5");
+            if (int.TryParse(_goalsAmountString, out var amount))
+            {
+                _goalsAmount = amount;
+            }
+            
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Length");
+            _goalsLengthMinString = GUILayout.TextField(_goalsLengthMinString ?? "5");
+            if (int.TryParse(_goalsLengthMinString, out var min))
+            {
+                _goalsLengthMin = min;
+            }
+            _goalsLengthMaxString = GUILayout.TextField(_goalsLengthMaxString ?? "10");
+            if (int.TryParse(_goalsLengthMaxString, out var max))
+            {
+                _goalsLengthMax = max;
+            }
+            EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Generate"))
             {
@@ -27,6 +48,7 @@ namespace Maze.Configs.Editor
                 GenerateGoals();
                 _levelConfigObject = null;
                 _levelName = $"level_{_size}_{Complexity}_{_cells.GetHashCode():X4}";
+                Debug.Log("Success");
             }
 
             EditorGUILayout.EndHorizontal();
@@ -81,13 +103,6 @@ namespace Maze.Configs.Editor
             {
                 EditorGUI.LabelField(rect, "F", style);
             }
-            
-            if (cellType.HasFlag(CellType.PathItem))
-            {
-                EditorGUI.LabelField(rect, "*", style);
-            }
-            
-            // GUI.FocusControl("");
         }
         
         private void OnGUI()
@@ -141,11 +156,11 @@ namespace Maze.Configs.Editor
             {
                 for (var c = 0; c < cols; c++)
                 {
-                    if (Event.current.type == EventType.MouseDown && itemRect.Contains(Event.current.mousePosition))
-                    {
-                        _cells[r, c] ^= CellType.PathItem;
-                        Debug.Log($"after {_cells[r, c]}");
-                    }
+                    // if (Event.current.type == EventType.MouseDown && itemRect.Contains(Event.current.mousePosition))
+                    // {
+                    //     _cells[r, c] ^= CellType.PathItem;
+                    //     Debug.Log($"after {_cells[r, c]}");
+                    // }
                     
                     DrawBoardItem(itemRect, _cells[r, c]);
                     itemRect.x = itemRect.xMax;
@@ -154,9 +169,33 @@ namespace Maze.Configs.Editor
                 itemRect.x = 0;
                 itemRect.y = itemRect.yMax;
             }
+
+            DrawGoals(elementSize, cellsRect);
             
             GUI.EndGroup();
             GUI.EndGroup();
+        }
+
+        private void DrawGoals(float elementSize, Rect cellsRect)
+        {
+            var style = new GUIStyle
+            {
+                alignment = TextAnchor.MiddleCenter, 
+                fontStyle = FontStyle.Bold,
+                fontSize = (int)elementSize - 10,
+                normal = new GUIStyleState
+                {
+                    textColor = Color.white
+                }
+            };
+
+            for (var index = 0; index < _goals.Count; index++)
+            {
+                var goal = _goals[index];
+                var goalRect = new Rect(goal.Col * elementSize, goal.Row * elementSize, elementSize, elementSize);
+                EditorGUI.LabelField(goalRect, index.ToString(), style);
+                // EditorGUI.DrawRect(goalRect, Color.blue);
+            }
         }
     }
 }

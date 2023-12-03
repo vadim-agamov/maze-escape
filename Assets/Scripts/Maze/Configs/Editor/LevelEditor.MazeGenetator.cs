@@ -48,7 +48,7 @@ namespace Maze.Configs.Editor
                 if (neighbours.Count == 0)
                     break;
                 
-                if (Random.Range(0, 5) == 0)
+                if (Random.Range(0, 10) == 0)
                 {
                     BrakeRandomWall(neighbours);
                 }

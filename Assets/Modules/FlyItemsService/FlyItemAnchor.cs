@@ -9,11 +9,11 @@ namespace Modules.FlyItemsService
         private string _id;
 
         [SerializeField] 
-        private UnityEvent<int> _onEvent;
+        private UnityEvent<string,int> _onEvent;
 
         public string Id => _id;
 
-        public void Play(int v) => _onEvent?.Invoke(v); 
+        public void Play(string id, int v) => _onEvent?.Invoke(id, v); 
         
         private void OnEnable()
         {

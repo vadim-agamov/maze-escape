@@ -38,7 +38,6 @@ namespace Maze.Components
         {
             _context = context;
             _context.CharacterPositionProvider = this;
-            // Event<PathUpdatedEvent>.Subscribe(OnPathUpdated);
             SetupStartPosition();
             _disposalTokenSource = new CancellationTokenSource();
             return UniTask.CompletedTask;
@@ -55,7 +54,7 @@ namespace Maze.Components
             }
         }
         
-        void IComponent.Update()
+        void IComponent.Tick()
         {
             if (_paused)
             {
@@ -80,7 +79,7 @@ namespace Maze.Components
                     _context.Path.RemoveFirst();
                 }
                 else
-                { 
+                {
                     transform.position = Vector3.MoveTowards(transform.position, _context.Path.First.Value.transform.position, _speed * Time.deltaTime);
 
                     if (_isWalkingTrigger.SetValue(true))
@@ -106,7 +105,7 @@ namespace Maze.Components
         {
             if (_context.Path.Count < 10)
             {
-                await UniTask.WaitUntil(() => _context.Path.Count == 0, cancellationToken: token);
+                await WaitDistance();
                 return;
             }
             
@@ -130,8 +129,14 @@ namespace Maze.Components
                 .SuppressCancellationThrow();
             
             _paused = false;
-            
-            await UniTask.WaitUntil(() => _context.Path.Count == 0, cancellationToken: token);
+
+            await WaitDistance();
+
+            UniTask WaitDistance()
+            {
+                return UniTask.WaitUntil(() => Vector3.Distance(transform.position, _context.Path.Last.Value.transform.position) < 1f,
+                    cancellationToken: token);
+            }
         }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Actions;
 using Cysharp.Threading.Tasks;
 using Modules.Events;
@@ -24,7 +26,7 @@ namespace Maze.Components
             return UniTask.CompletedTask;
         }
         
-        void IComponent.Update()
+        void IComponent.Tick()
         {
             if (_context.Path.Count == 0 || _context.GoalReached)
             {
@@ -45,7 +47,7 @@ namespace Maze.Components
             Event<GoalReachedEvent>.Publish(new GoalReachedEvent { Cell = cell });
             if (_context.CurrentGoal >= _context.Goals.Length)
             {
-                await WinLevelAction().SuppressCancellationThrow();
+                await WinLevelAction(cell).SuppressCancellationThrow();
             }
             else
             {
@@ -58,20 +60,39 @@ namespace Maze.Components
         {
             await _characterController.Teleport(Bootstrapper.SessionToken);
             cell.RemoveType(CellType.Finish);
-            var nextGoal = _context.Goals[_context.CurrentGoal];
-            _context.CellViews[nextGoal.Row, nextGoal.Col].AddType(CellType.Finish);
+            cell.Goal.PlayCollected().ContinueWith(() =>
+            {
+                cell.Goal.Dispose();
+                cell.Goal = null;
+            }).Forget();
             
             var screenPoint = _context.Camera.WorldToScreenPoint(cell.transform.position);
             var worldPoint = UIService.Canvas.worldCamera.ScreenToWorldPoint(screenPoint);
-            
-            FlyItemsService.Fly("goal", worldPoint, "goals_anchor", 1).Forget();
+            var rewards = cell.Goal.Rewards.Select(r => (r, 1)).ToList();
+            FlyItemsService.Fly(rewards, worldPoint, "goals_anchor").Forget();
+
+            var nextGoal = _context.Goals[_context.CurrentGoal];
+            _context.CellViews[nextGoal.Row, nextGoal.Col].AddType(CellType.Finish);
+            await _context.GoalsFactoryComponent.Create(_context.CellViews[nextGoal.Row, nextGoal.Col]).PlayAppear();
         }
 
-        private async UniTask WinLevelAction()
+        private async UniTask WinLevelAction(CellView cell)
         {
             _context.Active = false;
             Event<WinLevelEvent>.Publish();
             await _characterController.Teleport(Bootstrapper.SessionToken);
+            
+            cell.Goal.PlayCollected().ContinueWith(() =>
+            {
+                cell.Goal.Dispose();
+                cell.Goal = null;
+            }).Forget();
+            
+            var screenPoint = _context.Camera.WorldToScreenPoint(cell.transform.position);
+            var worldPoint = UIService.Canvas.worldCamera.ScreenToWorldPoint(screenPoint);
+            var rewards = cell.Goal.Rewards.Select(r => (r, 1)).ToList();
+            await FlyItemsService.Fly(rewards, worldPoint, "goals_anchor");
+            
             await new WinLevelAction().Execute(Bootstrapper.SessionToken);
         }
 

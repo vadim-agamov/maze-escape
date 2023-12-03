@@ -39,6 +39,7 @@ SpriteAtlas:
     packedSpriteRenderDataKeys:
     - 8f7b3410cbab84a2c8f4f4be968e1ab7: 21300000
     - 73f75090b02734d85870e86874e9adad: 21300000
+    - 7e59b0712cdb7443d96521ec0917e321: 21300000
     - b3775ef1d8c71b64391bff6deeb6adb1: 1362046142
     - b3775ef1d8c71b64391bff6deeb6adb1: -1659025985
     - b3775ef1d8c71b64391bff6deeb6adb1: -1279144892
@@ -47,9 +48,9 @@ SpriteAtlas:
     - b3775ef1d8c71b64391bff6deeb6adb1: 1046350131
     - b3775ef1d8c71b64391bff6deeb6adb1: 115457094
     - b3775ef1d8c71b64391bff6deeb6adb1: 1447845157
-    - 5f27f6828d8a049539b303d04a18853f: 21300000
     - c0451e92db4d5408b9a0bb5775a72bd6: 21300000
     - 262b3b94a1ea74c81af12c2e7a7caf83: 21300000
+    - d5567fd4133a34a8497b6c67d25aa544: 21300000
     - fe0e6955a8b97416b9d2d2a2e3b67db4: 21300000
     - 323383955d90f479f8c23d5e1d7ea2cb: 21300000
     - 5851a558446da4887b54120acb3a8d70: 21300000
@@ -59,6 +60,7 @@ SpriteAtlas:
   m_PackedSprites:
   - {fileID: 21300000, guid: 8f7b3410cbab84a2c8f4f4be968e1ab7, type: 3}
   - {fileID: 21300000, guid: 73f75090b02734d85870e86874e9adad, type: 3}
+  - {fileID: 21300000, guid: 7e59b0712cdb7443d96521ec0917e321, type: 3}
   - {fileID: 1362046142, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: -1659025985, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: -1279144892, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
@@ -67,9 +69,9 @@ SpriteAtlas:
   - {fileID: 1046350131, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: 115457094, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
   - {fileID: 1447845157, guid: b3775ef1d8c71b64391bff6deeb6adb1, type: 3}
-  - {fileID: 21300000, guid: 5f27f6828d8a049539b303d04a18853f, type: 3}
   - {fileID: 21300000, guid: c0451e92db4d5408b9a0bb5775a72bd6, type: 3}
   - {fileID: 21300000, guid: 262b3b94a1ea74c81af12c2e7a7caf83, type: 3}
+  - {fileID: 21300000, guid: d5567fd4133a34a8497b6c67d25aa544, type: 3}
   - {fileID: 21300000, guid: fe0e6955a8b97416b9d2d2a2e3b67db4, type: 3}
   - {fileID: 21300000, guid: 323383955d90f479f8c23d5e1d7ea2cb, type: 3}
   - {fileID: 21300000, guid: 5851a558446da4887b54120acb3a8d70, type: 3}
@@ -78,6 +80,7 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - body
   - orange_btn
+  - 00050-2452193651
   - confetti_6
   - confetti_7
   - confetti_4
@@ -86,9 +89,9 @@ SpriteAtlas:
   - confetti_3
   - confetti_0
   - confetti_1
-  - LoadingBack
   - crab400
   - sound_on
+  - progress
   - sound_off
   - blue_btn
   - header

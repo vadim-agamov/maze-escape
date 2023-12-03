@@ -19,7 +19,8 @@ namespace Maze.Service
         // character
         public CellView CurrentCell;      // destination cell
         public IPositionProvider CharacterPositionProvider;
-        // public bool IsWalking;
         public bool GoalReached;
+        
+        public IGoalsFactoryComponent GoalsFactoryComponent;
     }
 }

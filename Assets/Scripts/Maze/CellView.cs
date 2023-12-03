@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Maze.Configs;
 using Modules.Extensions;
@@ -49,7 +48,9 @@ namespace Maze
         
         [SerializeField]
         private GameObject _attentionFx;
-        
+
+        public GoalView Goal { get; set; }
+
         private CellType _cellType;
         private int _row;
         private int _col;
@@ -60,13 +61,11 @@ namespace Maze
         public void AddType(CellType cellType)
         {
             _cellType |= cellType;
-            _finish.SetActive(_cellType.HasFlag(CellType.Finish));
         }
         
         public void RemoveType(CellType cellType)
         {
             _cellType &= ~cellType;
-            _finish.SetActive(_cellType.HasFlag(CellType.Finish));
         }
 
         public void Setup(CellType cellType, int r, int c, HashSet<string> walls)
@@ -154,11 +153,6 @@ namespace Maze
                 {
                     _downRightWall.gameObject.SetActive(true);
                 }
-            }
-            
-            if(_cellType.HasFlag(CellType.Finish))
-            {
-                _finish.SetActive(true);
             }
             
             gameObject.name = $"cell_{r}_{c}";

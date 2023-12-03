@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Maze.Configs.Editor
 {
@@ -43,7 +42,6 @@ namespace Maze.Configs.Editor
                 return;
             }
             
-            Debug.Log($"push {r} {c}");
             _currentPath.Push((Row: r, Col: c));
             _cells[r, c] |= CellType.Visited;
             var cell = _cells[r, c];
@@ -80,7 +78,6 @@ namespace Maze.Configs.Editor
                 FindPath(r - 1, c);
             }
 
-            Debug.Log($"pop {r} {c}");
             _currentPath.Pop();
             _cells[r, c] &= ~CellType.Visited;
         }

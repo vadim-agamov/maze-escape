@@ -31,7 +31,7 @@ namespace Maze.Components
             StartCoroutine(ShowCharacterFx());
             return UniTask.CompletedTask;
         }
-        void IComponent.Update()
+        void IComponent.Tick()
         {
             // nothing
         }
