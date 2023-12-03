@@ -36,7 +36,7 @@ SpriteAtlas:
       m_ForceMaximumCompressionQuality_BC6H_BC7: 0
     - serializedVersion: 3
       m_BuildTarget: DefaultTexturePlatform
-      m_MaxTextureSize: 2048
+      m_MaxTextureSize: 1024
       m_ResizeAlgorithm: 0
       m_TextureFormat: -1
       m_TextureCompression: 1
@@ -93,9 +93,9 @@ SpriteAtlas:
     - 55dee6bdd618745f8837be68f7ec7913: 21300000
     - a2fbabed3e8f84becad60ad8a191a0de: 21300000
     - c0038bfd880034858b0481d88f6477f4: 21300000
+    - df815dce2810946c39d8955fdf1d7f90: 21300000
     - 35928ffe50d7042c7b0621eee121ebf1: 21300000
     - e8c61e6f6b87b4f9a9b1fba17e0fa3a1: 21300000
-    - fc7c657fe67d54f05a18003abbbaff26: 21300000
     - 43f6528fef5204c9386cf1153a57f8aa: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -129,9 +129,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 55dee6bdd618745f8837be68f7ec7913, type: 3}
   - {fileID: 21300000, guid: a2fbabed3e8f84becad60ad8a191a0de, type: 3}
   - {fileID: 21300000, guid: c0038bfd880034858b0481d88f6477f4, type: 3}
+  - {fileID: 21300000, guid: df815dce2810946c39d8955fdf1d7f90, type: 3}
   - {fileID: 21300000, guid: 35928ffe50d7042c7b0621eee121ebf1, type: 3}
   - {fileID: 21300000, guid: e8c61e6f6b87b4f9a9b1fba17e0fa3a1, type: 3}
-  - {fileID: 21300000, guid: fc7c657fe67d54f05a18003abbbaff26, type: 3}
   - {fileID: 21300000, guid: 43f6528fef5204c9386cf1153a57f8aa, type: 3}
   m_PackedSpriteNamesToIndex:
   - h_0
@@ -164,9 +164,9 @@ SpriteAtlas:
   - shell_3
   - v_0
   - h_3
+  - 00017-2805823779
   - v_1
   - starfish_1
-  - 00162-33753019
   - 4
   m_RenderDataMap: {}
   m_Tag: Images
