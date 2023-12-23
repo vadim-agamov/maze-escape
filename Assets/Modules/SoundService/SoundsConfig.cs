@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Modules.SoundService
@@ -18,5 +19,7 @@ namespace Modules.SoundService
         private List<Sound> _sounds;
         
         public AudioClip GetSound(string id) => _sounds.Find(s => s.Id == id).Clip;
+
+        public IEnumerable<AudioClip> GetAllAudioClips() => _sounds.Select(s => s.Clip);
     }
 }

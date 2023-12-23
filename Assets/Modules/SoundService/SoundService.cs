@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Modules.Events;
+using Modules.PlatformService;
 using Modules.PlayerDataService;
 using Modules.ServiceLocator;
 using UnityEngine;
@@ -18,7 +20,19 @@ namespace Modules.SoundService
         private List<AudioSource> _activeSources;
         private IPropertyProvider<bool> IsMuted { get; set; }
 
-        private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationToken = new ();
+        
+        private void Silence(bool silence)
+        {
+            if (silence)
+            {
+                ((ISoundService)this).Mute();
+            }
+            else
+            {
+                ((ISoundService)this).UnMute();
+            }
+        }
 
         public SoundService BindProperty(IPropertyProvider<bool> isMuted)
         {
@@ -32,15 +46,34 @@ namespace Modules.SoundService
             gameObject.name = $"[{nameof(SoundService)}]";
             
             _config = await Addressables.LoadAssetAsync<SoundsConfig>("SoundsConfig").ToUniTask(cancellationToken: cancellationToken);
+            foreach (var audioClip in _config.GetAllAudioClips())
+            {
+                Debug.Log($"[{nameof(SoundService)}] Begin loading {audioClip.name}");
+                var result = audioClip.LoadAudioData();
+                Debug.Log($"[{nameof(SoundService)}] End loading {audioClip.name}, {result}");
+            }
             
             gameObject.name = $"[{nameof(SoundService)}]";
             gameObject.AddComponent<AudioListener>();
             _objectPool = new ObjectPool<AudioSource>(OnCreateAudioSource, OnGetAudioSource, OnReleaseAudioSource, OnDestroyAudioSource);
             _activeSources = new List<AudioSource>();
+
+            Event<AppFocusState>.Subscribe(OnAppFocusStateChanged);
+        }
+
+        private void OnAppFocusStateChanged(AppFocusState evt)
+        {
+            Silence(!evt.IsFocus);
         }
 
         void IService.Dispose()
         {
+            Event<AppFocusState>.Unsubscribe(OnAppFocusStateChanged);
+
+            foreach (var audioClip in _config.GetAllAudioClips())
+            {
+                audioClip.UnloadAudioData();
+            }
             Addressables.Release(_config);
             _cancellationToken.Cancel();
             _objectPool.Dispose();
@@ -49,6 +82,7 @@ namespace Modules.SoundService
 
         void ISoundService.PlayLoop(string soundId)
         {
+            Debug.Log($"[{nameof(SoundService)}] PlayLoop {soundId}");
             var source = _objectPool.Get();
             if (source.clip == null || source.clip.name != soundId)
             {
@@ -63,6 +97,7 @@ namespace Modules.SoundService
 
         async UniTask ISoundService.Play(string soundId)
         {
+            Debug.Log($"[{nameof(SoundService)}] Play {soundId}");
             var source = _objectPool.Get();
             if (source.clip == null || source.clip.name != soundId)
             {
