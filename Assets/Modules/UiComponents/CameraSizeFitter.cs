@@ -1,3 +1,4 @@
+using System.Collections;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Events;
@@ -21,9 +22,20 @@ namespace Modules.UiComponents
         [SerializeField] 
         private UnityEvent _onFitted;
         
+        private Vector2Int _prevScreenSize = Vector2Int.zero;
+        
         private void OnEnable()
         {
             FitCameraSize();
+        }
+
+        private void Update()
+        {
+            if(_prevScreenSize.x != Screen.width || _prevScreenSize.y != Screen.height)
+            {
+                _prevScreenSize = new Vector2Int(Screen.width, Screen.height);
+                FitCameraSize();
+            }
         }
 
         [UsedImplicitly]

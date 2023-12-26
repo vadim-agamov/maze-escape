@@ -28,10 +28,7 @@ namespace Maze.Components
         
         [SerializeField] 
         private float _paddingRight;
-
-        // [SerializeField]
-        // private Transform _cellsContainer;
-
+        
         [SerializeField]
         private UnityEvent _initialized;
 
@@ -39,6 +36,7 @@ namespace Maze.Components
 
         private Context _context;
         private const float CellSize = 1.5f;
+        private Rect _prevRect = new Rect();
         
         public UniTask Initialize(Context context, IMazeService mazeService)
         {

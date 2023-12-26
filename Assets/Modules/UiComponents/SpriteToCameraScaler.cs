@@ -8,10 +8,9 @@ namespace Modules.UiComponents
     {
         [SerializeField] 
         private Camera _camera;
-
-        [HideInInspector] 
-        [SerializeField] 
-        private SpriteRenderer _spriteRenderer;
+        
+        [SerializeField, HideInInspector]
+        private Vector2 _spriteBounds;
 
         private void OnEnable()
         {
@@ -22,12 +21,12 @@ namespace Modules.UiComponents
         {
             var a = _camera.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
             var b = _camera.ScreenToWorldPoint(new Vector2(0, 0));
+            
             var targetWith = a.x - b.x;
             var targetHeight = a.y - b.y;
 
-            var bounds = _spriteRenderer.bounds;
-            var widthScale = targetWith / bounds.size.x;
-            var heightScale = targetHeight / bounds.size.y;
+            var widthScale = targetWith / _spriteBounds.x;
+            var heightScale = targetHeight / _spriteBounds.y;
 
             var scale = Mathf.Max(widthScale, heightScale);
             transform.localScale = new Vector3(scale, scale);
@@ -35,7 +34,7 @@ namespace Modules.UiComponents
 
         private void OnValidate()
         {
-            _spriteRenderer = GetComponent<SpriteRenderer>();
+            _spriteBounds = GetComponent<SpriteRenderer>().bounds.size;
         }
 
         private void OnDrawGizmosSelected()

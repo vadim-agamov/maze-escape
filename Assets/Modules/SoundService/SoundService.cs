@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -21,17 +22,11 @@ namespace Modules.SoundService
         private IPropertyProvider<bool> IsMuted { get; set; }
 
         private readonly CancellationTokenSource _cancellationToken = new ();
-        
+
         private void Silence(bool silence)
         {
-            if (silence)
-            {
-                ((ISoundService)this).Mute();
-            }
-            else
-            {
-                ((ISoundService)this).UnMute();
-            }
+            AudioListener.pause = silence;
+            AudioListener.volume = silence ? 0 : 1;
         }
 
         public SoundService BindProperty(IPropertyProvider<bool> isMuted)
@@ -46,12 +41,13 @@ namespace Modules.SoundService
             gameObject.name = $"[{nameof(SoundService)}]";
             
             _config = await Addressables.LoadAssetAsync<SoundsConfig>("SoundsConfig").ToUniTask(cancellationToken: cancellationToken);
-            foreach (var audioClip in _config.GetAllAudioClips())
+
+            var clips = _config.GetAllAudioClips().ToList();
+            await UniTask.WaitUntil(() => clips.All(clip =>
             {
-                Debug.Log($"[{nameof(SoundService)}] Begin loading {audioClip.name}");
-                var result = audioClip.LoadAudioData();
-                Debug.Log($"[{nameof(SoundService)}] End loading {audioClip.name}, {result}");
-            }
+                Debug.Log($"[{nameof(SoundService)}] {clip.name}: {clip.loadState}");
+                return clip.loadState == AudioDataLoadState.Loaded;
+            }), cancellationToken: cancellationToken);
             
             gameObject.name = $"[{nameof(SoundService)}]";
             gameObject.AddComponent<AudioListener>();
@@ -60,7 +56,7 @@ namespace Modules.SoundService
 
             Event<AppFocusState>.Subscribe(OnAppFocusStateChanged);
         }
-
+        
         private void OnAppFocusStateChanged(AppFocusState evt)
         {
             Silence(!evt.IsFocus);
@@ -69,11 +65,7 @@ namespace Modules.SoundService
         void IService.Dispose()
         {
             Event<AppFocusState>.Unsubscribe(OnAppFocusStateChanged);
-
-            foreach (var audioClip in _config.GetAllAudioClips())
-            {
-                audioClip.UnloadAudioData();
-            }
+            
             Addressables.Release(_config);
             _cancellationToken.Cancel();
             _objectPool.Dispose();
