@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SoundsConfig
   m_EditorClassIdentifier: 
   _sounds:
-  - Id: ambient
-    Clip: {fileID: 8300000, guid: 577872017e08a44578ae861598074ead, type: 3}
   - Id: tap
     Clip: {fileID: 8300000, guid: cf3d233ffac6e4ad2ab96e2a234b29c2, type: 3}
+  - Id: ambient
+    Clip: {fileID: 8300000, guid: e47ca82b54c0a48f59c14365ef35b672, type: 3}
