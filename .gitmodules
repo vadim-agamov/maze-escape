@@ -1,0 +1,3 @@
+[submodule "Assets/Modules"]
+	path = Assets/Modules
+	url = git@github.com:vadim-agamov/modules.git
